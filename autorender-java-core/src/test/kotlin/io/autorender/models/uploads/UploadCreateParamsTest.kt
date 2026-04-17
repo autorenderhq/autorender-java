@@ -20,7 +20,6 @@ internal class UploadCreateParamsTest {
             .randomPrefix("random_prefix")
             .tags("tags")
             .transform("transform")
-            .webhookUrl("webhook_url")
             .build()
     }
 
@@ -36,7 +35,6 @@ internal class UploadCreateParamsTest {
                 .randomPrefix("random_prefix")
                 .tags("tags")
                 .transform("transform")
-                .webhookUrl("webhook_url")
                 .build()
 
         val body = params._body()
@@ -59,7 +57,6 @@ internal class UploadCreateParamsTest {
                         "random_prefix" to MultipartField.of("random_prefix"),
                         "tags" to MultipartField.of("tags"),
                         "transform" to MultipartField.of("transform"),
-                        "webhook_url" to MultipartField.of("webhook_url"),
                     )
                     .mapValues { (_, field) ->
                         field.map { (it as? ByteArray)?.inputStream() ?: it }

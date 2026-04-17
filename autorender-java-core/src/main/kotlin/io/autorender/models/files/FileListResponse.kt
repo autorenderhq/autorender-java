@@ -248,6 +248,8 @@ private constructor(
         fun page(): Long = page.getRequired("page")
 
         /**
+         * Total matching files
+         *
          * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
@@ -381,6 +383,7 @@ private constructor(
              */
             fun page(page: JsonField<Long>) = apply { this.page = page }
 
+            /** Total matching files */
             fun total(total: Long) = total(JsonField.of(total))
 
             /**

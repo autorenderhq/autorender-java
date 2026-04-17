@@ -24,7 +24,7 @@ internal class FolderServiceTest {
 
         val folder =
             folderService.create(
-                FolderCreateParams.builder().name("name").parentFolderNo("parent_folder_no").build()
+                FolderCreateParams.builder().name("demo2").parentFolderNo("sD1LvqoDzG").build()
             )
 
         folder.validate()
@@ -70,7 +70,7 @@ internal class FolderServiceTest {
 
         val folder =
             folderService.rename(
-                FolderRenameParams.builder().folderNo("53855hxPoq").name("name").build()
+                FolderRenameParams.builder().folderNo("53855hxPoq").name("demo2").build()
             )
 
         folder.validate()

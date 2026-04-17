@@ -24,7 +24,7 @@ internal class FolderServiceAsyncTest {
 
         val folderFuture =
             folderServiceAsync.create(
-                FolderCreateParams.builder().name("name").parentFolderNo("parent_folder_no").build()
+                FolderCreateParams.builder().name("demo2").parentFolderNo("sD1LvqoDzG").build()
             )
 
         val folder = folderFuture.get()
@@ -73,7 +73,7 @@ internal class FolderServiceAsyncTest {
 
         val folderFuture =
             folderServiceAsync.rename(
-                FolderRenameParams.builder().folderNo("53855hxPoq").name("name").build()
+                FolderRenameParams.builder().folderNo("53855hxPoq").name("demo2").build()
             )
 
         val folder = folderFuture.get()

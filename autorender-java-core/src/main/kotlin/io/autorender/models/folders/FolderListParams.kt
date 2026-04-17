@@ -9,7 +9,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** List folders in the workspace. Omit parent_folder_no to list root-level folders. */
+/** List folders under an optional parent. Omit `parent_folder_no` to list root-level folders. */
 class FolderListParams
 private constructor(
     private val parentFolderNo: String?,
@@ -17,7 +17,7 @@ private constructor(
     private val additionalQueryParams: QueryParams,
 ) : Params {
 
-    /** Return only direct children of this folder */
+    /** Only return direct children of this folder (folder number) */
     fun parentFolderNo(): Optional<String> = Optional.ofNullable(parentFolderNo)
 
     /** Additional headers to send with the request. */
@@ -50,7 +50,7 @@ private constructor(
             additionalQueryParams = folderListParams.additionalQueryParams.toBuilder()
         }
 
-        /** Return only direct children of this folder */
+        /** Only return direct children of this folder (folder number) */
         fun parentFolderNo(parentFolderNo: String?) = apply { this.parentFolderNo = parentFolderNo }
 
         /** Alias for calling [Builder.parentFolderNo] with `parentFolderNo.orElse(null)`. */

@@ -9,26 +9,25 @@ internal class FolderCreateParamsTest {
 
     @Test
     fun create() {
-        FolderCreateParams.builder().name("name").parentFolderNo("parent_folder_no").build()
+        FolderCreateParams.builder().name("demo2").parentFolderNo("sD1LvqoDzG").build()
     }
 
     @Test
     fun body() {
-        val params =
-            FolderCreateParams.builder().name("name").parentFolderNo("parent_folder_no").build()
+        val params = FolderCreateParams.builder().name("demo2").parentFolderNo("sD1LvqoDzG").build()
 
         val body = params._body()
 
-        assertThat(body.name()).isEqualTo("name")
-        assertThat(body.parentFolderNo()).contains("parent_folder_no")
+        assertThat(body.name()).isEqualTo("demo2")
+        assertThat(body.parentFolderNo()).contains("sD1LvqoDzG")
     }
 
     @Test
     fun bodyWithoutOptionalFields() {
-        val params = FolderCreateParams.builder().name("name").build()
+        val params = FolderCreateParams.builder().name("demo2").build()
 
         val body = params._body()
 
-        assertThat(body.name()).isEqualTo("name")
+        assertThat(body.name()).isEqualTo("demo2")
     }
 }

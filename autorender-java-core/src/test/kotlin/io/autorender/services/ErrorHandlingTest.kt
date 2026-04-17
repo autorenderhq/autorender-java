@@ -80,7 +80,6 @@ internal class ErrorHandlingTest {
                         .randomPrefix("random_prefix")
                         .tags("tags")
                         .transform("transform")
-                        .webhookUrl("webhook_url")
                         .build()
                 )
             }
@@ -112,7 +111,6 @@ internal class ErrorHandlingTest {
                         .randomPrefix("random_prefix")
                         .tags("tags")
                         .transform("transform")
-                        .webhookUrl("webhook_url")
                         .build()
                 )
             }
@@ -144,7 +142,6 @@ internal class ErrorHandlingTest {
                         .randomPrefix("random_prefix")
                         .tags("tags")
                         .transform("transform")
-                        .webhookUrl("webhook_url")
                         .build()
                 )
             }
@@ -176,7 +173,6 @@ internal class ErrorHandlingTest {
                         .randomPrefix("random_prefix")
                         .tags("tags")
                         .transform("transform")
-                        .webhookUrl("webhook_url")
                         .build()
                 )
             }
@@ -208,7 +204,6 @@ internal class ErrorHandlingTest {
                         .randomPrefix("random_prefix")
                         .tags("tags")
                         .transform("transform")
-                        .webhookUrl("webhook_url")
                         .build()
                 )
             }
@@ -240,7 +235,6 @@ internal class ErrorHandlingTest {
                         .randomPrefix("random_prefix")
                         .tags("tags")
                         .transform("transform")
-                        .webhookUrl("webhook_url")
                         .build()
                 )
             }
@@ -272,7 +266,6 @@ internal class ErrorHandlingTest {
                         .randomPrefix("random_prefix")
                         .tags("tags")
                         .transform("transform")
-                        .webhookUrl("webhook_url")
                         .build()
                 )
             }
@@ -304,7 +297,6 @@ internal class ErrorHandlingTest {
                         .randomPrefix("random_prefix")
                         .tags("tags")
                         .transform("transform")
-                        .webhookUrl("webhook_url")
                         .build()
                 )
             }
@@ -336,7 +328,6 @@ internal class ErrorHandlingTest {
                         .randomPrefix("random_prefix")
                         .tags("tags")
                         .transform("transform")
-                        .webhookUrl("webhook_url")
                         .build()
                 )
             }
@@ -368,7 +359,6 @@ internal class ErrorHandlingTest {
                         .randomPrefix("random_prefix")
                         .tags("tags")
                         .transform("transform")
-                        .webhookUrl("webhook_url")
                         .build()
                 )
             }
@@ -400,7 +390,6 @@ internal class ErrorHandlingTest {
                         .randomPrefix("random_prefix")
                         .tags("tags")
                         .transform("transform")
-                        .webhookUrl("webhook_url")
                         .build()
                 )
             }
@@ -432,7 +421,6 @@ internal class ErrorHandlingTest {
                         .randomPrefix("random_prefix")
                         .tags("tags")
                         .transform("transform")
-                        .webhookUrl("webhook_url")
                         .build()
                 )
             }
@@ -464,7 +452,6 @@ internal class ErrorHandlingTest {
                         .randomPrefix("random_prefix")
                         .tags("tags")
                         .transform("transform")
-                        .webhookUrl("webhook_url")
                         .build()
                 )
             }
@@ -496,7 +483,6 @@ internal class ErrorHandlingTest {
                         .randomPrefix("random_prefix")
                         .tags("tags")
                         .transform("transform")
-                        .webhookUrl("webhook_url")
                         .build()
                 )
             }
@@ -528,7 +514,6 @@ internal class ErrorHandlingTest {
                         .randomPrefix("random_prefix")
                         .tags("tags")
                         .transform("transform")
-                        .webhookUrl("webhook_url")
                         .build()
                 )
             }
@@ -560,7 +545,6 @@ internal class ErrorHandlingTest {
                         .randomPrefix("random_prefix")
                         .tags("tags")
                         .transform("transform")
-                        .webhookUrl("webhook_url")
                         .build()
                 )
             }
@@ -590,7 +574,6 @@ internal class ErrorHandlingTest {
                         .randomPrefix("random_prefix")
                         .tags("tags")
                         .transform("transform")
-                        .webhookUrl("webhook_url")
                         .build()
                 )
             }

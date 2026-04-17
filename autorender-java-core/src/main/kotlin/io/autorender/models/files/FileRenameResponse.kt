@@ -18,23 +18,33 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
+/** Updated file record after rename */
 class FileRenameResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val id: JsonField<String>,
     private val createdAt: JsonField<OffsetDateTime>,
+    private val createdBy: JsonField<String>,
     private val extension: JsonField<String>,
     private val fileNo: JsonField<String>,
     private val fileSize: JsonField<Long>,
     private val folderId: JsonField<String>,
     private val format: JsonField<String>,
     private val height: JsonField<Long>,
+    private val isActive: JsonField<Boolean>,
+    private val isDefault: JsonField<Boolean>,
+    private val isDelete: JsonField<Boolean>,
     private val metaData: JsonField<MetaData>,
     private val name: JsonField<String>,
+    private val orientation: JsonField<String>,
+    private val originalUrl: JsonField<String>,
     private val path: JsonField<String>,
+    private val source: JsonField<String>,
+    private val transformString: JsonField<String>,
     private val updatedAt: JsonField<OffsetDateTime>,
     private val url: JsonField<String>,
     private val width: JsonField<Long>,
+    private val workspaceId: JsonField<String>,
     private val workspaceNo: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
@@ -45,38 +55,66 @@ private constructor(
         @JsonProperty("created_at")
         @ExcludeMissing
         createdAt: JsonField<OffsetDateTime> = JsonMissing.of(),
+        @JsonProperty("created_by") @ExcludeMissing createdBy: JsonField<String> = JsonMissing.of(),
         @JsonProperty("extension") @ExcludeMissing extension: JsonField<String> = JsonMissing.of(),
         @JsonProperty("file_no") @ExcludeMissing fileNo: JsonField<String> = JsonMissing.of(),
         @JsonProperty("file_size") @ExcludeMissing fileSize: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("folder_id") @ExcludeMissing folderId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("format") @ExcludeMissing format: JsonField<String> = JsonMissing.of(),
         @JsonProperty("height") @ExcludeMissing height: JsonField<Long> = JsonMissing.of(),
+        @JsonProperty("is_active") @ExcludeMissing isActive: JsonField<Boolean> = JsonMissing.of(),
+        @JsonProperty("is_default")
+        @ExcludeMissing
+        isDefault: JsonField<Boolean> = JsonMissing.of(),
+        @JsonProperty("is_delete") @ExcludeMissing isDelete: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("meta_data") @ExcludeMissing metaData: JsonField<MetaData> = JsonMissing.of(),
         @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("orientation")
+        @ExcludeMissing
+        orientation: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("original_url")
+        @ExcludeMissing
+        originalUrl: JsonField<String> = JsonMissing.of(),
         @JsonProperty("path") @ExcludeMissing path: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("source") @ExcludeMissing source: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("transform_string")
+        @ExcludeMissing
+        transformString: JsonField<String> = JsonMissing.of(),
         @JsonProperty("updated_at")
         @ExcludeMissing
         updatedAt: JsonField<OffsetDateTime> = JsonMissing.of(),
         @JsonProperty("url") @ExcludeMissing url: JsonField<String> = JsonMissing.of(),
         @JsonProperty("width") @ExcludeMissing width: JsonField<Long> = JsonMissing.of(),
+        @JsonProperty("workspace_id")
+        @ExcludeMissing
+        workspaceId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("workspace_no")
         @ExcludeMissing
         workspaceNo: JsonField<String> = JsonMissing.of(),
     ) : this(
         id,
         createdAt,
+        createdBy,
         extension,
         fileNo,
         fileSize,
         folderId,
         format,
         height,
+        isActive,
+        isDefault,
+        isDelete,
         metaData,
         name,
+        orientation,
+        originalUrl,
         path,
+        source,
+        transformString,
         updatedAt,
         url,
         width,
+        workspaceId,
         workspaceNo,
         mutableMapOf(),
     )
@@ -92,6 +130,12 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun createdAt(): Optional<OffsetDateTime> = createdAt.getOptional("created_at")
+
+    /**
+     * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun createdBy(): Optional<String> = createdBy.getOptional("created_by")
 
     /**
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -133,6 +177,24 @@ private constructor(
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
+    fun isActive(): Optional<Boolean> = isActive.getOptional("is_active")
+
+    /**
+     * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun isDefault(): Optional<Boolean> = isDefault.getOptional("is_default")
+
+    /**
+     * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun isDelete(): Optional<Boolean> = isDelete.getOptional("is_delete")
+
+    /**
+     * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
     fun metaData(): Optional<MetaData> = metaData.getOptional("meta_data")
 
     /**
@@ -145,7 +207,31 @@ private constructor(
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
+    fun orientation(): Optional<String> = orientation.getOptional("orientation")
+
+    /**
+     * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun originalUrl(): Optional<String> = originalUrl.getOptional("original_url")
+
+    /**
+     * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
     fun path(): Optional<String> = path.getOptional("path")
+
+    /**
+     * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun source(): Optional<String> = source.getOptional("source")
+
+    /**
+     * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun transformString(): Optional<String> = transformString.getOptional("transform_string")
 
     /**
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -169,6 +255,12 @@ private constructor(
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
+    fun workspaceId(): Optional<String> = workspaceId.getOptional("workspace_id")
+
+    /**
+     * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
     fun workspaceNo(): Optional<String> = workspaceNo.getOptional("workspace_no")
 
     /**
@@ -186,6 +278,13 @@ private constructor(
     @JsonProperty("created_at")
     @ExcludeMissing
     fun _createdAt(): JsonField<OffsetDateTime> = createdAt
+
+    /**
+     * Returns the raw JSON value of [createdBy].
+     *
+     * Unlike [createdBy], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("created_by") @ExcludeMissing fun _createdBy(): JsonField<String> = createdBy
 
     /**
      * Returns the raw JSON value of [extension].
@@ -230,6 +329,27 @@ private constructor(
     @JsonProperty("height") @ExcludeMissing fun _height(): JsonField<Long> = height
 
     /**
+     * Returns the raw JSON value of [isActive].
+     *
+     * Unlike [isActive], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("is_active") @ExcludeMissing fun _isActive(): JsonField<Boolean> = isActive
+
+    /**
+     * Returns the raw JSON value of [isDefault].
+     *
+     * Unlike [isDefault], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("is_default") @ExcludeMissing fun _isDefault(): JsonField<Boolean> = isDefault
+
+    /**
+     * Returns the raw JSON value of [isDelete].
+     *
+     * Unlike [isDelete], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("is_delete") @ExcludeMissing fun _isDelete(): JsonField<Boolean> = isDelete
+
+    /**
      * Returns the raw JSON value of [metaData].
      *
      * Unlike [metaData], this method doesn't throw if the JSON field has an unexpected type.
@@ -244,11 +364,43 @@ private constructor(
     @JsonProperty("name") @ExcludeMissing fun _name(): JsonField<String> = name
 
     /**
+     * Returns the raw JSON value of [orientation].
+     *
+     * Unlike [orientation], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("orientation") @ExcludeMissing fun _orientation(): JsonField<String> = orientation
+
+    /**
+     * Returns the raw JSON value of [originalUrl].
+     *
+     * Unlike [originalUrl], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("original_url")
+    @ExcludeMissing
+    fun _originalUrl(): JsonField<String> = originalUrl
+
+    /**
      * Returns the raw JSON value of [path].
      *
      * Unlike [path], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("path") @ExcludeMissing fun _path(): JsonField<String> = path
+
+    /**
+     * Returns the raw JSON value of [source].
+     *
+     * Unlike [source], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("source") @ExcludeMissing fun _source(): JsonField<String> = source
+
+    /**
+     * Returns the raw JSON value of [transformString].
+     *
+     * Unlike [transformString], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("transform_string")
+    @ExcludeMissing
+    fun _transformString(): JsonField<String> = transformString
 
     /**
      * Returns the raw JSON value of [updatedAt].
@@ -272,6 +424,15 @@ private constructor(
      * Unlike [width], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("width") @ExcludeMissing fun _width(): JsonField<Long> = width
+
+    /**
+     * Returns the raw JSON value of [workspaceId].
+     *
+     * Unlike [workspaceId], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("workspace_id")
+    @ExcludeMissing
+    fun _workspaceId(): JsonField<String> = workspaceId
 
     /**
      * Returns the raw JSON value of [workspaceNo].
@@ -305,18 +466,27 @@ private constructor(
 
         private var id: JsonField<String> = JsonMissing.of()
         private var createdAt: JsonField<OffsetDateTime> = JsonMissing.of()
+        private var createdBy: JsonField<String> = JsonMissing.of()
         private var extension: JsonField<String> = JsonMissing.of()
         private var fileNo: JsonField<String> = JsonMissing.of()
         private var fileSize: JsonField<Long> = JsonMissing.of()
         private var folderId: JsonField<String> = JsonMissing.of()
         private var format: JsonField<String> = JsonMissing.of()
         private var height: JsonField<Long> = JsonMissing.of()
+        private var isActive: JsonField<Boolean> = JsonMissing.of()
+        private var isDefault: JsonField<Boolean> = JsonMissing.of()
+        private var isDelete: JsonField<Boolean> = JsonMissing.of()
         private var metaData: JsonField<MetaData> = JsonMissing.of()
         private var name: JsonField<String> = JsonMissing.of()
+        private var orientation: JsonField<String> = JsonMissing.of()
+        private var originalUrl: JsonField<String> = JsonMissing.of()
         private var path: JsonField<String> = JsonMissing.of()
+        private var source: JsonField<String> = JsonMissing.of()
+        private var transformString: JsonField<String> = JsonMissing.of()
         private var updatedAt: JsonField<OffsetDateTime> = JsonMissing.of()
         private var url: JsonField<String> = JsonMissing.of()
         private var width: JsonField<Long> = JsonMissing.of()
+        private var workspaceId: JsonField<String> = JsonMissing.of()
         private var workspaceNo: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -324,18 +494,27 @@ private constructor(
         internal fun from(fileRenameResponse: FileRenameResponse) = apply {
             id = fileRenameResponse.id
             createdAt = fileRenameResponse.createdAt
+            createdBy = fileRenameResponse.createdBy
             extension = fileRenameResponse.extension
             fileNo = fileRenameResponse.fileNo
             fileSize = fileRenameResponse.fileSize
             folderId = fileRenameResponse.folderId
             format = fileRenameResponse.format
             height = fileRenameResponse.height
+            isActive = fileRenameResponse.isActive
+            isDefault = fileRenameResponse.isDefault
+            isDelete = fileRenameResponse.isDelete
             metaData = fileRenameResponse.metaData
             name = fileRenameResponse.name
+            orientation = fileRenameResponse.orientation
+            originalUrl = fileRenameResponse.originalUrl
             path = fileRenameResponse.path
+            source = fileRenameResponse.source
+            transformString = fileRenameResponse.transformString
             updatedAt = fileRenameResponse.updatedAt
             url = fileRenameResponse.url
             width = fileRenameResponse.width
+            workspaceId = fileRenameResponse.workspaceId
             workspaceNo = fileRenameResponse.workspaceNo
             additionalProperties = fileRenameResponse.additionalProperties.toMutableMap()
         }
@@ -360,6 +539,17 @@ private constructor(
          * supported value.
          */
         fun createdAt(createdAt: JsonField<OffsetDateTime>) = apply { this.createdAt = createdAt }
+
+        fun createdBy(createdBy: String) = createdBy(JsonField.of(createdBy))
+
+        /**
+         * Sets [Builder.createdBy] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.createdBy] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun createdBy(createdBy: JsonField<String>) = apply { this.createdBy = createdBy }
 
         fun extension(extension: String) = extension(JsonField.of(extension))
 
@@ -435,6 +625,39 @@ private constructor(
          */
         fun height(height: JsonField<Long>) = apply { this.height = height }
 
+        fun isActive(isActive: Boolean) = isActive(JsonField.of(isActive))
+
+        /**
+         * Sets [Builder.isActive] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.isActive] with a well-typed [Boolean] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun isActive(isActive: JsonField<Boolean>) = apply { this.isActive = isActive }
+
+        fun isDefault(isDefault: Boolean) = isDefault(JsonField.of(isDefault))
+
+        /**
+         * Sets [Builder.isDefault] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.isDefault] with a well-typed [Boolean] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun isDefault(isDefault: JsonField<Boolean>) = apply { this.isDefault = isDefault }
+
+        fun isDelete(isDelete: Boolean) = isDelete(JsonField.of(isDelete))
+
+        /**
+         * Sets [Builder.isDelete] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.isDelete] with a well-typed [Boolean] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun isDelete(isDelete: JsonField<Boolean>) = apply { this.isDelete = isDelete }
+
         fun metaData(metaData: MetaData) = metaData(JsonField.of(metaData))
 
         /**
@@ -456,6 +679,34 @@ private constructor(
          */
         fun name(name: JsonField<String>) = apply { this.name = name }
 
+        fun orientation(orientation: String?) = orientation(JsonField.ofNullable(orientation))
+
+        /** Alias for calling [Builder.orientation] with `orientation.orElse(null)`. */
+        fun orientation(orientation: Optional<String>) = orientation(orientation.getOrNull())
+
+        /**
+         * Sets [Builder.orientation] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.orientation] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun orientation(orientation: JsonField<String>) = apply { this.orientation = orientation }
+
+        fun originalUrl(originalUrl: String?) = originalUrl(JsonField.ofNullable(originalUrl))
+
+        /** Alias for calling [Builder.originalUrl] with `originalUrl.orElse(null)`. */
+        fun originalUrl(originalUrl: Optional<String>) = originalUrl(originalUrl.getOrNull())
+
+        /**
+         * Sets [Builder.originalUrl] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.originalUrl] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun originalUrl(originalUrl: JsonField<String>) = apply { this.originalUrl = originalUrl }
+
         fun path(path: String?) = path(JsonField.ofNullable(path))
 
         /** Alias for calling [Builder.path] with `path.orElse(null)`. */
@@ -468,6 +719,34 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun path(path: JsonField<String>) = apply { this.path = path }
+
+        fun source(source: String) = source(JsonField.of(source))
+
+        /**
+         * Sets [Builder.source] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.source] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun source(source: JsonField<String>) = apply { this.source = source }
+
+        fun transformString(transformString: String?) =
+            transformString(JsonField.ofNullable(transformString))
+
+        /** Alias for calling [Builder.transformString] with `transformString.orElse(null)`. */
+        fun transformString(transformString: Optional<String>) =
+            transformString(transformString.getOrNull())
+
+        /**
+         * Sets [Builder.transformString] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.transformString] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun transformString(transformString: JsonField<String>) = apply {
+            this.transformString = transformString
+        }
 
         fun updatedAt(updatedAt: OffsetDateTime) = updatedAt(JsonField.of(updatedAt))
 
@@ -510,6 +789,17 @@ private constructor(
          */
         fun width(width: JsonField<Long>) = apply { this.width = width }
 
+        fun workspaceId(workspaceId: String) = workspaceId(JsonField.of(workspaceId))
+
+        /**
+         * Sets [Builder.workspaceId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.workspaceId] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun workspaceId(workspaceId: JsonField<String>) = apply { this.workspaceId = workspaceId }
+
         fun workspaceNo(workspaceNo: String) = workspaceNo(JsonField.of(workspaceNo))
 
         /**
@@ -549,18 +839,27 @@ private constructor(
             FileRenameResponse(
                 id,
                 createdAt,
+                createdBy,
                 extension,
                 fileNo,
                 fileSize,
                 folderId,
                 format,
                 height,
+                isActive,
+                isDefault,
+                isDelete,
                 metaData,
                 name,
+                orientation,
+                originalUrl,
                 path,
+                source,
+                transformString,
                 updatedAt,
                 url,
                 width,
+                workspaceId,
                 workspaceNo,
                 additionalProperties.toMutableMap(),
             )
@@ -575,18 +874,27 @@ private constructor(
 
         id()
         createdAt()
+        createdBy()
         extension()
         fileNo()
         fileSize()
         folderId()
         format()
         height()
+        isActive()
+        isDefault()
+        isDelete()
         metaData().ifPresent { it.validate() }
         name()
+        orientation()
+        originalUrl()
         path()
+        source()
+        transformString()
         updatedAt()
         url()
         width()
+        workspaceId()
         workspaceNo()
         validated = true
     }
@@ -608,18 +916,27 @@ private constructor(
     internal fun validity(): Int =
         (if (id.asKnown().isPresent) 1 else 0) +
             (if (createdAt.asKnown().isPresent) 1 else 0) +
+            (if (createdBy.asKnown().isPresent) 1 else 0) +
             (if (extension.asKnown().isPresent) 1 else 0) +
             (if (fileNo.asKnown().isPresent) 1 else 0) +
             (if (fileSize.asKnown().isPresent) 1 else 0) +
             (if (folderId.asKnown().isPresent) 1 else 0) +
             (if (format.asKnown().isPresent) 1 else 0) +
             (if (height.asKnown().isPresent) 1 else 0) +
+            (if (isActive.asKnown().isPresent) 1 else 0) +
+            (if (isDefault.asKnown().isPresent) 1 else 0) +
+            (if (isDelete.asKnown().isPresent) 1 else 0) +
             (metaData.asKnown().getOrNull()?.validity() ?: 0) +
             (if (name.asKnown().isPresent) 1 else 0) +
+            (if (orientation.asKnown().isPresent) 1 else 0) +
+            (if (originalUrl.asKnown().isPresent) 1 else 0) +
             (if (path.asKnown().isPresent) 1 else 0) +
+            (if (source.asKnown().isPresent) 1 else 0) +
+            (if (transformString.asKnown().isPresent) 1 else 0) +
             (if (updatedAt.asKnown().isPresent) 1 else 0) +
             (if (url.asKnown().isPresent) 1 else 0) +
             (if (width.asKnown().isPresent) 1 else 0) +
+            (if (workspaceId.asKnown().isPresent) 1 else 0) +
             (if (workspaceNo.asKnown().isPresent) 1 else 0)
 
     class MetaData
@@ -729,18 +1046,27 @@ private constructor(
         return other is FileRenameResponse &&
             id == other.id &&
             createdAt == other.createdAt &&
+            createdBy == other.createdBy &&
             extension == other.extension &&
             fileNo == other.fileNo &&
             fileSize == other.fileSize &&
             folderId == other.folderId &&
             format == other.format &&
             height == other.height &&
+            isActive == other.isActive &&
+            isDefault == other.isDefault &&
+            isDelete == other.isDelete &&
             metaData == other.metaData &&
             name == other.name &&
+            orientation == other.orientation &&
+            originalUrl == other.originalUrl &&
             path == other.path &&
+            source == other.source &&
+            transformString == other.transformString &&
             updatedAt == other.updatedAt &&
             url == other.url &&
             width == other.width &&
+            workspaceId == other.workspaceId &&
             workspaceNo == other.workspaceNo &&
             additionalProperties == other.additionalProperties
     }
@@ -749,18 +1075,27 @@ private constructor(
         Objects.hash(
             id,
             createdAt,
+            createdBy,
             extension,
             fileNo,
             fileSize,
             folderId,
             format,
             height,
+            isActive,
+            isDefault,
+            isDelete,
             metaData,
             name,
+            orientation,
+            originalUrl,
             path,
+            source,
+            transformString,
             updatedAt,
             url,
             width,
+            workspaceId,
             workspaceNo,
             additionalProperties,
         )
@@ -769,5 +1104,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "FileRenameResponse{id=$id, createdAt=$createdAt, extension=$extension, fileNo=$fileNo, fileSize=$fileSize, folderId=$folderId, format=$format, height=$height, metaData=$metaData, name=$name, path=$path, updatedAt=$updatedAt, url=$url, width=$width, workspaceNo=$workspaceNo, additionalProperties=$additionalProperties}"
+        "FileRenameResponse{id=$id, createdAt=$createdAt, createdBy=$createdBy, extension=$extension, fileNo=$fileNo, fileSize=$fileSize, folderId=$folderId, format=$format, height=$height, isActive=$isActive, isDefault=$isDefault, isDelete=$isDelete, metaData=$metaData, name=$name, orientation=$orientation, originalUrl=$originalUrl, path=$path, source=$source, transformString=$transformString, updatedAt=$updatedAt, url=$url, width=$width, workspaceId=$workspaceId, workspaceNo=$workspaceNo, additionalProperties=$additionalProperties}"
 }

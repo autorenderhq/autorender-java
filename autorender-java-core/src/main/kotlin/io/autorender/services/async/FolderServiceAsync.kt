@@ -16,7 +16,6 @@ import io.autorender.models.folders.FolderRenameParams
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
-/** Manage folder structure */
 interface FolderServiceAsync {
 
     /**
@@ -31,10 +30,7 @@ interface FolderServiceAsync {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): FolderServiceAsync
 
-    /**
-     * Create a new folder. Optionally nest it under an existing folder by providing
-     * parent_folder_no.
-     */
+    /** Create a folder under an optional parent. */
     fun create(params: FolderCreateParams): CompletableFuture<FolderCreateResponse> =
         create(params, RequestOptions.none())
 
@@ -44,7 +40,9 @@ interface FolderServiceAsync {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<FolderCreateResponse>
 
-    /** List folders in the workspace. Omit parent_folder_no to list root-level folders. */
+    /**
+     * List folders under an optional parent. Omit `parent_folder_no` to list root-level folders.
+     */
     fun list(): CompletableFuture<FolderListResponse> = list(FolderListParams.none())
 
     /** @see list */
@@ -62,7 +60,7 @@ interface FolderServiceAsync {
     fun list(requestOptions: RequestOptions): CompletableFuture<FolderListResponse> =
         list(FolderListParams.none(), requestOptions)
 
-    /** Delete a folder by its folder number. */
+    /** Delete a folder by folder number. No request body required. */
     fun delete(folderNo: String): CompletableFuture<FolderDeleteResponse> =
         delete(folderNo, FolderDeleteParams.none())
 
@@ -97,7 +95,7 @@ interface FolderServiceAsync {
     ): CompletableFuture<FolderDeleteResponse> =
         delete(folderNo, FolderDeleteParams.none(), requestOptions)
 
-    /** Rename a folder by its folder number. */
+    /** Rename a folder by `folder_no`. */
     fun rename(folderNo: String, params: FolderRenameParams): CompletableFuture<Folder> =
         rename(folderNo, params, RequestOptions.none())
 

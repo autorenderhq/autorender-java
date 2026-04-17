@@ -19,9 +19,7 @@ import java.util.Collections
 import java.util.Objects
 import java.util.Optional
 
-/**
- * Create a new folder. Optionally nest it under an existing folder by providing parent_folder_no.
- */
+/** Create a folder under an optional parent. */
 class FolderCreateParams
 private constructor(
     private val body: Body,
@@ -38,7 +36,7 @@ private constructor(
     fun name(): String = body.name()
 
     /**
-     * Parent folder number; omit for root level
+     * Parent folder number; omit or null for root
      *
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -117,7 +115,7 @@ private constructor(
          */
         fun name(name: JsonField<String>) = apply { body.name(name) }
 
-        /** Parent folder number; omit for root level */
+        /** Parent folder number; omit or null for root */
         fun parentFolderNo(parentFolderNo: String) = apply { body.parentFolderNo(parentFolderNo) }
 
         /**
@@ -299,7 +297,7 @@ private constructor(
         fun name(): String = name.getRequired("name")
 
         /**
-         * Parent folder number; omit for root level
+         * Parent folder number; omit or null for root
          *
          * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -374,7 +372,7 @@ private constructor(
              */
             fun name(name: JsonField<String>) = apply { this.name = name }
 
-            /** Parent folder number; omit for root level */
+            /** Parent folder number; omit or null for root */
             fun parentFolderNo(parentFolderNo: String) =
                 parentFolderNo(JsonField.of(parentFolderNo))
 

@@ -44,13 +44,10 @@ interface AutorenderClient {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): AutorenderClient
 
-    /** Upload files to your workspace */
     fun uploads(): UploadService
 
-    /** Manage files in your workspace */
     fun files(): FileService
 
-    /** Manage folder structure */
     fun folders(): FolderService
 
     /**
@@ -76,13 +73,10 @@ interface AutorenderClient {
          */
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): AutorenderClient.WithRawResponse
 
-        /** Upload files to your workspace */
         fun uploads(): UploadService.WithRawResponse
 
-        /** Manage files in your workspace */
         fun files(): FileService.WithRawResponse
 
-        /** Manage folder structure */
         fun folders(): FolderService.WithRawResponse
     }
 }

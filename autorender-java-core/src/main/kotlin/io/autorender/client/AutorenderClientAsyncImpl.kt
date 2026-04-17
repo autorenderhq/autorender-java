@@ -46,13 +46,10 @@ class AutorenderClientAsyncImpl(private val clientOptions: ClientOptions) : Auto
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): AutorenderClientAsync =
         AutorenderClientAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
-    /** Upload files to your workspace */
     override fun uploads(): UploadServiceAsync = uploads
 
-    /** Manage files in your workspace */
     override fun files(): FileServiceAsync = files
 
-    /** Manage folder structure */
     override fun folders(): FolderServiceAsync = folders
 
     override fun close() = clientOptions.close()
@@ -79,13 +76,10 @@ class AutorenderClientAsyncImpl(private val clientOptions: ClientOptions) : Auto
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        /** Upload files to your workspace */
         override fun uploads(): UploadServiceAsync.WithRawResponse = uploads
 
-        /** Manage files in your workspace */
         override fun files(): FileServiceAsync.WithRawResponse = files
 
-        /** Manage folder structure */
         override fun folders(): FolderServiceAsync.WithRawResponse = folders
     }
 }

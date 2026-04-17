@@ -174,7 +174,7 @@ private constructor(
         private val dimensions: JsonField<Dimensions>,
         private val extension: JsonField<String>,
         private val fileNo: JsonField<String>,
-        private val folder: JsonField<String>,
+        private val folder: JsonValue,
         private val format: JsonField<String>,
         private val name: JsonField<String>,
         private val path: JsonField<String>,
@@ -202,7 +202,7 @@ private constructor(
             @ExcludeMissing
             extension: JsonField<String> = JsonMissing.of(),
             @JsonProperty("file_no") @ExcludeMissing fileNo: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("folder") @ExcludeMissing folder: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("folder") @ExcludeMissing folder: JsonValue = JsonMissing.of(),
             @JsonProperty("format") @ExcludeMissing format: JsonField<String> = JsonMissing.of(),
             @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
             @JsonProperty("path") @ExcludeMissing path: JsonField<String> = JsonMissing.of(),
@@ -273,10 +273,12 @@ private constructor(
         fun fileNo(): Optional<String> = fileNo.getOptional("file_no")
 
         /**
-         * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if
-         *   the server responded with an unexpected value).
+         * This arbitrary value can be deserialized into a custom type using the `convert` method:
+         * ```java
+         * MyClass myObject = data.folder().convert(MyClass.class);
+         * ```
          */
-        fun folder(): Optional<String> = folder.getOptional("folder")
+        @JsonProperty("folder") @ExcludeMissing fun _folder(): JsonValue = folder
 
         /**
          * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -297,6 +299,8 @@ private constructor(
         fun path(): Optional<String> = path.getOptional("path")
 
         /**
+         * File size in bytes
+         *
          * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
@@ -369,13 +373,6 @@ private constructor(
          * Unlike [fileNo], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("file_no") @ExcludeMissing fun _fileNo(): JsonField<String> = fileNo
-
-        /**
-         * Returns the raw JSON value of [folder].
-         *
-         * Unlike [folder], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("folder") @ExcludeMissing fun _folder(): JsonField<String> = folder
 
         /**
          * Returns the raw JSON value of [format].
@@ -466,7 +463,7 @@ private constructor(
             private var dimensions: JsonField<Dimensions> = JsonMissing.of()
             private var extension: JsonField<String> = JsonMissing.of()
             private var fileNo: JsonField<String> = JsonMissing.of()
-            private var folder: JsonField<String> = JsonMissing.of()
+            private var folder: JsonValue = JsonMissing.of()
             private var format: JsonField<String> = JsonMissing.of()
             private var name: JsonField<String> = JsonMissing.of()
             private var path: JsonField<String> = JsonMissing.of()
@@ -565,19 +562,7 @@ private constructor(
              */
             fun fileNo(fileNo: JsonField<String>) = apply { this.fileNo = fileNo }
 
-            fun folder(folder: String?) = folder(JsonField.ofNullable(folder))
-
-            /** Alias for calling [Builder.folder] with `folder.orElse(null)`. */
-            fun folder(folder: Optional<String>) = folder(folder.getOrNull())
-
-            /**
-             * Sets [Builder.folder] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.folder] with a well-typed [String] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun folder(folder: JsonField<String>) = apply { this.folder = folder }
+            fun folder(folder: JsonValue) = apply { this.folder = folder }
 
             fun format(format: String) = format(JsonField.of(format))
 
@@ -615,6 +600,7 @@ private constructor(
              */
             fun path(path: JsonField<String>) = apply { this.path = path }
 
+            /** File size in bytes */
             fun size(size: Long) = size(JsonField.of(size))
 
             /**
@@ -730,7 +716,6 @@ private constructor(
             dimensions().ifPresent { it.validate() }
             extension()
             fileNo()
-            folder()
             format()
             name()
             path()
@@ -764,7 +749,6 @@ private constructor(
                 (dimensions.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (extension.asKnown().isPresent) 1 else 0) +
                 (if (fileNo.asKnown().isPresent) 1 else 0) +
-                (if (folder.asKnown().isPresent) 1 else 0) +
                 (if (format.asKnown().isPresent) 1 else 0) +
                 (if (name.asKnown().isPresent) 1 else 0) +
                 (if (path.asKnown().isPresent) 1 else 0) +

@@ -4,10 +4,8 @@ package io.autorender.services.async
 
 import io.autorender.TestServerExtension
 import io.autorender.client.okhttp.AutorenderOkHttpClientAsync
-import io.autorender.core.JsonValue
 import io.autorender.models.files.FileListParams
 import io.autorender.models.files.FileRenameParams
-import io.autorender.models.files.FileUpdateParams
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -27,33 +25,6 @@ internal class FileServiceAsyncTest {
 
         val fileObject = fileObjectFuture.get()
         fileObject.validate()
-    }
-
-    @Test
-    fun update() {
-        val client =
-            AutorenderOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
-        val fileServiceAsync = client.files()
-
-        val fileFuture =
-            fileServiceAsync.update(
-                FileUpdateParams.builder()
-                    .fileNo("2353377462")
-                    .addAddTag("string")
-                    .metadata(
-                        FileUpdateParams.Metadata.builder()
-                            .putAdditionalProperty("foo", JsonValue.from("bar"))
-                            .build()
-                    )
-                    .addRemoveTag("string")
-                    .build()
-            )
-
-        val file = fileFuture.get()
-        file.validate()
     }
 
     @Test
@@ -92,7 +63,7 @@ internal class FileServiceAsyncTest {
                 .build()
         val fileServiceAsync = client.files()
 
-        val fileFuture = fileServiceAsync.delete("2353377462")
+        val fileFuture = fileServiceAsync.delete("2338056701")
 
         val file = fileFuture.get()
         file.validate()
@@ -109,7 +80,7 @@ internal class FileServiceAsyncTest {
 
         val responseFuture =
             fileServiceAsync.rename(
-                FileRenameParams.builder().fileNo("2353377462").name("name").build()
+                FileRenameParams.builder().fileNo("2338045312").name("demo").build()
             )
 
         val response = responseFuture.get()

@@ -28,7 +28,6 @@ import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
-/** Manage folder structure */
 class FolderServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
     FolderServiceAsync {
 
