@@ -6,6 +6,7 @@ import io.autorender.core.ClientOptions
 import io.autorender.core.RequestOptions
 import io.autorender.core.http.HttpResponseFor
 import io.autorender.models.uploads.Upload
+import io.autorender.models.uploads.UploadCreateFromUrlParams
 import io.autorender.models.uploads.UploadCreateParams
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
@@ -37,6 +38,16 @@ interface UploadServiceAsync {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<Upload>
 
+    /** Fetch a file from a remote URL and store it in your AutoRender workspace. */
+    fun createFromUrl(params: UploadCreateFromUrlParams): CompletableFuture<Upload> =
+        createFromUrl(params, RequestOptions.none())
+
+    /** @see createFromUrl */
+    fun createFromUrl(
+        params: UploadCreateFromUrlParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<Upload>
+
     /**
      * A view of [UploadServiceAsync] that provides access to raw HTTP responses for each method.
      */
@@ -61,6 +72,20 @@ interface UploadServiceAsync {
         /** @see create */
         fun create(
             params: UploadCreateParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<Upload>>
+
+        /**
+         * Returns a raw HTTP response for `post /api/v1/uploads/remote`, but is otherwise the same
+         * as [UploadServiceAsync.createFromUrl].
+         */
+        fun createFromUrl(
+            params: UploadCreateFromUrlParams
+        ): CompletableFuture<HttpResponseFor<Upload>> = createFromUrl(params, RequestOptions.none())
+
+        /** @see createFromUrl */
+        fun createFromUrl(
+            params: UploadCreateFromUrlParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<Upload>>
     }
