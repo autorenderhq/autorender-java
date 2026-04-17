@@ -12,7 +12,6 @@ import io.autorender.models.uploads.UploadCreateParams
 import io.autorender.models.uploads.UploadCreateWithTokenParams
 import io.autorender.models.uploads.UploadGenerateTokenParams
 import io.autorender.models.uploads.UploadGenerateTokenResponse
-import io.autorender.services.blocking.uploads.MultipartService
 import java.util.function.Consumer
 
 /** Upload files to your workspace */
@@ -29,9 +28,6 @@ interface UploadService {
      * The original service is not modified.
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): UploadService
-
-    /** Large file uploads via multipart */
-    fun multipart(): MultipartService
 
     /**
      * Upload a file to your AutoRender workspace with optional transformations, tags, and folder
@@ -118,9 +114,6 @@ interface UploadService {
          * The original service is not modified.
          */
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): UploadService.WithRawResponse
-
-        /** Large file uploads via multipart */
-        fun multipart(): MultipartService.WithRawResponse
 
         /**
          * Returns a raw HTTP response for `post /api/v1/uploads`, but is otherwise the same as

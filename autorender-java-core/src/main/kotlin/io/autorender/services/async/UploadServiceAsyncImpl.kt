@@ -23,8 +23,6 @@ import io.autorender.models.uploads.UploadCreateParams
 import io.autorender.models.uploads.UploadCreateWithTokenParams
 import io.autorender.models.uploads.UploadGenerateTokenParams
 import io.autorender.models.uploads.UploadGenerateTokenResponse
-import io.autorender.services.async.uploads.MultipartServiceAsync
-import io.autorender.services.async.uploads.MultipartServiceAsyncImpl
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
@@ -37,17 +35,10 @@ class UploadServiceAsyncImpl internal constructor(private val clientOptions: Cli
         WithRawResponseImpl(clientOptions)
     }
 
-    private val multipart: MultipartServiceAsync by lazy {
-        MultipartServiceAsyncImpl(clientOptions)
-    }
-
     override fun withRawResponse(): UploadServiceAsync.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): UploadServiceAsync =
         UploadServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
-
-    /** Large file uploads via multipart */
-    override fun multipart(): MultipartServiceAsync = multipart
 
     override fun create(
         params: UploadCreateParams,
@@ -83,19 +74,12 @@ class UploadServiceAsyncImpl internal constructor(private val clientOptions: Cli
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
 
-        private val multipart: MultipartServiceAsync.WithRawResponse by lazy {
-            MultipartServiceAsyncImpl.WithRawResponseImpl(clientOptions)
-        }
-
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): UploadServiceAsync.WithRawResponse =
             UploadServiceAsyncImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
-
-        /** Large file uploads via multipart */
-        override fun multipart(): MultipartServiceAsync.WithRawResponse = multipart
 
         private val createHandler: Handler<Upload> = jsonHandler<Upload>(clientOptions.jsonMapper)
 
