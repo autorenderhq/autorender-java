@@ -23,8 +23,6 @@ import io.autorender.models.uploads.UploadCreateParams
 import io.autorender.models.uploads.UploadCreateWithTokenParams
 import io.autorender.models.uploads.UploadGenerateTokenParams
 import io.autorender.models.uploads.UploadGenerateTokenResponse
-import io.autorender.services.blocking.uploads.MultipartService
-import io.autorender.services.blocking.uploads.MultipartServiceImpl
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
@@ -36,15 +34,10 @@ class UploadServiceImpl internal constructor(private val clientOptions: ClientOp
         WithRawResponseImpl(clientOptions)
     }
 
-    private val multipart: MultipartService by lazy { MultipartServiceImpl(clientOptions) }
-
     override fun withRawResponse(): UploadService.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): UploadService =
         UploadServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
-
-    /** Large file uploads via multipart */
-    override fun multipart(): MultipartService = multipart
 
     override fun create(params: UploadCreateParams, requestOptions: RequestOptions): Upload =
         // post /api/v1/uploads
@@ -77,19 +70,12 @@ class UploadServiceImpl internal constructor(private val clientOptions: ClientOp
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
 
-        private val multipart: MultipartService.WithRawResponse by lazy {
-            MultipartServiceImpl.WithRawResponseImpl(clientOptions)
-        }
-
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): UploadService.WithRawResponse =
             UploadServiceImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
-
-        /** Large file uploads via multipart */
-        override fun multipart(): MultipartService.WithRawResponse = multipart
 
         private val createHandler: Handler<Upload> = jsonHandler<Upload>(clientOptions.jsonMapper)
 
