@@ -28,7 +28,7 @@ private constructor(
     private val height: JsonField<Long>,
     private val name: JsonField<String>,
     private val path: JsonField<String>,
-    private val thumbanil: JsonField<String>,
+    private val thumbnail: JsonField<String>,
     private val url: JsonField<String>,
     private val width: JsonField<Long>,
     private val workspaceNo: JsonField<String>,
@@ -47,7 +47,7 @@ private constructor(
         @JsonProperty("height") @ExcludeMissing height: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
         @JsonProperty("path") @ExcludeMissing path: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("thumbanil") @ExcludeMissing thumbanil: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("thumbnail") @ExcludeMissing thumbnail: JsonField<String> = JsonMissing.of(),
         @JsonProperty("url") @ExcludeMissing url: JsonField<String> = JsonMissing.of(),
         @JsonProperty("width") @ExcludeMissing width: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("workspace_no")
@@ -62,7 +62,7 @@ private constructor(
         height,
         name,
         path,
-        thumbanil,
+        thumbnail,
         url,
         width,
         workspaceNo,
@@ -123,7 +123,7 @@ private constructor(
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun thumbanil(): Optional<String> = thumbanil.getOptional("thumbanil")
+    fun thumbnail(): Optional<String> = thumbnail.getOptional("thumbnail")
 
     /**
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -202,11 +202,11 @@ private constructor(
     @JsonProperty("path") @ExcludeMissing fun _path(): JsonField<String> = path
 
     /**
-     * Returns the raw JSON value of [thumbanil].
+     * Returns the raw JSON value of [thumbnail].
      *
-     * Unlike [thumbanil], this method doesn't throw if the JSON field has an unexpected type.
+     * Unlike [thumbnail], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("thumbanil") @ExcludeMissing fun _thumbanil(): JsonField<String> = thumbanil
+    @JsonProperty("thumbnail") @ExcludeMissing fun _thumbnail(): JsonField<String> = thumbnail
 
     /**
      * Returns the raw JSON value of [url].
@@ -260,7 +260,7 @@ private constructor(
         private var height: JsonField<Long> = JsonMissing.of()
         private var name: JsonField<String> = JsonMissing.of()
         private var path: JsonField<String> = JsonMissing.of()
-        private var thumbanil: JsonField<String> = JsonMissing.of()
+        private var thumbnail: JsonField<String> = JsonMissing.of()
         private var url: JsonField<String> = JsonMissing.of()
         private var width: JsonField<Long> = JsonMissing.of()
         private var workspaceNo: JsonField<String> = JsonMissing.of()
@@ -276,7 +276,7 @@ private constructor(
             height = fileListItem.height
             name = fileListItem.name
             path = fileListItem.path
-            thumbanil = fileListItem.thumbanil
+            thumbnail = fileListItem.thumbnail
             url = fileListItem.url
             width = fileListItem.width
             workspaceNo = fileListItem.workspaceNo
@@ -376,16 +376,16 @@ private constructor(
         fun path(path: JsonField<String>) = apply { this.path = path }
 
         /** Thumbnail CDN URL */
-        fun thumbanil(thumbanil: String) = thumbanil(JsonField.of(thumbanil))
+        fun thumbnail(thumbnail: String) = thumbnail(JsonField.of(thumbnail))
 
         /**
-         * Sets [Builder.thumbanil] to an arbitrary JSON value.
+         * Sets [Builder.thumbnail] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.thumbanil] with a well-typed [String] value instead.
+         * You should usually call [Builder.thumbnail] with a well-typed [String] value instead.
          * This method is primarily for setting the field to an undocumented or not yet supported
          * value.
          */
-        fun thumbanil(thumbanil: JsonField<String>) = apply { this.thumbanil = thumbanil }
+        fun thumbnail(thumbnail: JsonField<String>) = apply { this.thumbnail = thumbnail }
 
         fun url(url: String) = url(JsonField.of(url))
 
@@ -462,7 +462,7 @@ private constructor(
                 height,
                 name,
                 path,
-                thumbanil,
+                thumbnail,
                 url,
                 width,
                 workspaceNo,
@@ -485,7 +485,7 @@ private constructor(
         height()
         name()
         path()
-        thumbanil()
+        thumbnail()
         url()
         width()
         workspaceNo()
@@ -515,7 +515,7 @@ private constructor(
             (if (height.asKnown().isPresent) 1 else 0) +
             (if (name.asKnown().isPresent) 1 else 0) +
             (if (path.asKnown().isPresent) 1 else 0) +
-            (if (thumbanil.asKnown().isPresent) 1 else 0) +
+            (if (thumbnail.asKnown().isPresent) 1 else 0) +
             (if (url.asKnown().isPresent) 1 else 0) +
             (if (width.asKnown().isPresent) 1 else 0) +
             (if (workspaceNo.asKnown().isPresent) 1 else 0)
@@ -534,7 +534,7 @@ private constructor(
             height == other.height &&
             name == other.name &&
             path == other.path &&
-            thumbanil == other.thumbanil &&
+            thumbnail == other.thumbnail &&
             url == other.url &&
             width == other.width &&
             workspaceNo == other.workspaceNo &&
@@ -551,7 +551,7 @@ private constructor(
             height,
             name,
             path,
-            thumbanil,
+            thumbnail,
             url,
             width,
             workspaceNo,
@@ -562,5 +562,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "FileListItem{createdAt=$createdAt, extension=$extension, fileNo=$fileNo, fileSize=$fileSize, format=$format, height=$height, name=$name, path=$path, thumbanil=$thumbanil, url=$url, width=$width, workspaceNo=$workspaceNo, additionalProperties=$additionalProperties}"
+        "FileListItem{createdAt=$createdAt, extension=$extension, fileNo=$fileNo, fileSize=$fileSize, format=$format, height=$height, name=$name, path=$path, thumbnail=$thumbnail, url=$url, width=$width, workspaceNo=$workspaceNo, additionalProperties=$additionalProperties}"
 }
