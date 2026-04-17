@@ -12,10 +12,12 @@ import io.autorender.core.http.HttpRequest
 import io.autorender.core.http.HttpResponse
 import io.autorender.core.http.HttpResponse.Handler
 import io.autorender.core.http.HttpResponseFor
+import io.autorender.core.http.json
 import io.autorender.core.http.multipartFormData
 import io.autorender.core.http.parseable
 import io.autorender.core.prepareAsync
 import io.autorender.models.uploads.Upload
+import io.autorender.models.uploads.UploadCreateFromUrlParams
 import io.autorender.models.uploads.UploadCreateParams
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
@@ -38,6 +40,13 @@ class UploadServiceAsyncImpl internal constructor(private val clientOptions: Cli
     ): CompletableFuture<Upload> =
         // post /api/v1/uploads
         withRawResponse().create(params, requestOptions).thenApply { it.parse() }
+
+    override fun createFromUrl(
+        params: UploadCreateFromUrlParams,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<Upload> =
+        // post /api/v1/uploads/remote
+        withRawResponse().createFromUrl(params, requestOptions).thenApply { it.parse() }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         UploadServiceAsync.WithRawResponse {
@@ -73,6 +82,37 @@ class UploadServiceAsyncImpl internal constructor(private val clientOptions: Cli
                     errorHandler.handle(response).parseable {
                         response
                             .use { createHandler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.validate()
+                                }
+                            }
+                    }
+                }
+        }
+
+        private val createFromUrlHandler: Handler<Upload> =
+            jsonHandler<Upload>(clientOptions.jsonMapper)
+
+        override fun createFromUrl(
+            params: UploadCreateFromUrlParams,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<Upload>> {
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.POST)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v1", "uploads", "remote")
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response
+                            .use { createFromUrlHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()

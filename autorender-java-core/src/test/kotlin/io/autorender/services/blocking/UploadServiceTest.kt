@@ -4,6 +4,7 @@ package io.autorender.services.blocking
 
 import io.autorender.TestServerExtension
 import io.autorender.client.okhttp.AutorenderOkHttpClient
+import io.autorender.models.uploads.UploadCreateFromUrlParams
 import io.autorender.models.uploads.UploadCreateParams
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -31,6 +32,32 @@ internal class UploadServiceTest {
                     .randomPrefix("random_prefix")
                     .tags("tags")
                     .transform("transform")
+                    .build()
+            )
+
+        upload.validate()
+    }
+
+    @Test
+    fun createFromUrl() {
+        val client =
+            AutorenderOkHttpClient.builder()
+                .baseUrl(TestServerExtension.BASE_URL)
+                .apiKey("My API Key")
+                .build()
+        val uploadService = client.uploads()
+
+        val upload =
+            uploadService.createFromUrl(
+                UploadCreateFromUrlParams.builder()
+                    .remoteUrl("remote_url")
+                    .customId("custom_id")
+                    .folder("folder")
+                    .metadata("metadata")
+                    .randomPrefix("random_prefix")
+                    .tags("tags")
+                    .transform("transform")
+                    .webhookUrl("webhook_url")
                     .build()
             )
 

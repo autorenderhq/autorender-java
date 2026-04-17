@@ -12,10 +12,12 @@ import io.autorender.core.http.HttpRequest
 import io.autorender.core.http.HttpResponse
 import io.autorender.core.http.HttpResponse.Handler
 import io.autorender.core.http.HttpResponseFor
+import io.autorender.core.http.json
 import io.autorender.core.http.multipartFormData
 import io.autorender.core.http.parseable
 import io.autorender.core.prepare
 import io.autorender.models.uploads.Upload
+import io.autorender.models.uploads.UploadCreateFromUrlParams
 import io.autorender.models.uploads.UploadCreateParams
 import java.util.function.Consumer
 
@@ -34,6 +36,13 @@ class UploadServiceImpl internal constructor(private val clientOptions: ClientOp
     override fun create(params: UploadCreateParams, requestOptions: RequestOptions): Upload =
         // post /api/v1/uploads
         withRawResponse().create(params, requestOptions).parse()
+
+    override fun createFromUrl(
+        params: UploadCreateFromUrlParams,
+        requestOptions: RequestOptions,
+    ): Upload =
+        // post /api/v1/uploads/remote
+        withRawResponse().createFromUrl(params, requestOptions).parse()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         UploadService.WithRawResponse {
@@ -67,6 +76,34 @@ class UploadServiceImpl internal constructor(private val clientOptions: ClientOp
             return errorHandler.handle(response).parseable {
                 response
                     .use { createHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
+
+        private val createFromUrlHandler: Handler<Upload> =
+            jsonHandler<Upload>(clientOptions.jsonMapper)
+
+        override fun createFromUrl(
+            params: UploadCreateFromUrlParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<Upload> {
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.POST)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v1", "uploads", "remote")
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { createFromUrlHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()
