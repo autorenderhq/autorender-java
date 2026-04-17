@@ -9,7 +9,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Retrieve detailed information about a specific file by its file number. */
+/** Retrieve detailed information about a file by numeric file id (`file_no`). */
 class FileRetrieveParams
 private constructor(
     private val fileNo: String?,

@@ -77,7 +77,7 @@ private constructor(
     fun fileNo(): Optional<String> = fileNo.getOptional("file_no")
 
     /**
-     * File size in bytes
+     * File size in bytes (after processing)
      *
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -85,7 +85,7 @@ private constructor(
     fun fileSize(): Optional<Long> = fileSize.getOptional("file_size")
 
     /**
-     * File format (e.g., jpeg, png, mp4)
+     * File format/extension (e.g., jpg, png, webp)
      *
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -93,7 +93,7 @@ private constructor(
     fun format(): Optional<String> = format.getOptional("format")
 
     /**
-     * Image height in pixels
+     * Image height in pixels (null for non-image files)
      *
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -101,7 +101,7 @@ private constructor(
     fun height(): Optional<Long> = height.getOptional("height")
 
     /**
-     * Final filename
+     * Final filename (may include random suffix if requested)
      *
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -117,7 +117,7 @@ private constructor(
     fun path(): Optional<String> = path.getOptional("path")
 
     /**
-     * CDN URL to access the file
+     * Full CDN URL to access the uploaded file
      *
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -125,7 +125,7 @@ private constructor(
     fun url(): Optional<String> = url.getOptional("url")
 
     /**
-     * Image width in pixels
+     * Image width in pixels (null for non-image files)
      *
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -282,7 +282,7 @@ private constructor(
          */
         fun fileNo(fileNo: JsonField<String>) = apply { this.fileNo = fileNo }
 
-        /** File size in bytes */
+        /** File size in bytes (after processing) */
         fun fileSize(fileSize: Long) = fileSize(JsonField.of(fileSize))
 
         /**
@@ -293,7 +293,7 @@ private constructor(
          */
         fun fileSize(fileSize: JsonField<Long>) = apply { this.fileSize = fileSize }
 
-        /** File format (e.g., jpeg, png, mp4) */
+        /** File format/extension (e.g., jpg, png, webp) */
         fun format(format: String) = format(JsonField.of(format))
 
         /**
@@ -304,7 +304,7 @@ private constructor(
          */
         fun format(format: JsonField<String>) = apply { this.format = format }
 
-        /** Image height in pixels */
+        /** Image height in pixels (null for non-image files) */
         fun height(height: Long?) = height(JsonField.ofNullable(height))
 
         /**
@@ -325,7 +325,7 @@ private constructor(
          */
         fun height(height: JsonField<Long>) = apply { this.height = height }
 
-        /** Final filename */
+        /** Final filename (may include random suffix if requested) */
         fun name(name: String) = name(JsonField.of(name))
 
         /**
@@ -347,7 +347,7 @@ private constructor(
          */
         fun path(path: JsonField<String>) = apply { this.path = path }
 
-        /** CDN URL to access the file */
+        /** Full CDN URL to access the uploaded file */
         fun url(url: String) = url(JsonField.of(url))
 
         /**
@@ -358,7 +358,7 @@ private constructor(
          */
         fun url(url: JsonField<String>) = apply { this.url = url }
 
-        /** Image width in pixels */
+        /** Image width in pixels (null for non-image files) */
         fun width(width: Long?) = width(JsonField.ofNullable(width))
 
         /**

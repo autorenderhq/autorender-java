@@ -14,8 +14,8 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /**
- * Paginated list of files in the workspace. Filter by folder, path prefix, name, or tags. Sort by
- * various fields.
+ * Paginated list of files in the workspace. Filter by folder, sort by field and order, and page
+ * through results.
  */
 class FileListParams
 private constructor(
@@ -31,19 +31,19 @@ private constructor(
     private val additionalQueryParams: QueryParams,
 ) : Params {
 
-    /** Filter to files in this folder */
+    /** Restrict results to files in this folder (folder number) */
     fun folderNo(): Optional<String> = Optional.ofNullable(folderNo)
 
     /** Items per page */
     fun limit(): Optional<Long> = Optional.ofNullable(limit)
 
-    /** Partial filename match (case-insensitive) */
+    /** Filter by filename (partial match, if supported) */
     fun name(): Optional<String> = Optional.ofNullable(name)
 
     /** Page number (1-based) */
     fun page(): Optional<Long> = Optional.ofNullable(page)
 
-    /** Filter by path prefix (e.g., products/sku123/) */
+    /** Filter by path prefix (if supported) */
     fun path(): Optional<String> = Optional.ofNullable(path)
 
     /** Field to sort by */
@@ -52,7 +52,7 @@ private constructor(
     /** Sort direction */
     fun sortOrder(): Optional<SortOrder> = Optional.ofNullable(sortOrder)
 
-    /** Comma-separated tags to filter by */
+    /** Comma-separated tags (if supported) */
     fun tags(): Optional<String> = Optional.ofNullable(tags)
 
     /** Additional headers to send with the request. */
@@ -99,7 +99,7 @@ private constructor(
             additionalQueryParams = fileListParams.additionalQueryParams.toBuilder()
         }
 
-        /** Filter to files in this folder */
+        /** Restrict results to files in this folder (folder number) */
         fun folderNo(folderNo: String?) = apply { this.folderNo = folderNo }
 
         /** Alias for calling [Builder.folderNo] with `folderNo.orElse(null)`. */
@@ -118,7 +118,7 @@ private constructor(
         /** Alias for calling [Builder.limit] with `limit.orElse(null)`. */
         fun limit(limit: Optional<Long>) = limit(limit.getOrNull())
 
-        /** Partial filename match (case-insensitive) */
+        /** Filter by filename (partial match, if supported) */
         fun name(name: String?) = apply { this.name = name }
 
         /** Alias for calling [Builder.name] with `name.orElse(null)`. */
@@ -137,7 +137,7 @@ private constructor(
         /** Alias for calling [Builder.page] with `page.orElse(null)`. */
         fun page(page: Optional<Long>) = page(page.getOrNull())
 
-        /** Filter by path prefix (e.g., products/sku123/) */
+        /** Filter by path prefix (if supported) */
         fun path(path: String?) = apply { this.path = path }
 
         /** Alias for calling [Builder.path] with `path.orElse(null)`. */
@@ -155,7 +155,7 @@ private constructor(
         /** Alias for calling [Builder.sortOrder] with `sortOrder.orElse(null)`. */
         fun sortOrder(sortOrder: Optional<SortOrder>) = sortOrder(sortOrder.getOrNull())
 
-        /** Comma-separated tags to filter by */
+        /** Comma-separated tags (if supported) */
         fun tags(tags: String?) = apply { this.tags = tags }
 
         /** Alias for calling [Builder.tags] with `tags.orElse(null)`. */

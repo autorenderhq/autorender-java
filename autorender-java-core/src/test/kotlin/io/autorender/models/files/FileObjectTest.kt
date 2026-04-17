@@ -3,6 +3,7 @@
 package io.autorender.models.files
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
+import io.autorender.core.JsonValue
 import io.autorender.core.jsonMapper
 import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
@@ -24,7 +25,7 @@ internal class FileObjectTest {
                         )
                         .extension("extension")
                         .fileNo("file_no")
-                        .folder("folder")
+                        .folder(JsonValue.from(mapOf<String, Any>()))
                         .format("format")
                         .name("name")
                         .path("path")
@@ -52,7 +53,7 @@ internal class FileObjectTest {
                     .dimensions(FileObject.Data.Dimensions.builder().height(0L).width(0L).build())
                     .extension("extension")
                     .fileNo("file_no")
-                    .folder("folder")
+                    .folder(JsonValue.from(mapOf<String, Any>()))
                     .format("format")
                     .name("name")
                     .path("path")
@@ -86,7 +87,7 @@ internal class FileObjectTest {
                         )
                         .extension("extension")
                         .fileNo("file_no")
-                        .folder("folder")
+                        .folder(JsonValue.from(mapOf<String, Any>()))
                         .format("format")
                         .name("name")
                         .path("path")

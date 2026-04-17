@@ -16,7 +16,6 @@ import io.autorender.models.folders.FolderListResponse
 import io.autorender.models.folders.FolderRenameParams
 import java.util.function.Consumer
 
-/** Manage folder structure */
 interface FolderService {
 
     /**
@@ -31,10 +30,7 @@ interface FolderService {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): FolderService
 
-    /**
-     * Create a new folder. Optionally nest it under an existing folder by providing
-     * parent_folder_no.
-     */
+    /** Create a folder under an optional parent. */
     fun create(params: FolderCreateParams): FolderCreateResponse =
         create(params, RequestOptions.none())
 
@@ -44,7 +40,9 @@ interface FolderService {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): FolderCreateResponse
 
-    /** List folders in the workspace. Omit parent_folder_no to list root-level folders. */
+    /**
+     * List folders under an optional parent. Omit `parent_folder_no` to list root-level folders.
+     */
     fun list(): FolderListResponse = list(FolderListParams.none())
 
     /** @see list */
@@ -61,7 +59,7 @@ interface FolderService {
     fun list(requestOptions: RequestOptions): FolderListResponse =
         list(FolderListParams.none(), requestOptions)
 
-    /** Delete a folder by its folder number. */
+    /** Delete a folder by folder number. No request body required. */
     fun delete(folderNo: String): FolderDeleteResponse = delete(folderNo, FolderDeleteParams.none())
 
     /** @see delete */
@@ -91,7 +89,7 @@ interface FolderService {
     fun delete(folderNo: String, requestOptions: RequestOptions): FolderDeleteResponse =
         delete(folderNo, FolderDeleteParams.none(), requestOptions)
 
-    /** Rename a folder by its folder number. */
+    /** Rename a folder by `folder_no`. */
     fun rename(folderNo: String, params: FolderRenameParams): Folder =
         rename(folderNo, params, RequestOptions.none())
 

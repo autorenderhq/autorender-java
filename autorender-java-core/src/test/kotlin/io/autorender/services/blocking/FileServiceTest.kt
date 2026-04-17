@@ -4,10 +4,8 @@ package io.autorender.services.blocking
 
 import io.autorender.TestServerExtension
 import io.autorender.client.okhttp.AutorenderOkHttpClient
-import io.autorender.core.JsonValue
 import io.autorender.models.files.FileListParams
 import io.autorender.models.files.FileRenameParams
-import io.autorender.models.files.FileUpdateParams
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -26,32 +24,6 @@ internal class FileServiceTest {
         val fileObject = fileService.retrieve("2353377462")
 
         fileObject.validate()
-    }
-
-    @Test
-    fun update() {
-        val client =
-            AutorenderOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
-        val fileService = client.files()
-
-        val file =
-            fileService.update(
-                FileUpdateParams.builder()
-                    .fileNo("2353377462")
-                    .addAddTag("string")
-                    .metadata(
-                        FileUpdateParams.Metadata.builder()
-                            .putAdditionalProperty("foo", JsonValue.from("bar"))
-                            .build()
-                    )
-                    .addRemoveTag("string")
-                    .build()
-            )
-
-        file.validate()
     }
 
     @Test
@@ -89,7 +61,7 @@ internal class FileServiceTest {
                 .build()
         val fileService = client.files()
 
-        val file = fileService.delete("2353377462")
+        val file = fileService.delete("2338056701")
 
         file.validate()
     }
@@ -104,7 +76,7 @@ internal class FileServiceTest {
         val fileService = client.files()
 
         val response =
-            fileService.rename(FileRenameParams.builder().fileNo("2353377462").name("name").build())
+            fileService.rename(FileRenameParams.builder().fileNo("2338045312").name("demo").build())
 
         response.validate()
     }

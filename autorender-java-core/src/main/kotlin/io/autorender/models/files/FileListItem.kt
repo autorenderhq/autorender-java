@@ -17,6 +17,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
+/** File summary row in list responses */
 class FileListItem
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
@@ -28,7 +29,7 @@ private constructor(
     private val height: JsonField<Long>,
     private val name: JsonField<String>,
     private val path: JsonField<String>,
-    private val thumbnail: JsonField<String>,
+    private val thumbanil: JsonField<String>,
     private val url: JsonField<String>,
     private val width: JsonField<Long>,
     private val workspaceNo: JsonField<String>,
@@ -47,7 +48,7 @@ private constructor(
         @JsonProperty("height") @ExcludeMissing height: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
         @JsonProperty("path") @ExcludeMissing path: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("thumbnail") @ExcludeMissing thumbnail: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("thumbanil") @ExcludeMissing thumbanil: JsonField<String> = JsonMissing.of(),
         @JsonProperty("url") @ExcludeMissing url: JsonField<String> = JsonMissing.of(),
         @JsonProperty("width") @ExcludeMissing width: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("workspace_no")
@@ -62,7 +63,7 @@ private constructor(
         height,
         name,
         path,
-        thumbnail,
+        thumbanil,
         url,
         width,
         workspaceNo,
@@ -76,6 +77,8 @@ private constructor(
     fun createdAt(): Optional<OffsetDateTime> = createdAt.getOptional("created_at")
 
     /**
+     * Asset category, e.g. image
+     *
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -112,18 +115,20 @@ private constructor(
     fun name(): Optional<String> = name.getOptional("name")
 
     /**
+     * Relative path / display path
+     *
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun path(): Optional<String> = path.getOptional("path")
 
     /**
-     * Thumbnail CDN URL
+     * Thumbnail CDN URL (field name as returned by the API)
      *
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun thumbnail(): Optional<String> = thumbnail.getOptional("thumbnail")
+    fun thumbanil(): Optional<String> = thumbanil.getOptional("thumbanil")
 
     /**
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -202,11 +207,11 @@ private constructor(
     @JsonProperty("path") @ExcludeMissing fun _path(): JsonField<String> = path
 
     /**
-     * Returns the raw JSON value of [thumbnail].
+     * Returns the raw JSON value of [thumbanil].
      *
-     * Unlike [thumbnail], this method doesn't throw if the JSON field has an unexpected type.
+     * Unlike [thumbanil], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("thumbnail") @ExcludeMissing fun _thumbnail(): JsonField<String> = thumbnail
+    @JsonProperty("thumbanil") @ExcludeMissing fun _thumbanil(): JsonField<String> = thumbanil
 
     /**
      * Returns the raw JSON value of [url].
@@ -260,7 +265,7 @@ private constructor(
         private var height: JsonField<Long> = JsonMissing.of()
         private var name: JsonField<String> = JsonMissing.of()
         private var path: JsonField<String> = JsonMissing.of()
-        private var thumbnail: JsonField<String> = JsonMissing.of()
+        private var thumbanil: JsonField<String> = JsonMissing.of()
         private var url: JsonField<String> = JsonMissing.of()
         private var width: JsonField<Long> = JsonMissing.of()
         private var workspaceNo: JsonField<String> = JsonMissing.of()
@@ -276,7 +281,7 @@ private constructor(
             height = fileListItem.height
             name = fileListItem.name
             path = fileListItem.path
-            thumbnail = fileListItem.thumbnail
+            thumbanil = fileListItem.thumbanil
             url = fileListItem.url
             width = fileListItem.width
             workspaceNo = fileListItem.workspaceNo
@@ -294,6 +299,7 @@ private constructor(
          */
         fun createdAt(createdAt: JsonField<OffsetDateTime>) = apply { this.createdAt = createdAt }
 
+        /** Asset category, e.g. image */
         fun extension(extension: String) = extension(JsonField.of(extension))
 
         /**
@@ -365,6 +371,7 @@ private constructor(
          */
         fun name(name: JsonField<String>) = apply { this.name = name }
 
+        /** Relative path / display path */
         fun path(path: String) = path(JsonField.of(path))
 
         /**
@@ -375,17 +382,17 @@ private constructor(
          */
         fun path(path: JsonField<String>) = apply { this.path = path }
 
-        /** Thumbnail CDN URL */
-        fun thumbnail(thumbnail: String) = thumbnail(JsonField.of(thumbnail))
+        /** Thumbnail CDN URL (field name as returned by the API) */
+        fun thumbanil(thumbanil: String) = thumbanil(JsonField.of(thumbanil))
 
         /**
-         * Sets [Builder.thumbnail] to an arbitrary JSON value.
+         * Sets [Builder.thumbanil] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.thumbnail] with a well-typed [String] value instead.
+         * You should usually call [Builder.thumbanil] with a well-typed [String] value instead.
          * This method is primarily for setting the field to an undocumented or not yet supported
          * value.
          */
-        fun thumbnail(thumbnail: JsonField<String>) = apply { this.thumbnail = thumbnail }
+        fun thumbanil(thumbanil: JsonField<String>) = apply { this.thumbanil = thumbanil }
 
         fun url(url: String) = url(JsonField.of(url))
 
@@ -462,7 +469,7 @@ private constructor(
                 height,
                 name,
                 path,
-                thumbnail,
+                thumbanil,
                 url,
                 width,
                 workspaceNo,
@@ -485,7 +492,7 @@ private constructor(
         height()
         name()
         path()
-        thumbnail()
+        thumbanil()
         url()
         width()
         workspaceNo()
@@ -515,7 +522,7 @@ private constructor(
             (if (height.asKnown().isPresent) 1 else 0) +
             (if (name.asKnown().isPresent) 1 else 0) +
             (if (path.asKnown().isPresent) 1 else 0) +
-            (if (thumbnail.asKnown().isPresent) 1 else 0) +
+            (if (thumbanil.asKnown().isPresent) 1 else 0) +
             (if (url.asKnown().isPresent) 1 else 0) +
             (if (width.asKnown().isPresent) 1 else 0) +
             (if (workspaceNo.asKnown().isPresent) 1 else 0)
@@ -534,7 +541,7 @@ private constructor(
             height == other.height &&
             name == other.name &&
             path == other.path &&
-            thumbnail == other.thumbnail &&
+            thumbanil == other.thumbanil &&
             url == other.url &&
             width == other.width &&
             workspaceNo == other.workspaceNo &&
@@ -551,7 +558,7 @@ private constructor(
             height,
             name,
             path,
-            thumbnail,
+            thumbanil,
             url,
             width,
             workspaceNo,
@@ -562,5 +569,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "FileListItem{createdAt=$createdAt, extension=$extension, fileNo=$fileNo, fileSize=$fileSize, format=$format, height=$height, name=$name, path=$path, thumbnail=$thumbnail, url=$url, width=$width, workspaceNo=$workspaceNo, additionalProperties=$additionalProperties}"
+        "FileListItem{createdAt=$createdAt, extension=$extension, fileNo=$fileNo, fileSize=$fileSize, format=$format, height=$height, name=$name, path=$path, thumbanil=$thumbanil, url=$url, width=$width, workspaceNo=$workspaceNo, additionalProperties=$additionalProperties}"
 }

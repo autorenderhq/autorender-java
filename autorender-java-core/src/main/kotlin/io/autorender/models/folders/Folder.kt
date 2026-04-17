@@ -22,12 +22,14 @@ class Folder
 private constructor(
     private val id: JsonField<String>,
     private val createdAt: JsonField<OffsetDateTime>,
+    private val createdBy: JsonField<String>,
     private val folderNo: JsonField<String>,
     private val isActive: JsonField<Boolean>,
     private val isDelete: JsonField<Boolean>,
     private val name: JsonField<String>,
     private val parentFolder: JsonField<String>,
     private val path: JsonField<String>,
+    private val source: JsonField<String>,
     private val updatedAt: JsonField<OffsetDateTime>,
     private val workspace: JsonField<Workspace>,
     private val workspaceId: JsonField<String>,
@@ -41,6 +43,7 @@ private constructor(
         @JsonProperty("created_at")
         @ExcludeMissing
         createdAt: JsonField<OffsetDateTime> = JsonMissing.of(),
+        @JsonProperty("created_by") @ExcludeMissing createdBy: JsonField<String> = JsonMissing.of(),
         @JsonProperty("folder_no") @ExcludeMissing folderNo: JsonField<String> = JsonMissing.of(),
         @JsonProperty("is_active") @ExcludeMissing isActive: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("is_delete") @ExcludeMissing isDelete: JsonField<Boolean> = JsonMissing.of(),
@@ -49,6 +52,7 @@ private constructor(
         @ExcludeMissing
         parentFolder: JsonField<String> = JsonMissing.of(),
         @JsonProperty("path") @ExcludeMissing path: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("source") @ExcludeMissing source: JsonField<String> = JsonMissing.of(),
         @JsonProperty("updated_at")
         @ExcludeMissing
         updatedAt: JsonField<OffsetDateTime> = JsonMissing.of(),
@@ -64,12 +68,14 @@ private constructor(
     ) : this(
         id,
         createdAt,
+        createdBy,
         folderNo,
         isActive,
         isDelete,
         name,
         parentFolder,
         path,
+        source,
         updatedAt,
         workspace,
         workspaceId,
@@ -88,6 +94,12 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun createdAt(): Optional<OffsetDateTime> = createdAt.getOptional("created_at")
+
+    /**
+     * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun createdBy(): Optional<String> = createdBy.getOptional("created_by")
 
     /**
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -129,6 +141,12 @@ private constructor(
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
+    fun source(): Optional<String> = source.getOptional("source")
+
+    /**
+     * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
     fun updatedAt(): Optional<OffsetDateTime> = updatedAt.getOptional("updated_at")
 
     /**
@@ -164,6 +182,13 @@ private constructor(
     @JsonProperty("created_at")
     @ExcludeMissing
     fun _createdAt(): JsonField<OffsetDateTime> = createdAt
+
+    /**
+     * Returns the raw JSON value of [createdBy].
+     *
+     * Unlike [createdBy], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("created_by") @ExcludeMissing fun _createdBy(): JsonField<String> = createdBy
 
     /**
      * Returns the raw JSON value of [folderNo].
@@ -208,6 +233,13 @@ private constructor(
      * Unlike [path], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("path") @ExcludeMissing fun _path(): JsonField<String> = path
+
+    /**
+     * Returns the raw JSON value of [source].
+     *
+     * Unlike [source], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("source") @ExcludeMissing fun _source(): JsonField<String> = source
 
     /**
      * Returns the raw JSON value of [updatedAt].
@@ -266,12 +298,14 @@ private constructor(
 
         private var id: JsonField<String> = JsonMissing.of()
         private var createdAt: JsonField<OffsetDateTime> = JsonMissing.of()
+        private var createdBy: JsonField<String> = JsonMissing.of()
         private var folderNo: JsonField<String> = JsonMissing.of()
         private var isActive: JsonField<Boolean> = JsonMissing.of()
         private var isDelete: JsonField<Boolean> = JsonMissing.of()
         private var name: JsonField<String> = JsonMissing.of()
         private var parentFolder: JsonField<String> = JsonMissing.of()
         private var path: JsonField<String> = JsonMissing.of()
+        private var source: JsonField<String> = JsonMissing.of()
         private var updatedAt: JsonField<OffsetDateTime> = JsonMissing.of()
         private var workspace: JsonField<Workspace> = JsonMissing.of()
         private var workspaceId: JsonField<String> = JsonMissing.of()
@@ -282,12 +316,14 @@ private constructor(
         internal fun from(folder: Folder) = apply {
             id = folder.id
             createdAt = folder.createdAt
+            createdBy = folder.createdBy
             folderNo = folder.folderNo
             isActive = folder.isActive
             isDelete = folder.isDelete
             name = folder.name
             parentFolder = folder.parentFolder
             path = folder.path
+            source = folder.source
             updatedAt = folder.updatedAt
             workspace = folder.workspace
             workspaceId = folder.workspaceId
@@ -315,6 +351,17 @@ private constructor(
          * supported value.
          */
         fun createdAt(createdAt: JsonField<OffsetDateTime>) = apply { this.createdAt = createdAt }
+
+        fun createdBy(createdBy: String) = createdBy(JsonField.of(createdBy))
+
+        /**
+         * Sets [Builder.createdBy] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.createdBy] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun createdBy(createdBy: JsonField<String>) = apply { this.createdBy = createdBy }
 
         fun folderNo(folderNo: String) = folderNo(JsonField.of(folderNo))
 
@@ -383,6 +430,16 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun path(path: JsonField<String>) = apply { this.path = path }
+
+        fun source(source: String) = source(JsonField.of(source))
+
+        /**
+         * Sets [Builder.source] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.source] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun source(source: JsonField<String>) = apply { this.source = source }
 
         fun updatedAt(updatedAt: OffsetDateTime) = updatedAt(JsonField.of(updatedAt))
 
@@ -456,12 +513,14 @@ private constructor(
             Folder(
                 id,
                 createdAt,
+                createdBy,
                 folderNo,
                 isActive,
                 isDelete,
                 name,
                 parentFolder,
                 path,
+                source,
                 updatedAt,
                 workspace,
                 workspaceId,
@@ -479,12 +538,14 @@ private constructor(
 
         id()
         createdAt()
+        createdBy()
         folderNo()
         isActive()
         isDelete()
         name()
         parentFolder()
         path()
+        source()
         updatedAt()
         workspace().ifPresent { it.validate() }
         workspaceId()
@@ -509,12 +570,14 @@ private constructor(
     internal fun validity(): Int =
         (if (id.asKnown().isPresent) 1 else 0) +
             (if (createdAt.asKnown().isPresent) 1 else 0) +
+            (if (createdBy.asKnown().isPresent) 1 else 0) +
             (if (folderNo.asKnown().isPresent) 1 else 0) +
             (if (isActive.asKnown().isPresent) 1 else 0) +
             (if (isDelete.asKnown().isPresent) 1 else 0) +
             (if (name.asKnown().isPresent) 1 else 0) +
             (if (parentFolder.asKnown().isPresent) 1 else 0) +
             (if (path.asKnown().isPresent) 1 else 0) +
+            (if (source.asKnown().isPresent) 1 else 0) +
             (if (updatedAt.asKnown().isPresent) 1 else 0) +
             (workspace.asKnown().getOrNull()?.validity() ?: 0) +
             (if (workspaceId.asKnown().isPresent) 1 else 0) +
@@ -672,12 +735,14 @@ private constructor(
         return other is Folder &&
             id == other.id &&
             createdAt == other.createdAt &&
+            createdBy == other.createdBy &&
             folderNo == other.folderNo &&
             isActive == other.isActive &&
             isDelete == other.isDelete &&
             name == other.name &&
             parentFolder == other.parentFolder &&
             path == other.path &&
+            source == other.source &&
             updatedAt == other.updatedAt &&
             workspace == other.workspace &&
             workspaceId == other.workspaceId &&
@@ -689,12 +754,14 @@ private constructor(
         Objects.hash(
             id,
             createdAt,
+            createdBy,
             folderNo,
             isActive,
             isDelete,
             name,
             parentFolder,
             path,
+            source,
             updatedAt,
             workspace,
             workspaceId,
@@ -706,5 +773,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Folder{id=$id, createdAt=$createdAt, folderNo=$folderNo, isActive=$isActive, isDelete=$isDelete, name=$name, parentFolder=$parentFolder, path=$path, updatedAt=$updatedAt, workspace=$workspace, workspaceId=$workspaceId, workspaceNo=$workspaceNo, additionalProperties=$additionalProperties}"
+        "Folder{id=$id, createdAt=$createdAt, createdBy=$createdBy, folderNo=$folderNo, isActive=$isActive, isDelete=$isDelete, name=$name, parentFolder=$parentFolder, path=$path, source=$source, updatedAt=$updatedAt, workspace=$workspace, workspaceId=$workspaceId, workspaceNo=$workspaceNo, additionalProperties=$additionalProperties}"
 }

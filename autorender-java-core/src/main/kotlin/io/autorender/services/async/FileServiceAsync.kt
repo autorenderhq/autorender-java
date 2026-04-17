@@ -13,12 +13,9 @@ import io.autorender.models.files.FileObject
 import io.autorender.models.files.FileRenameParams
 import io.autorender.models.files.FileRenameResponse
 import io.autorender.models.files.FileRetrieveParams
-import io.autorender.models.files.FileUpdateParams
-import io.autorender.models.files.FileUpdateResponse
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
-/** Manage files in your workspace */
 interface FileServiceAsync {
 
     /**
@@ -33,7 +30,7 @@ interface FileServiceAsync {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): FileServiceAsync
 
-    /** Retrieve detailed information about a specific file by its file number. */
+    /** Retrieve detailed information about a file by numeric file id (`file_no`). */
     fun retrieve(fileNo: String): CompletableFuture<FileObject> =
         retrieve(fileNo, FileRetrieveParams.none())
 
@@ -66,46 +63,8 @@ interface FileServiceAsync {
         retrieve(fileNo, FileRetrieveParams.none(), requestOptions)
 
     /**
-     * Update a file's tags and/or metadata. Tags are merged — add_tags appends, remove_tags
-     * removes. Metadata is merged with existing values.
-     */
-    fun update(fileNo: String): CompletableFuture<FileUpdateResponse> =
-        update(fileNo, FileUpdateParams.none())
-
-    /** @see update */
-    fun update(
-        fileNo: String,
-        params: FileUpdateParams = FileUpdateParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<FileUpdateResponse> =
-        update(params.toBuilder().fileNo(fileNo).build(), requestOptions)
-
-    /** @see update */
-    fun update(
-        fileNo: String,
-        params: FileUpdateParams = FileUpdateParams.none(),
-    ): CompletableFuture<FileUpdateResponse> = update(fileNo, params, RequestOptions.none())
-
-    /** @see update */
-    fun update(
-        params: FileUpdateParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<FileUpdateResponse>
-
-    /** @see update */
-    fun update(params: FileUpdateParams): CompletableFuture<FileUpdateResponse> =
-        update(params, RequestOptions.none())
-
-    /** @see update */
-    fun update(
-        fileNo: String,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<FileUpdateResponse> =
-        update(fileNo, FileUpdateParams.none(), requestOptions)
-
-    /**
-     * Paginated list of files in the workspace. Filter by folder, path prefix, name, or tags. Sort
-     * by various fields.
+     * Paginated list of files in the workspace. Filter by folder, sort by field and order, and page
+     * through results.
      */
     fun list(): CompletableFuture<FileListResponse> = list(FileListParams.none())
 
@@ -123,7 +82,7 @@ interface FileServiceAsync {
     fun list(requestOptions: RequestOptions): CompletableFuture<FileListResponse> =
         list(FileListParams.none(), requestOptions)
 
-    /** Permanently delete a file from the workspace. */
+    /** Permanently delete a file. No request body is required. */
     fun delete(fileNo: String): CompletableFuture<FileDeleteResponse> =
         delete(fileNo, FileDeleteParams.none())
 
@@ -159,8 +118,8 @@ interface FileServiceAsync {
         delete(fileNo, FileDeleteParams.none(), requestOptions)
 
     /**
-     * Rename a file. The server preserves the file extension (e.g., supplying "product" renames to
-     * "product.jpg").
+     * Rename a file. The API may preserve or normalize the file extension (e.g. `demo` →
+     * `demo.png`).
      */
     fun rename(fileNo: String, params: FileRenameParams): CompletableFuture<FileRenameResponse> =
         rename(fileNo, params, RequestOptions.none())
@@ -231,47 +190,6 @@ interface FileServiceAsync {
             requestOptions: RequestOptions,
         ): CompletableFuture<HttpResponseFor<FileObject>> =
             retrieve(fileNo, FileRetrieveParams.none(), requestOptions)
-
-        /**
-         * Returns a raw HTTP response for `patch /api/v1/files/{fileNo}`, but is otherwise the same
-         * as [FileServiceAsync.update].
-         */
-        fun update(fileNo: String): CompletableFuture<HttpResponseFor<FileUpdateResponse>> =
-            update(fileNo, FileUpdateParams.none())
-
-        /** @see update */
-        fun update(
-            fileNo: String,
-            params: FileUpdateParams = FileUpdateParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<FileUpdateResponse>> =
-            update(params.toBuilder().fileNo(fileNo).build(), requestOptions)
-
-        /** @see update */
-        fun update(
-            fileNo: String,
-            params: FileUpdateParams = FileUpdateParams.none(),
-        ): CompletableFuture<HttpResponseFor<FileUpdateResponse>> =
-            update(fileNo, params, RequestOptions.none())
-
-        /** @see update */
-        fun update(
-            params: FileUpdateParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<FileUpdateResponse>>
-
-        /** @see update */
-        fun update(
-            params: FileUpdateParams
-        ): CompletableFuture<HttpResponseFor<FileUpdateResponse>> =
-            update(params, RequestOptions.none())
-
-        /** @see update */
-        fun update(
-            fileNo: String,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<FileUpdateResponse>> =
-            update(fileNo, FileUpdateParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `get /api/v1/files`, but is otherwise the same as

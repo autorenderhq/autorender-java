@@ -21,8 +21,7 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /**
- * Rename a file. The server preserves the file extension (e.g., supplying "product" renames to
- * "product.jpg").
+ * Rename a file. The API may preserve or normalize the file extension (e.g. `demo` → `demo.png`).
  */
 class FileRenameParams
 private constructor(
@@ -35,7 +34,7 @@ private constructor(
     fun fileNo(): Optional<String> = Optional.ofNullable(fileNo)
 
     /**
-     * New base name; extension is preserved by the server
+     * New base name; extension may be applied by the server
      *
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
@@ -102,7 +101,7 @@ private constructor(
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
-        /** New base name; extension is preserved by the server */
+        /** New base name; extension may be applied by the server */
         fun name(name: String) = apply { body.name(name) }
 
         /**
@@ -276,7 +275,7 @@ private constructor(
         ) : this(name, mutableMapOf())
 
         /**
-         * New base name; extension is preserved by the server
+         * New base name; extension may be applied by the server
          *
          * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
@@ -327,7 +326,7 @@ private constructor(
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
-            /** New base name; extension is preserved by the server */
+            /** New base name; extension may be applied by the server */
             fun name(name: String) = name(JsonField.of(name))
 
             /**

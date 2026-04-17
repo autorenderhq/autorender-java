@@ -37,6 +37,8 @@ private constructor(
     fun data(): UploadData = data.getRequired("data")
 
     /**
+     * Indicates if the upload was successful
+     *
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
@@ -106,6 +108,7 @@ private constructor(
          */
         fun data(data: JsonField<UploadData>) = apply { this.data = data }
 
+        /** Indicates if the upload was successful */
         fun success(success: Boolean) = success(JsonField.of(success))
 
         /**

@@ -14,11 +14,8 @@ import io.autorender.models.files.FileObject
 import io.autorender.models.files.FileRenameParams
 import io.autorender.models.files.FileRenameResponse
 import io.autorender.models.files.FileRetrieveParams
-import io.autorender.models.files.FileUpdateParams
-import io.autorender.models.files.FileUpdateResponse
 import java.util.function.Consumer
 
-/** Manage files in your workspace */
 interface FileService {
 
     /**
@@ -33,7 +30,7 @@ interface FileService {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): FileService
 
-    /** Retrieve detailed information about a specific file by its file number. */
+    /** Retrieve detailed information about a file by numeric file id (`file_no`). */
     fun retrieve(fileNo: String): FileObject = retrieve(fileNo, FileRetrieveParams.none())
 
     /** @see retrieve */
@@ -63,40 +60,8 @@ interface FileService {
         retrieve(fileNo, FileRetrieveParams.none(), requestOptions)
 
     /**
-     * Update a file's tags and/or metadata. Tags are merged — add_tags appends, remove_tags
-     * removes. Metadata is merged with existing values.
-     */
-    fun update(fileNo: String): FileUpdateResponse = update(fileNo, FileUpdateParams.none())
-
-    /** @see update */
-    fun update(
-        fileNo: String,
-        params: FileUpdateParams = FileUpdateParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): FileUpdateResponse = update(params.toBuilder().fileNo(fileNo).build(), requestOptions)
-
-    /** @see update */
-    fun update(
-        fileNo: String,
-        params: FileUpdateParams = FileUpdateParams.none(),
-    ): FileUpdateResponse = update(fileNo, params, RequestOptions.none())
-
-    /** @see update */
-    fun update(
-        params: FileUpdateParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): FileUpdateResponse
-
-    /** @see update */
-    fun update(params: FileUpdateParams): FileUpdateResponse = update(params, RequestOptions.none())
-
-    /** @see update */
-    fun update(fileNo: String, requestOptions: RequestOptions): FileUpdateResponse =
-        update(fileNo, FileUpdateParams.none(), requestOptions)
-
-    /**
-     * Paginated list of files in the workspace. Filter by folder, path prefix, name, or tags. Sort
-     * by various fields.
+     * Paginated list of files in the workspace. Filter by folder, sort by field and order, and page
+     * through results.
      */
     fun list(): FileListResponse = list(FileListParams.none())
 
@@ -114,7 +79,7 @@ interface FileService {
     fun list(requestOptions: RequestOptions): FileListResponse =
         list(FileListParams.none(), requestOptions)
 
-    /** Permanently delete a file from the workspace. */
+    /** Permanently delete a file. No request body is required. */
     fun delete(fileNo: String): FileDeleteResponse = delete(fileNo, FileDeleteParams.none())
 
     /** @see delete */
@@ -144,8 +109,8 @@ interface FileService {
         delete(fileNo, FileDeleteParams.none(), requestOptions)
 
     /**
-     * Rename a file. The server preserves the file extension (e.g., supplying "product" renames to
-     * "product.jpg").
+     * Rename a file. The API may preserve or normalize the file extension (e.g. `demo` →
+     * `demo.png`).
      */
     fun rename(fileNo: String, params: FileRenameParams): FileRenameResponse =
         rename(fileNo, params, RequestOptions.none())
@@ -216,50 +181,6 @@ interface FileService {
         @MustBeClosed
         fun retrieve(fileNo: String, requestOptions: RequestOptions): HttpResponseFor<FileObject> =
             retrieve(fileNo, FileRetrieveParams.none(), requestOptions)
-
-        /**
-         * Returns a raw HTTP response for `patch /api/v1/files/{fileNo}`, but is otherwise the same
-         * as [FileService.update].
-         */
-        @MustBeClosed
-        fun update(fileNo: String): HttpResponseFor<FileUpdateResponse> =
-            update(fileNo, FileUpdateParams.none())
-
-        /** @see update */
-        @MustBeClosed
-        fun update(
-            fileNo: String,
-            params: FileUpdateParams = FileUpdateParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<FileUpdateResponse> =
-            update(params.toBuilder().fileNo(fileNo).build(), requestOptions)
-
-        /** @see update */
-        @MustBeClosed
-        fun update(
-            fileNo: String,
-            params: FileUpdateParams = FileUpdateParams.none(),
-        ): HttpResponseFor<FileUpdateResponse> = update(fileNo, params, RequestOptions.none())
-
-        /** @see update */
-        @MustBeClosed
-        fun update(
-            params: FileUpdateParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<FileUpdateResponse>
-
-        /** @see update */
-        @MustBeClosed
-        fun update(params: FileUpdateParams): HttpResponseFor<FileUpdateResponse> =
-            update(params, RequestOptions.none())
-
-        /** @see update */
-        @MustBeClosed
-        fun update(
-            fileNo: String,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<FileUpdateResponse> =
-            update(fileNo, FileUpdateParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `get /api/v1/files`, but is otherwise the same as

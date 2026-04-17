@@ -50,7 +50,6 @@ internal class ServiceParamsTest {
                 .randomPrefix("random_prefix")
                 .tags("tags")
                 .transform("transform")
-                .webhookUrl("webhook_url")
                 .putAdditionalHeader("Secret-Header", "42")
                 .putAdditionalQueryParam("secret_query_param", "42")
                 .putAdditionalBodyProperty("secretProperty", JsonValue.from("42"))

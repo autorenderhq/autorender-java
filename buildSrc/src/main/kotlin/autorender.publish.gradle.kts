@@ -10,7 +10,7 @@ configure<PublishingExtension> {
 
             pom {
                 name.set("AutoRender API")
-                description.set("AutoRender upload, file, and folder APIs")
+                description.set("AutoRender upload, file, folder, and multipart APIs")
                 url.set("https://docs.autorender.io")
 
                 licenses {
