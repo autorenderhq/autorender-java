@@ -21,7 +21,7 @@ private constructor(
     private val additionalQueryParams: QueryParams,
 ) : Params {
 
-    /** One multipart chunk uploaded to a presigned URL */
+    /** One multipart chunk */
     fun body(): Optional<String> = Optional.ofNullable(body)
 
     /** Additional headers to send with the request. */
@@ -56,7 +56,7 @@ private constructor(
             additionalQueryParams = multipartUploadPartParams.additionalQueryParams.toBuilder()
         }
 
-        /** One multipart chunk uploaded to a presigned URL */
+        /** One multipart chunk */
         fun body(body: String?) = apply { this.body = body }
 
         /** Alias for calling [Builder.body] with `body.orElse(null)`. */
