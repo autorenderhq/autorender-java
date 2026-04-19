@@ -15,37 +15,30 @@ internal class FileServiceAsyncTest {
     @Test
     fun retrieve() {
         val client =
-            AutorenderOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+            AutorenderOkHttpClientAsync.builder().baseUrl(TestServerExtension.BASE_URL).build()
         val fileServiceAsync = client.files()
 
-        val fileObjectFuture = fileServiceAsync.retrieve("2353377462")
+        val fileFuture = fileServiceAsync.retrieve("fileNo")
 
-        val fileObject = fileObjectFuture.get()
-        fileObject.validate()
+        val file = fileFuture.get()
+        file.validate()
     }
 
     @Test
     fun list() {
         val client =
-            AutorenderOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+            AutorenderOkHttpClientAsync.builder().baseUrl(TestServerExtension.BASE_URL).build()
         val fileServiceAsync = client.files()
 
         val filesFuture =
             fileServiceAsync.list(
                 FileListParams.builder()
-                    .folderNo("folder_no")
-                    .limit(0L)
+                    .folderNo("folderNo")
+                    .limit(1L)
                     .name("name")
-                    .page(0L)
+                    .page(1L)
                     .path("path")
-                    .sortField(FileListParams.SortField.FILE_SIZE)
-                    .sortOrder(FileListParams.SortOrder.ASC)
+                    .sort(FileListParams.Sort.CREATED_AT_ASC)
                     .tags("tags")
                     .build()
             )
@@ -57,30 +50,23 @@ internal class FileServiceAsyncTest {
     @Test
     fun delete() {
         val client =
-            AutorenderOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+            AutorenderOkHttpClientAsync.builder().baseUrl(TestServerExtension.BASE_URL).build()
         val fileServiceAsync = client.files()
 
-        val fileFuture = fileServiceAsync.delete("2338056701")
+        val future = fileServiceAsync.delete("fileNo")
 
-        val file = fileFuture.get()
-        file.validate()
+        val response = future.get()
     }
 
     @Test
     fun rename() {
         val client =
-            AutorenderOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+            AutorenderOkHttpClientAsync.builder().baseUrl(TestServerExtension.BASE_URL).build()
         val fileServiceAsync = client.files()
 
         val responseFuture =
             fileServiceAsync.rename(
-                FileRenameParams.builder().fileNo("2338045312").name("demo").build()
+                FileRenameParams.builder().fileNo("fileNo").name("name").build()
             )
 
         val response = responseFuture.get()

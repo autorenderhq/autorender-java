@@ -15,23 +15,21 @@ internal class UploadServiceAsyncTest {
     @Test
     fun create() {
         val client =
-            AutorenderOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+            AutorenderOkHttpClientAsync.builder().baseUrl(TestServerExtension.BASE_URL).build()
         val uploadServiceAsync = client.uploads()
 
         val uploadFuture =
             uploadServiceAsync.create(
                 UploadCreateParams.builder()
                     .file("Example data".byteInputStream())
-                    .fileName("file_name")
-                    .customId("custom_id")
-                    .folder("folder")
-                    .metadata("metadata")
+                    .fileName("product.jpg")
+                    .customId("sku123")
+                    .folder("products/sku123")
+                    .metadata("{\"productId\":\"123\"}")
                     .randomPrefix("random_prefix")
-                    .tags("tags")
+                    .tags("product,thumbnail")
                     .transform("transform")
+                    .webhookUrl("webhook_url")
                     .build()
             )
 
@@ -42,27 +40,24 @@ internal class UploadServiceAsyncTest {
     @Test
     fun createFromUrl() {
         val client =
-            AutorenderOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+            AutorenderOkHttpClientAsync.builder().baseUrl(TestServerExtension.BASE_URL).build()
         val uploadServiceAsync = client.uploads()
 
-        val uploadFuture =
+        val responseFuture =
             uploadServiceAsync.createFromUrl(
                 UploadCreateFromUrlParams.builder()
-                    .remoteUrl("remote_url")
+                    .remoteUrl("https://example.com")
                     .customId("custom_id")
+                    .fileName("file_name")
                     .folder("folder")
                     .metadata("metadata")
                     .randomPrefix("random_prefix")
                     .tags("tags")
-                    .transform("transform")
-                    .webhookUrl("webhook_url")
+                    .webhookUrl("https://example.com")
                     .build()
             )
 
-        val upload = uploadFuture.get()
-        upload.validate()
+        val response = responseFuture.get()
+        response.validate()
     }
 }

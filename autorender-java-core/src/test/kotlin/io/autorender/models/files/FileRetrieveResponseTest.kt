@@ -9,15 +9,14 @@ import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class FileListResponseTest {
+internal class FileRetrieveResponseTest {
 
     @Test
     fun create() {
-        val fileListResponse =
-            FileListResponse.builder()
-                .isPageNext(true)
-                .addItem(
-                    FileListResponse.Item.builder()
+        val fileRetrieveResponse =
+            FileRetrieveResponse.builder()
+                .data(
+                    FileRetrieveResponse.Data.builder()
                         .id("id")
                         .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .fileNo("file_no")
@@ -26,7 +25,7 @@ internal class FileListResponseTest {
                         .format("format")
                         .height(-9007199254740991L)
                         .metadata(
-                            FileListResponse.Item.Metadata.builder()
+                            FileRetrieveResponse.Data.Metadata.builder()
                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
@@ -41,16 +40,12 @@ internal class FileListResponseTest {
                         .width(-9007199254740991L)
                         .build()
                 )
-                .limit(-9007199254740991L)
-                .page(-9007199254740991L)
-                .totalCount(-9007199254740991L)
-                .totalPages(-9007199254740991L)
+                .success(FileRetrieveResponse.Success.TRUE)
                 .build()
 
-        assertThat(fileListResponse.isPageNext()).isEqualTo(true)
-        assertThat(fileListResponse.items())
-            .containsExactly(
-                FileListResponse.Item.builder()
+        assertThat(fileRetrieveResponse.data())
+            .isEqualTo(
+                FileRetrieveResponse.Data.builder()
                     .id("id")
                     .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .fileNo("file_no")
@@ -59,7 +54,7 @@ internal class FileListResponseTest {
                     .format("format")
                     .height(-9007199254740991L)
                     .metadata(
-                        FileListResponse.Item.Metadata.builder()
+                        FileRetrieveResponse.Data.Metadata.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
@@ -74,20 +69,16 @@ internal class FileListResponseTest {
                     .width(-9007199254740991L)
                     .build()
             )
-        assertThat(fileListResponse.limit()).isEqualTo(-9007199254740991L)
-        assertThat(fileListResponse.page()).isEqualTo(-9007199254740991L)
-        assertThat(fileListResponse.totalCount()).isEqualTo(-9007199254740991L)
-        assertThat(fileListResponse.totalPages()).isEqualTo(-9007199254740991L)
+        assertThat(fileRetrieveResponse.success()).isEqualTo(FileRetrieveResponse.Success.TRUE)
     }
 
     @Test
     fun roundtrip() {
         val jsonMapper = jsonMapper()
-        val fileListResponse =
-            FileListResponse.builder()
-                .isPageNext(true)
-                .addItem(
-                    FileListResponse.Item.builder()
+        val fileRetrieveResponse =
+            FileRetrieveResponse.builder()
+                .data(
+                    FileRetrieveResponse.Data.builder()
                         .id("id")
                         .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .fileNo("file_no")
@@ -96,7 +87,7 @@ internal class FileListResponseTest {
                         .format("format")
                         .height(-9007199254740991L)
                         .metadata(
-                            FileListResponse.Item.Metadata.builder()
+                            FileRetrieveResponse.Data.Metadata.builder()
                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
@@ -111,18 +102,15 @@ internal class FileListResponseTest {
                         .width(-9007199254740991L)
                         .build()
                 )
-                .limit(-9007199254740991L)
-                .page(-9007199254740991L)
-                .totalCount(-9007199254740991L)
-                .totalPages(-9007199254740991L)
+                .success(FileRetrieveResponse.Success.TRUE)
                 .build()
 
-        val roundtrippedFileListResponse =
+        val roundtrippedFileRetrieveResponse =
             jsonMapper.readValue(
-                jsonMapper.writeValueAsString(fileListResponse),
-                jacksonTypeRef<FileListResponse>(),
+                jsonMapper.writeValueAsString(fileRetrieveResponse),
+                jacksonTypeRef<FileRetrieveResponse>(),
             )
 
-        assertThat(roundtrippedFileListResponse).isEqualTo(fileListResponse)
+        assertThat(roundtrippedFileRetrieveResponse).isEqualTo(fileRetrieveResponse)
     }
 }

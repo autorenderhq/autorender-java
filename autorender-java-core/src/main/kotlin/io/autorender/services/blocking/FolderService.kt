@@ -5,17 +5,16 @@ package io.autorender.services.blocking
 import com.google.errorprone.annotations.MustBeClosed
 import io.autorender.core.ClientOptions
 import io.autorender.core.RequestOptions
+import io.autorender.core.http.HttpResponse
 import io.autorender.core.http.HttpResponseFor
-import io.autorender.models.folders.Folder
 import io.autorender.models.folders.FolderCreateParams
 import io.autorender.models.folders.FolderCreateResponse
 import io.autorender.models.folders.FolderDeleteParams
-import io.autorender.models.folders.FolderDeleteResponse
-import io.autorender.models.folders.FolderListParams
-import io.autorender.models.folders.FolderListResponse
 import io.autorender.models.folders.FolderRenameParams
+import io.autorender.models.folders.FolderRenameResponse
 import java.util.function.Consumer
 
+/** Folder management endpoints (API key required) */
 interface FolderService {
 
     /**
@@ -30,7 +29,7 @@ interface FolderService {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): FolderService
 
-    /** Create a folder under an optional parent. */
+    /** Create folder */
     fun create(params: FolderCreateParams): FolderCreateResponse =
         create(params, RequestOptions.none())
 
@@ -40,57 +39,32 @@ interface FolderService {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): FolderCreateResponse
 
-    /**
-     * List folders under an optional parent. Omit `parent_folder_no` to list root-level folders.
-     */
-    fun list(): FolderListResponse = list(FolderListParams.none())
-
-    /** @see list */
-    fun list(
-        params: FolderListParams = FolderListParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): FolderListResponse
-
-    /** @see list */
-    fun list(params: FolderListParams = FolderListParams.none()): FolderListResponse =
-        list(params, RequestOptions.none())
-
-    /** @see list */
-    fun list(requestOptions: RequestOptions): FolderListResponse =
-        list(FolderListParams.none(), requestOptions)
-
-    /** Delete a folder by folder number. No request body required. */
-    fun delete(folderNo: String): FolderDeleteResponse = delete(folderNo, FolderDeleteParams.none())
+    /** Delete folder */
+    fun delete(folderNo: String) = delete(folderNo, FolderDeleteParams.none())
 
     /** @see delete */
     fun delete(
         folderNo: String,
         params: FolderDeleteParams = FolderDeleteParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): FolderDeleteResponse = delete(params.toBuilder().folderNo(folderNo).build(), requestOptions)
+    ) = delete(params.toBuilder().folderNo(folderNo).build(), requestOptions)
 
     /** @see delete */
-    fun delete(
-        folderNo: String,
-        params: FolderDeleteParams = FolderDeleteParams.none(),
-    ): FolderDeleteResponse = delete(folderNo, params, RequestOptions.none())
+    fun delete(folderNo: String, params: FolderDeleteParams = FolderDeleteParams.none()) =
+        delete(folderNo, params, RequestOptions.none())
 
     /** @see delete */
-    fun delete(
-        params: FolderDeleteParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): FolderDeleteResponse
+    fun delete(params: FolderDeleteParams, requestOptions: RequestOptions = RequestOptions.none())
 
     /** @see delete */
-    fun delete(params: FolderDeleteParams): FolderDeleteResponse =
-        delete(params, RequestOptions.none())
+    fun delete(params: FolderDeleteParams) = delete(params, RequestOptions.none())
 
     /** @see delete */
-    fun delete(folderNo: String, requestOptions: RequestOptions): FolderDeleteResponse =
+    fun delete(folderNo: String, requestOptions: RequestOptions) =
         delete(folderNo, FolderDeleteParams.none(), requestOptions)
 
-    /** Rename a folder by `folder_no`. */
-    fun rename(folderNo: String, params: FolderRenameParams): Folder =
+    /** Rename folder */
+    fun rename(folderNo: String, params: FolderRenameParams): FolderRenameResponse =
         rename(folderNo, params, RequestOptions.none())
 
     /** @see rename */
@@ -98,16 +72,17 @@ interface FolderService {
         folderNo: String,
         params: FolderRenameParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): Folder = rename(params.toBuilder().folderNo(folderNo).build(), requestOptions)
+    ): FolderRenameResponse = rename(params.toBuilder().folderNo(folderNo).build(), requestOptions)
 
     /** @see rename */
-    fun rename(params: FolderRenameParams): Folder = rename(params, RequestOptions.none())
+    fun rename(params: FolderRenameParams): FolderRenameResponse =
+        rename(params, RequestOptions.none())
 
     /** @see rename */
     fun rename(
         params: FolderRenameParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): Folder
+    ): FolderRenameResponse
 
     /** A view of [FolderService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
@@ -135,37 +110,11 @@ interface FolderService {
         ): HttpResponseFor<FolderCreateResponse>
 
         /**
-         * Returns a raw HTTP response for `get /api/v1/folders`, but is otherwise the same as
-         * [FolderService.list].
-         */
-        @MustBeClosed
-        fun list(): HttpResponseFor<FolderListResponse> = list(FolderListParams.none())
-
-        /** @see list */
-        @MustBeClosed
-        fun list(
-            params: FolderListParams = FolderListParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<FolderListResponse>
-
-        /** @see list */
-        @MustBeClosed
-        fun list(
-            params: FolderListParams = FolderListParams.none()
-        ): HttpResponseFor<FolderListResponse> = list(params, RequestOptions.none())
-
-        /** @see list */
-        @MustBeClosed
-        fun list(requestOptions: RequestOptions): HttpResponseFor<FolderListResponse> =
-            list(FolderListParams.none(), requestOptions)
-
-        /**
          * Returns a raw HTTP response for `delete /api/v1/folders/{folderNo}`, but is otherwise the
          * same as [FolderService.delete].
          */
         @MustBeClosed
-        fun delete(folderNo: String): HttpResponseFor<FolderDeleteResponse> =
-            delete(folderNo, FolderDeleteParams.none())
+        fun delete(folderNo: String): HttpResponse = delete(folderNo, FolderDeleteParams.none())
 
         /** @see delete */
         @MustBeClosed
@@ -173,34 +122,29 @@ interface FolderService {
             folderNo: String,
             params: FolderDeleteParams = FolderDeleteParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<FolderDeleteResponse> =
-            delete(params.toBuilder().folderNo(folderNo).build(), requestOptions)
+        ): HttpResponse = delete(params.toBuilder().folderNo(folderNo).build(), requestOptions)
 
         /** @see delete */
         @MustBeClosed
         fun delete(
             folderNo: String,
             params: FolderDeleteParams = FolderDeleteParams.none(),
-        ): HttpResponseFor<FolderDeleteResponse> = delete(folderNo, params, RequestOptions.none())
+        ): HttpResponse = delete(folderNo, params, RequestOptions.none())
 
         /** @see delete */
         @MustBeClosed
         fun delete(
             params: FolderDeleteParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<FolderDeleteResponse>
+        ): HttpResponse
 
         /** @see delete */
         @MustBeClosed
-        fun delete(params: FolderDeleteParams): HttpResponseFor<FolderDeleteResponse> =
-            delete(params, RequestOptions.none())
+        fun delete(params: FolderDeleteParams): HttpResponse = delete(params, RequestOptions.none())
 
         /** @see delete */
         @MustBeClosed
-        fun delete(
-            folderNo: String,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<FolderDeleteResponse> =
+        fun delete(folderNo: String, requestOptions: RequestOptions): HttpResponse =
             delete(folderNo, FolderDeleteParams.none(), requestOptions)
 
         /**
@@ -208,8 +152,10 @@ interface FolderService {
          * otherwise the same as [FolderService.rename].
          */
         @MustBeClosed
-        fun rename(folderNo: String, params: FolderRenameParams): HttpResponseFor<Folder> =
-            rename(folderNo, params, RequestOptions.none())
+        fun rename(
+            folderNo: String,
+            params: FolderRenameParams,
+        ): HttpResponseFor<FolderRenameResponse> = rename(folderNo, params, RequestOptions.none())
 
         /** @see rename */
         @MustBeClosed
@@ -217,12 +163,12 @@ interface FolderService {
             folderNo: String,
             params: FolderRenameParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<Folder> =
+        ): HttpResponseFor<FolderRenameResponse> =
             rename(params.toBuilder().folderNo(folderNo).build(), requestOptions)
 
         /** @see rename */
         @MustBeClosed
-        fun rename(params: FolderRenameParams): HttpResponseFor<Folder> =
+        fun rename(params: FolderRenameParams): HttpResponseFor<FolderRenameResponse> =
             rename(params, RequestOptions.none())
 
         /** @see rename */
@@ -230,6 +176,6 @@ interface FolderService {
         fun rename(
             params: FolderRenameParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<Folder>
+        ): HttpResponseFor<FolderRenameResponse>
     }
 }

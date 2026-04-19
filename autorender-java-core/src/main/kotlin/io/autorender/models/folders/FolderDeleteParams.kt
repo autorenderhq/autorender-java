@@ -11,7 +11,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Delete a folder by folder number. No request body required. */
+/** Delete folder */
 class FolderDeleteParams
 private constructor(
     private val folderNo: String?,

@@ -13,10 +13,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/**
- * Paginated list of files in the workspace. Filter by folder, sort by field and order, and page
- * through results.
- */
+/** List/search files with pagination, filtering, and sorting. */
 class FileListParams
 private constructor(
     private val folderNo: String?,
@@ -24,35 +21,28 @@ private constructor(
     private val name: String?,
     private val page: Long?,
     private val path: String?,
-    private val sortField: SortField?,
-    private val sortOrder: SortOrder?,
+    private val sort: Sort?,
     private val tags: String?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
 
-    /** Restrict results to files in this folder (folder number) */
+    /** Exact folder number */
     fun folderNo(): Optional<String> = Optional.ofNullable(folderNo)
 
-    /** Items per page */
     fun limit(): Optional<Long> = Optional.ofNullable(limit)
 
-    /** Filter by filename (partial match, if supported) */
+    /** Partial name match (case-insensitive) */
     fun name(): Optional<String> = Optional.ofNullable(name)
 
-    /** Page number (1-based) */
     fun page(): Optional<Long> = Optional.ofNullable(page)
 
-    /** Filter by path prefix (if supported) */
+    /** Folder prefix (e.g. products/sku123/) */
     fun path(): Optional<String> = Optional.ofNullable(path)
 
-    /** Field to sort by */
-    fun sortField(): Optional<SortField> = Optional.ofNullable(sortField)
+    fun sort(): Optional<Sort> = Optional.ofNullable(sort)
 
-    /** Sort direction */
-    fun sortOrder(): Optional<SortOrder> = Optional.ofNullable(sortOrder)
-
-    /** Comma-separated tags (if supported) */
+    /** Comma-separated tags */
     fun tags(): Optional<String> = Optional.ofNullable(tags)
 
     /** Additional headers to send with the request. */
@@ -79,8 +69,7 @@ private constructor(
         private var name: String? = null
         private var page: Long? = null
         private var path: String? = null
-        private var sortField: SortField? = null
-        private var sortOrder: SortOrder? = null
+        private var sort: Sort? = null
         private var tags: String? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
@@ -92,20 +81,18 @@ private constructor(
             name = fileListParams.name
             page = fileListParams.page
             path = fileListParams.path
-            sortField = fileListParams.sortField
-            sortOrder = fileListParams.sortOrder
+            sort = fileListParams.sort
             tags = fileListParams.tags
             additionalHeaders = fileListParams.additionalHeaders.toBuilder()
             additionalQueryParams = fileListParams.additionalQueryParams.toBuilder()
         }
 
-        /** Restrict results to files in this folder (folder number) */
+        /** Exact folder number */
         fun folderNo(folderNo: String?) = apply { this.folderNo = folderNo }
 
         /** Alias for calling [Builder.folderNo] with `folderNo.orElse(null)`. */
         fun folderNo(folderNo: Optional<String>) = folderNo(folderNo.getOrNull())
 
-        /** Items per page */
         fun limit(limit: Long?) = apply { this.limit = limit }
 
         /**
@@ -118,13 +105,12 @@ private constructor(
         /** Alias for calling [Builder.limit] with `limit.orElse(null)`. */
         fun limit(limit: Optional<Long>) = limit(limit.getOrNull())
 
-        /** Filter by filename (partial match, if supported) */
+        /** Partial name match (case-insensitive) */
         fun name(name: String?) = apply { this.name = name }
 
         /** Alias for calling [Builder.name] with `name.orElse(null)`. */
         fun name(name: Optional<String>) = name(name.getOrNull())
 
-        /** Page number (1-based) */
         fun page(page: Long?) = apply { this.page = page }
 
         /**
@@ -137,25 +123,18 @@ private constructor(
         /** Alias for calling [Builder.page] with `page.orElse(null)`. */
         fun page(page: Optional<Long>) = page(page.getOrNull())
 
-        /** Filter by path prefix (if supported) */
+        /** Folder prefix (e.g. products/sku123/) */
         fun path(path: String?) = apply { this.path = path }
 
         /** Alias for calling [Builder.path] with `path.orElse(null)`. */
         fun path(path: Optional<String>) = path(path.getOrNull())
 
-        /** Field to sort by */
-        fun sortField(sortField: SortField?) = apply { this.sortField = sortField }
+        fun sort(sort: Sort?) = apply { this.sort = sort }
 
-        /** Alias for calling [Builder.sortField] with `sortField.orElse(null)`. */
-        fun sortField(sortField: Optional<SortField>) = sortField(sortField.getOrNull())
+        /** Alias for calling [Builder.sort] with `sort.orElse(null)`. */
+        fun sort(sort: Optional<Sort>) = sort(sort.getOrNull())
 
-        /** Sort direction */
-        fun sortOrder(sortOrder: SortOrder?) = apply { this.sortOrder = sortOrder }
-
-        /** Alias for calling [Builder.sortOrder] with `sortOrder.orElse(null)`. */
-        fun sortOrder(sortOrder: Optional<SortOrder>) = sortOrder(sortOrder.getOrNull())
-
-        /** Comma-separated tags (if supported) */
+        /** Comma-separated tags */
         fun tags(tags: String?) = apply { this.tags = tags }
 
         /** Alias for calling [Builder.tags] with `tags.orElse(null)`. */
@@ -271,8 +250,7 @@ private constructor(
                 name,
                 page,
                 path,
-                sortField,
-                sortOrder,
+                sort,
                 tags,
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
@@ -284,20 +262,18 @@ private constructor(
     override fun _queryParams(): QueryParams =
         QueryParams.builder()
             .apply {
-                folderNo?.let { put("folder_no", it) }
+                folderNo?.let { put("folderNo", it) }
                 limit?.let { put("limit", it.toString()) }
                 name?.let { put("name", it) }
                 page?.let { put("page", it.toString()) }
                 path?.let { put("path", it) }
-                sortField?.let { put("sort_field", it.toString()) }
-                sortOrder?.let { put("sort_order", it.toString()) }
+                sort?.let { put("sort", it.toString()) }
                 tags?.let { put("tags", it) }
                 putAll(additionalQueryParams)
             }
             .build()
 
-    /** Field to sort by */
-    class SortField @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
+    class Sort @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
 
         /**
          * Returns this class instance's raw value.
@@ -311,42 +287,40 @@ private constructor(
 
         companion object {
 
-            @JvmField val FILE_SIZE = of("file_size")
+            @JvmField val CREATED_AT_ASC = of("created_at_asc")
 
-            @JvmField val NAME = of("name")
+            @JvmField val CREATED_AT_DESC = of("created_at_desc")
 
-            @JvmField val CREATED_AT = of("created_at")
+            @JvmField val SIZE_ASC = of("size_asc")
 
-            @JvmField val UPDATED_AT = of("updated_at")
+            @JvmField val SIZE_DESC = of("size_desc")
 
-            @JvmStatic fun of(value: String) = SortField(JsonField.of(value))
+            @JvmStatic fun of(value: String) = Sort(JsonField.of(value))
         }
 
-        /** An enum containing [SortField]'s known values. */
+        /** An enum containing [Sort]'s known values. */
         enum class Known {
-            FILE_SIZE,
-            NAME,
-            CREATED_AT,
-            UPDATED_AT,
+            CREATED_AT_ASC,
+            CREATED_AT_DESC,
+            SIZE_ASC,
+            SIZE_DESC,
         }
 
         /**
-         * An enum containing [SortField]'s known values, as well as an [_UNKNOWN] member.
+         * An enum containing [Sort]'s known values, as well as an [_UNKNOWN] member.
          *
-         * An instance of [SortField] can contain an unknown value in a couple of cases:
+         * An instance of [Sort] can contain an unknown value in a couple of cases:
          * - It was deserialized from data that doesn't match any known member. For example, if the
          *   SDK is on an older version than the API, then the API may respond with new members that
          *   the SDK is unaware of.
          * - It was constructed with an arbitrary value using the [of] method.
          */
         enum class Value {
-            FILE_SIZE,
-            NAME,
-            CREATED_AT,
-            UPDATED_AT,
-            /**
-             * An enum member indicating that [SortField] was instantiated with an unknown value.
-             */
+            CREATED_AT_ASC,
+            CREATED_AT_DESC,
+            SIZE_ASC,
+            SIZE_DESC,
+            /** An enum member indicating that [Sort] was instantiated with an unknown value. */
             _UNKNOWN,
         }
 
@@ -359,10 +333,10 @@ private constructor(
          */
         fun value(): Value =
             when (this) {
-                FILE_SIZE -> Value.FILE_SIZE
-                NAME -> Value.NAME
-                CREATED_AT -> Value.CREATED_AT
-                UPDATED_AT -> Value.UPDATED_AT
+                CREATED_AT_ASC -> Value.CREATED_AT_ASC
+                CREATED_AT_DESC -> Value.CREATED_AT_DESC
+                SIZE_ASC -> Value.SIZE_ASC
+                SIZE_DESC -> Value.SIZE_DESC
                 else -> Value._UNKNOWN
             }
 
@@ -377,11 +351,11 @@ private constructor(
          */
         fun known(): Known =
             when (this) {
-                FILE_SIZE -> Known.FILE_SIZE
-                NAME -> Known.NAME
-                CREATED_AT -> Known.CREATED_AT
-                UPDATED_AT -> Known.UPDATED_AT
-                else -> throw AutorenderInvalidDataException("Unknown SortField: $value")
+                CREATED_AT_ASC -> Known.CREATED_AT_ASC
+                CREATED_AT_DESC -> Known.CREATED_AT_DESC
+                SIZE_ASC -> Known.SIZE_ASC
+                SIZE_DESC -> Known.SIZE_DESC
+                else -> throw AutorenderInvalidDataException("Unknown Sort: $value")
             }
 
         /**
@@ -400,7 +374,7 @@ private constructor(
 
         private var validated: Boolean = false
 
-        fun validate(): SortField = apply {
+        fun validate(): Sort = apply {
             if (validated) {
                 return@apply
             }
@@ -430,137 +404,7 @@ private constructor(
                 return true
             }
 
-            return other is SortField && value == other.value
-        }
-
-        override fun hashCode() = value.hashCode()
-
-        override fun toString() = value.toString()
-    }
-
-    /** Sort direction */
-    class SortOrder @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
-
-        /**
-         * Returns this class instance's raw value.
-         *
-         * This is usually only useful if this instance was deserialized from data that doesn't
-         * match any known member, and you want to know that value. For example, if the SDK is on an
-         * older version than the API, then the API may respond with new members that the SDK is
-         * unaware of.
-         */
-        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
-
-        companion object {
-
-            @JvmField val ASC = of("asc")
-
-            @JvmField val DESC = of("desc")
-
-            @JvmStatic fun of(value: String) = SortOrder(JsonField.of(value))
-        }
-
-        /** An enum containing [SortOrder]'s known values. */
-        enum class Known {
-            ASC,
-            DESC,
-        }
-
-        /**
-         * An enum containing [SortOrder]'s known values, as well as an [_UNKNOWN] member.
-         *
-         * An instance of [SortOrder] can contain an unknown value in a couple of cases:
-         * - It was deserialized from data that doesn't match any known member. For example, if the
-         *   SDK is on an older version than the API, then the API may respond with new members that
-         *   the SDK is unaware of.
-         * - It was constructed with an arbitrary value using the [of] method.
-         */
-        enum class Value {
-            ASC,
-            DESC,
-            /**
-             * An enum member indicating that [SortOrder] was instantiated with an unknown value.
-             */
-            _UNKNOWN,
-        }
-
-        /**
-         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
-         * if the class was instantiated with an unknown value.
-         *
-         * Use the [known] method instead if you're certain the value is always known or if you want
-         * to throw for the unknown case.
-         */
-        fun value(): Value =
-            when (this) {
-                ASC -> Value.ASC
-                DESC -> Value.DESC
-                else -> Value._UNKNOWN
-            }
-
-        /**
-         * Returns an enum member corresponding to this class instance's value.
-         *
-         * Use the [value] method instead if you're uncertain the value is always known and don't
-         * want to throw for the unknown case.
-         *
-         * @throws AutorenderInvalidDataException if this class instance's value is a not a known
-         *   member.
-         */
-        fun known(): Known =
-            when (this) {
-                ASC -> Known.ASC
-                DESC -> Known.DESC
-                else -> throw AutorenderInvalidDataException("Unknown SortOrder: $value")
-            }
-
-        /**
-         * Returns this class instance's primitive wire representation.
-         *
-         * This differs from the [toString] method because that method is primarily for debugging
-         * and generally doesn't throw.
-         *
-         * @throws AutorenderInvalidDataException if this class instance's value does not have the
-         *   expected primitive type.
-         */
-        fun asString(): String =
-            _value().asString().orElseThrow {
-                AutorenderInvalidDataException("Value is not a String")
-            }
-
-        private var validated: Boolean = false
-
-        fun validate(): SortOrder = apply {
-            if (validated) {
-                return@apply
-            }
-
-            known()
-            validated = true
-        }
-
-        fun isValid(): Boolean =
-            try {
-                validate()
-                true
-            } catch (e: AutorenderInvalidDataException) {
-                false
-            }
-
-        /**
-         * Returns a score indicating how many valid values are contained in this object
-         * recursively.
-         *
-         * Used for best match union deserialization.
-         */
-        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) {
-                return true
-            }
-
-            return other is SortOrder && value == other.value
+            return other is Sort && value == other.value
         }
 
         override fun hashCode() = value.hashCode()
@@ -579,8 +423,7 @@ private constructor(
             name == other.name &&
             page == other.page &&
             path == other.path &&
-            sortField == other.sortField &&
-            sortOrder == other.sortOrder &&
+            sort == other.sort &&
             tags == other.tags &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
@@ -593,13 +436,12 @@ private constructor(
             name,
             page,
             path,
-            sortField,
-            sortOrder,
+            sort,
             tags,
             additionalHeaders,
             additionalQueryParams,
         )
 
     override fun toString() =
-        "FileListParams{folderNo=$folderNo, limit=$limit, name=$name, page=$page, path=$path, sortField=$sortField, sortOrder=$sortOrder, tags=$tags, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "FileListParams{folderNo=$folderNo, limit=$limit, name=$name, page=$page, path=$path, sort=$sort, tags=$tags, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

@@ -5,6 +5,7 @@ package io.autorender.services.blocking
 import io.autorender.core.ClientOptions
 import io.autorender.core.RequestOptions
 import io.autorender.core.checkRequired
+import io.autorender.core.handlers.emptyHandler
 import io.autorender.core.handlers.errorBodyHandler
 import io.autorender.core.handlers.errorHandler
 import io.autorender.core.handlers.jsonHandler
@@ -17,16 +18,16 @@ import io.autorender.core.http.json
 import io.autorender.core.http.parseable
 import io.autorender.core.prepare
 import io.autorender.models.files.FileDeleteParams
-import io.autorender.models.files.FileDeleteResponse
 import io.autorender.models.files.FileListParams
 import io.autorender.models.files.FileListResponse
-import io.autorender.models.files.FileObject
 import io.autorender.models.files.FileRenameParams
 import io.autorender.models.files.FileRenameResponse
 import io.autorender.models.files.FileRetrieveParams
+import io.autorender.models.files.FileRetrieveResponse
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
+/** File management endpoints (API key required) */
 class FileServiceImpl internal constructor(private val clientOptions: ClientOptions) : FileService {
 
     private val withRawResponse: FileService.WithRawResponse by lazy {
@@ -38,7 +39,10 @@ class FileServiceImpl internal constructor(private val clientOptions: ClientOpti
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): FileService =
         FileServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
-    override fun retrieve(params: FileRetrieveParams, requestOptions: RequestOptions): FileObject =
+    override fun retrieve(
+        params: FileRetrieveParams,
+        requestOptions: RequestOptions,
+    ): FileRetrieveResponse =
         // get /api/v1/files/{fileNo}
         withRawResponse().retrieve(params, requestOptions).parse()
 
@@ -46,12 +50,10 @@ class FileServiceImpl internal constructor(private val clientOptions: ClientOpti
         // get /api/v1/files
         withRawResponse().list(params, requestOptions).parse()
 
-    override fun delete(
-        params: FileDeleteParams,
-        requestOptions: RequestOptions,
-    ): FileDeleteResponse =
+    override fun delete(params: FileDeleteParams, requestOptions: RequestOptions) {
         // delete /api/v1/files/{fileNo}
-        withRawResponse().delete(params, requestOptions).parse()
+        withRawResponse().delete(params, requestOptions)
+    }
 
     override fun rename(
         params: FileRenameParams,
@@ -73,13 +75,13 @@ class FileServiceImpl internal constructor(private val clientOptions: ClientOpti
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val retrieveHandler: Handler<FileObject> =
-            jsonHandler<FileObject>(clientOptions.jsonMapper)
+        private val retrieveHandler: Handler<FileRetrieveResponse> =
+            jsonHandler<FileRetrieveResponse>(clientOptions.jsonMapper)
 
         override fun retrieve(
             params: FileRetrieveParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<FileObject> {
+        ): HttpResponseFor<FileRetrieveResponse> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("fileNo", params.fileNo().getOrNull())
@@ -130,13 +132,12 @@ class FileServiceImpl internal constructor(private val clientOptions: ClientOpti
             }
         }
 
-        private val deleteHandler: Handler<FileDeleteResponse> =
-            jsonHandler<FileDeleteResponse>(clientOptions.jsonMapper)
+        private val deleteHandler: Handler<Void?> = emptyHandler()
 
         override fun delete(
             params: FileDeleteParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<FileDeleteResponse> {
+        ): HttpResponse {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("fileNo", params.fileNo().getOrNull())
@@ -151,13 +152,7 @@ class FileServiceImpl internal constructor(private val clientOptions: ClientOpti
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
             val response = clientOptions.httpClient.execute(request, requestOptions)
             return errorHandler.handle(response).parseable {
-                response
-                    .use { deleteHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
-                        }
-                    }
+                response.use { deleteHandler.handle(it) }
             }
         }
 

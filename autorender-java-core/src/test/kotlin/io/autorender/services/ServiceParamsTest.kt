@@ -28,11 +28,7 @@ internal class ServiceParamsTest {
 
     @BeforeEach
     fun beforeEach(wmRuntimeInfo: WireMockRuntimeInfo) {
-        client =
-            AutorenderOkHttpClient.builder()
-                .baseUrl(wmRuntimeInfo.httpBaseUrl)
-                .apiKey("My API Key")
-                .build()
+        client = AutorenderOkHttpClient.builder().baseUrl(wmRuntimeInfo.httpBaseUrl).build()
     }
 
     @Test
@@ -43,13 +39,14 @@ internal class ServiceParamsTest {
         uploadService.create(
             UploadCreateParams.builder()
                 .file("Example data".byteInputStream())
-                .fileName("file_name")
-                .customId("custom_id")
-                .folder("folder")
-                .metadata("metadata")
+                .fileName("product.jpg")
+                .customId("sku123")
+                .folder("products/sku123")
+                .metadata("{\"productId\":\"123\"}")
                 .randomPrefix("random_prefix")
-                .tags("tags")
+                .tags("product,thumbnail")
                 .transform("transform")
+                .webhookUrl("webhook_url")
                 .putAdditionalHeader("Secret-Header", "42")
                 .putAdditionalQueryParam("secret_query_param", "42")
                 .putAdditionalBodyProperty("secretProperty", JsonValue.from("42"))

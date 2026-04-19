@@ -16,11 +16,13 @@ import io.autorender.core.http.json
 import io.autorender.core.http.multipartFormData
 import io.autorender.core.http.parseable
 import io.autorender.core.prepare
-import io.autorender.models.uploads.Upload
 import io.autorender.models.uploads.UploadCreateFromUrlParams
+import io.autorender.models.uploads.UploadCreateFromUrlResponse
 import io.autorender.models.uploads.UploadCreateParams
+import io.autorender.models.uploads.UploadCreateResponse
 import java.util.function.Consumer
 
+/** Upload endpoints (API key required) */
 class UploadServiceImpl internal constructor(private val clientOptions: ClientOptions) :
     UploadService {
 
@@ -33,14 +35,17 @@ class UploadServiceImpl internal constructor(private val clientOptions: ClientOp
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): UploadService =
         UploadServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
-    override fun create(params: UploadCreateParams, requestOptions: RequestOptions): Upload =
+    override fun create(
+        params: UploadCreateParams,
+        requestOptions: RequestOptions,
+    ): UploadCreateResponse =
         // post /api/v1/uploads
         withRawResponse().create(params, requestOptions).parse()
 
     override fun createFromUrl(
         params: UploadCreateFromUrlParams,
         requestOptions: RequestOptions,
-    ): Upload =
+    ): UploadCreateFromUrlResponse =
         // post /api/v1/uploads/remote
         withRawResponse().createFromUrl(params, requestOptions).parse()
 
@@ -57,12 +62,13 @@ class UploadServiceImpl internal constructor(private val clientOptions: ClientOp
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val createHandler: Handler<Upload> = jsonHandler<Upload>(clientOptions.jsonMapper)
+        private val createHandler: Handler<UploadCreateResponse> =
+            jsonHandler<UploadCreateResponse>(clientOptions.jsonMapper)
 
         override fun create(
             params: UploadCreateParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<Upload> {
+        ): HttpResponseFor<UploadCreateResponse> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
@@ -84,13 +90,13 @@ class UploadServiceImpl internal constructor(private val clientOptions: ClientOp
             }
         }
 
-        private val createFromUrlHandler: Handler<Upload> =
-            jsonHandler<Upload>(clientOptions.jsonMapper)
+        private val createFromUrlHandler: Handler<UploadCreateFromUrlResponse> =
+            jsonHandler<UploadCreateFromUrlResponse>(clientOptions.jsonMapper)
 
         override fun createFromUrl(
             params: UploadCreateFromUrlParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<Upload> {
+        ): HttpResponseFor<UploadCreateFromUrlResponse> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)

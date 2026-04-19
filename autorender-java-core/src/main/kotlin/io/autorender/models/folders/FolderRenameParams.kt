@@ -20,7 +20,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Rename a folder by `folder_no`. */
+/** Rename folder */
 class FolderRenameParams
 private constructor(
     private val folderNo: String?,
@@ -32,6 +32,8 @@ private constructor(
     fun folderNo(): Optional<String> = Optional.ofNullable(folderNo)
 
     /**
+     * New folder name without slashes
+     *
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
@@ -97,6 +99,7 @@ private constructor(
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
+        /** New folder name without slashes */
         fun name(name: String) = apply { body.name(name) }
 
         /**
@@ -270,6 +273,8 @@ private constructor(
         ) : this(name, mutableMapOf())
 
         /**
+         * New folder name without slashes
+         *
          * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
@@ -319,6 +324,7 @@ private constructor(
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
+            /** New folder name without slashes */
             fun name(name: String) = name(JsonField.of(name))
 
             /**

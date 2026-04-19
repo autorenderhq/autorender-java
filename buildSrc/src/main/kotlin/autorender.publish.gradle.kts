@@ -9,8 +9,8 @@ configure<PublishingExtension> {
             from(components["java"])
 
             pom {
-                name.set("AutoRender API")
-                description.set("AutoRender upload, file, folder, and multipart APIs")
+                name.set("AutoRender Public API")
+                description.set("AutoRender Public API Documentation - File upload, management, and optimization\nendpoints (API key authentication required)")
                 url.set("https://docs.autorender.io")
 
                 licenses {

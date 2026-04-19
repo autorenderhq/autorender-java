@@ -19,7 +19,7 @@ import java.util.Collections
 import java.util.Objects
 import java.util.Optional
 
-/** Create a folder under an optional parent. */
+/** Create folder */
 class FolderCreateParams
 private constructor(
     private val body: Body,
@@ -28,34 +28,34 @@ private constructor(
 ) : Params {
 
     /**
-     * Folder display name
+     * Folder name without slashes
      *
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
-    fun name(): String = body.name()
+    fun folderName(): String = body.folderName()
 
     /**
-     * Parent folder number; omit or null for root
+     * Optional parent path, e.g. products/sku123
      *
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun parentFolderNo(): Optional<String> = body.parentFolderNo()
+    fun path(): Optional<String> = body.path()
 
     /**
-     * Returns the raw JSON value of [name].
+     * Returns the raw JSON value of [folderName].
      *
-     * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
+     * Unlike [folderName], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _name(): JsonField<String> = body._name()
+    fun _folderName(): JsonField<String> = body._folderName()
 
     /**
-     * Returns the raw JSON value of [parentFolderNo].
+     * Returns the raw JSON value of [path].
      *
-     * Unlike [parentFolderNo], this method doesn't throw if the JSON field has an unexpected type.
+     * Unlike [path], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _parentFolderNo(): JsonField<String> = body._parentFolderNo()
+    fun _path(): JsonField<String> = body._path()
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
@@ -74,7 +74,7 @@ private constructor(
          *
          * The following fields are required:
          * ```java
-         * .name()
+         * .folderName()
          * ```
          */
         @JvmStatic fun builder() = Builder()
@@ -99,35 +99,33 @@ private constructor(
          *
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
-         * - [name]
-         * - [parentFolderNo]
+         * - [folderName]
+         * - [path]
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
-        /** Folder display name */
-        fun name(name: String) = apply { body.name(name) }
+        /** Folder name without slashes */
+        fun folderName(folderName: String) = apply { body.folderName(folderName) }
 
         /**
-         * Sets [Builder.name] to an arbitrary JSON value.
+         * Sets [Builder.folderName] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.name] with a well-typed [String] value instead. This
+         * You should usually call [Builder.folderName] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun folderName(folderName: JsonField<String>) = apply { body.folderName(folderName) }
+
+        /** Optional parent path, e.g. products/sku123 */
+        fun path(path: String) = apply { body.path(path) }
+
+        /**
+         * Sets [Builder.path] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.path] with a well-typed [String] value instead. This
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
-        fun name(name: JsonField<String>) = apply { body.name(name) }
-
-        /** Parent folder number; omit or null for root */
-        fun parentFolderNo(parentFolderNo: String) = apply { body.parentFolderNo(parentFolderNo) }
-
-        /**
-         * Sets [Builder.parentFolderNo] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.parentFolderNo] with a well-typed [String] value
-         * instead. This method is primarily for setting the field to an undocumented or not yet
-         * supported value.
-         */
-        fun parentFolderNo(parentFolderNo: JsonField<String>) = apply {
-            body.parentFolderNo(parentFolderNo)
-        }
+        fun path(path: JsonField<String>) = apply { body.path(path) }
 
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
             body.additionalProperties(additionalBodyProperties)
@@ -253,7 +251,7 @@ private constructor(
          *
          * The following fields are required:
          * ```java
-         * .name()
+         * .folderName()
          * ```
          *
          * @throws IllegalStateException if any required field is unset.
@@ -275,51 +273,50 @@ private constructor(
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
-        private val name: JsonField<String>,
-        private val parentFolderNo: JsonField<String>,
+        private val folderName: JsonField<String>,
+        private val path: JsonField<String>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
         @JsonCreator
         private constructor(
-            @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("parent_folder_no")
+            @JsonProperty("folder_name")
             @ExcludeMissing
-            parentFolderNo: JsonField<String> = JsonMissing.of(),
-        ) : this(name, parentFolderNo, mutableMapOf())
+            folderName: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("path") @ExcludeMissing path: JsonField<String> = JsonMissing.of(),
+        ) : this(folderName, path, mutableMapOf())
 
         /**
-         * Folder display name
+         * Folder name without slashes
          *
          * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
-        fun name(): String = name.getRequired("name")
+        fun folderName(): String = folderName.getRequired("folder_name")
 
         /**
-         * Parent folder number; omit or null for root
+         * Optional parent path, e.g. products/sku123
          *
          * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
-        fun parentFolderNo(): Optional<String> = parentFolderNo.getOptional("parent_folder_no")
+        fun path(): Optional<String> = path.getOptional("path")
 
         /**
-         * Returns the raw JSON value of [name].
+         * Returns the raw JSON value of [folderName].
          *
-         * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [folderName], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("name") @ExcludeMissing fun _name(): JsonField<String> = name
-
-        /**
-         * Returns the raw JSON value of [parentFolderNo].
-         *
-         * Unlike [parentFolderNo], this method doesn't throw if the JSON field has an unexpected
-         * type.
-         */
-        @JsonProperty("parent_folder_no")
+        @JsonProperty("folder_name")
         @ExcludeMissing
-        fun _parentFolderNo(): JsonField<String> = parentFolderNo
+        fun _folderName(): JsonField<String> = folderName
+
+        /**
+         * Returns the raw JSON value of [path].
+         *
+         * Unlike [path], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("path") @ExcludeMissing fun _path(): JsonField<String> = path
 
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -340,7 +337,7 @@ private constructor(
              *
              * The following fields are required:
              * ```java
-             * .name()
+             * .folderName()
              * ```
              */
             @JvmStatic fun builder() = Builder()
@@ -349,43 +346,40 @@ private constructor(
         /** A builder for [Body]. */
         class Builder internal constructor() {
 
-            private var name: JsonField<String>? = null
-            private var parentFolderNo: JsonField<String> = JsonMissing.of()
+            private var folderName: JsonField<String>? = null
+            private var path: JsonField<String> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
-                name = body.name
-                parentFolderNo = body.parentFolderNo
+                folderName = body.folderName
+                path = body.path
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
-            /** Folder display name */
-            fun name(name: String) = name(JsonField.of(name))
+            /** Folder name without slashes */
+            fun folderName(folderName: String) = folderName(JsonField.of(folderName))
 
             /**
-             * Sets [Builder.name] to an arbitrary JSON value.
+             * Sets [Builder.folderName] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.name] with a well-typed [String] value instead. This
-             * method is primarily for setting the field to an undocumented or not yet supported
-             * value.
-             */
-            fun name(name: JsonField<String>) = apply { this.name = name }
-
-            /** Parent folder number; omit or null for root */
-            fun parentFolderNo(parentFolderNo: String) =
-                parentFolderNo(JsonField.of(parentFolderNo))
-
-            /**
-             * Sets [Builder.parentFolderNo] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.parentFolderNo] with a well-typed [String] value
+             * You should usually call [Builder.folderName] with a well-typed [String] value
              * instead. This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun parentFolderNo(parentFolderNo: JsonField<String>) = apply {
-                this.parentFolderNo = parentFolderNo
-            }
+            fun folderName(folderName: JsonField<String>) = apply { this.folderName = folderName }
+
+            /** Optional parent path, e.g. products/sku123 */
+            fun path(path: String) = path(JsonField.of(path))
+
+            /**
+             * Sets [Builder.path] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.path] with a well-typed [String] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun path(path: JsonField<String>) = apply { this.path = path }
 
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
@@ -413,15 +407,15 @@ private constructor(
              *
              * The following fields are required:
              * ```java
-             * .name()
+             * .folderName()
              * ```
              *
              * @throws IllegalStateException if any required field is unset.
              */
             fun build(): Body =
                 Body(
-                    checkRequired("name", name),
-                    parentFolderNo,
+                    checkRequired("folderName", folderName),
+                    path,
                     additionalProperties.toMutableMap(),
                 )
         }
@@ -433,8 +427,8 @@ private constructor(
                 return@apply
             }
 
-            name()
-            parentFolderNo()
+            folderName()
+            path()
             validated = true
         }
 
@@ -454,8 +448,8 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            (if (name.asKnown().isPresent) 1 else 0) +
-                (if (parentFolderNo.asKnown().isPresent) 1 else 0)
+            (if (folderName.asKnown().isPresent) 1 else 0) +
+                (if (path.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -463,19 +457,17 @@ private constructor(
             }
 
             return other is Body &&
-                name == other.name &&
-                parentFolderNo == other.parentFolderNo &&
+                folderName == other.folderName &&
+                path == other.path &&
                 additionalProperties == other.additionalProperties
         }
 
-        private val hashCode: Int by lazy {
-            Objects.hash(name, parentFolderNo, additionalProperties)
-        }
+        private val hashCode: Int by lazy { Objects.hash(folderName, path, additionalProperties) }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{name=$name, parentFolderNo=$parentFolderNo, additionalProperties=$additionalProperties}"
+            "Body{folderName=$folderName, path=$path, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

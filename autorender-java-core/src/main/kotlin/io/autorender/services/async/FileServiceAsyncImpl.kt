@@ -5,6 +5,7 @@ package io.autorender.services.async
 import io.autorender.core.ClientOptions
 import io.autorender.core.RequestOptions
 import io.autorender.core.checkRequired
+import io.autorender.core.handlers.emptyHandler
 import io.autorender.core.handlers.errorBodyHandler
 import io.autorender.core.handlers.errorHandler
 import io.autorender.core.handlers.jsonHandler
@@ -17,17 +18,17 @@ import io.autorender.core.http.json
 import io.autorender.core.http.parseable
 import io.autorender.core.prepareAsync
 import io.autorender.models.files.FileDeleteParams
-import io.autorender.models.files.FileDeleteResponse
 import io.autorender.models.files.FileListParams
 import io.autorender.models.files.FileListResponse
-import io.autorender.models.files.FileObject
 import io.autorender.models.files.FileRenameParams
 import io.autorender.models.files.FileRenameResponse
 import io.autorender.models.files.FileRetrieveParams
+import io.autorender.models.files.FileRetrieveResponse
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
+/** File management endpoints (API key required) */
 class FileServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
     FileServiceAsync {
 
@@ -43,7 +44,7 @@ class FileServiceAsyncImpl internal constructor(private val clientOptions: Clien
     override fun retrieve(
         params: FileRetrieveParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<FileObject> =
+    ): CompletableFuture<FileRetrieveResponse> =
         // get /api/v1/files/{fileNo}
         withRawResponse().retrieve(params, requestOptions).thenApply { it.parse() }
 
@@ -57,9 +58,9 @@ class FileServiceAsyncImpl internal constructor(private val clientOptions: Clien
     override fun delete(
         params: FileDeleteParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<FileDeleteResponse> =
+    ): CompletableFuture<Void?> =
         // delete /api/v1/files/{fileNo}
-        withRawResponse().delete(params, requestOptions).thenApply { it.parse() }
+        withRawResponse().delete(params, requestOptions).thenAccept {}
 
     override fun rename(
         params: FileRenameParams,
@@ -81,13 +82,13 @@ class FileServiceAsyncImpl internal constructor(private val clientOptions: Clien
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val retrieveHandler: Handler<FileObject> =
-            jsonHandler<FileObject>(clientOptions.jsonMapper)
+        private val retrieveHandler: Handler<FileRetrieveResponse> =
+            jsonHandler<FileRetrieveResponse>(clientOptions.jsonMapper)
 
         override fun retrieve(
             params: FileRetrieveParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<FileObject>> {
+        ): CompletableFuture<HttpResponseFor<FileRetrieveResponse>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("fileNo", params.fileNo().getOrNull())
@@ -144,13 +145,12 @@ class FileServiceAsyncImpl internal constructor(private val clientOptions: Clien
                 }
         }
 
-        private val deleteHandler: Handler<FileDeleteResponse> =
-            jsonHandler<FileDeleteResponse>(clientOptions.jsonMapper)
+        private val deleteHandler: Handler<Void?> = emptyHandler()
 
         override fun delete(
             params: FileDeleteParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<FileDeleteResponse>> {
+        ): CompletableFuture<HttpResponse> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("fileNo", params.fileNo().getOrNull())
@@ -167,13 +167,7 @@ class FileServiceAsyncImpl internal constructor(private val clientOptions: Clien
                 .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
                 .thenApply { response ->
                     errorHandler.handle(response).parseable {
-                        response
-                            .use { deleteHandler.handle(it) }
-                            .also {
-                                if (requestOptions.responseValidation!!) {
-                                    it.validate()
-                                }
-                            }
+                        response.use { deleteHandler.handle(it) }
                     }
                 }
         }

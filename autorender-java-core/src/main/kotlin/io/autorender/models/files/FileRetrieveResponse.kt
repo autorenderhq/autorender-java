@@ -21,8 +21,8 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Renamed file */
-class FileRenameResponse
+/** File details */
+class FileRetrieveResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val data: JsonField<Data>,
@@ -77,7 +77,7 @@ private constructor(
     companion object {
 
         /**
-         * Returns a mutable builder for constructing an instance of [FileRenameResponse].
+         * Returns a mutable builder for constructing an instance of [FileRetrieveResponse].
          *
          * The following fields are required:
          * ```java
@@ -88,7 +88,7 @@ private constructor(
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [FileRenameResponse]. */
+    /** A builder for [FileRetrieveResponse]. */
     class Builder internal constructor() {
 
         private var data: JsonField<Data>? = null
@@ -96,10 +96,10 @@ private constructor(
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(fileRenameResponse: FileRenameResponse) = apply {
-            data = fileRenameResponse.data
-            success = fileRenameResponse.success
-            additionalProperties = fileRenameResponse.additionalProperties.toMutableMap()
+        internal fun from(fileRetrieveResponse: FileRetrieveResponse) = apply {
+            data = fileRetrieveResponse.data
+            success = fileRetrieveResponse.success
+            additionalProperties = fileRetrieveResponse.additionalProperties.toMutableMap()
         }
 
         fun data(data: Data) = data(JsonField.of(data))
@@ -142,7 +142,7 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [FileRenameResponse].
+         * Returns an immutable instance of [FileRetrieveResponse].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          *
@@ -154,8 +154,8 @@ private constructor(
          *
          * @throws IllegalStateException if any required field is unset.
          */
-        fun build(): FileRenameResponse =
-            FileRenameResponse(
+        fun build(): FileRetrieveResponse =
+            FileRetrieveResponse(
                 checkRequired("data", data),
                 checkRequired("success", success),
                 additionalProperties.toMutableMap(),
@@ -164,7 +164,7 @@ private constructor(
 
     private var validated: Boolean = false
 
-    fun validate(): FileRenameResponse = apply {
+    fun validate(): FileRetrieveResponse = apply {
         if (validated) {
             return@apply
         }
@@ -1228,7 +1228,7 @@ private constructor(
             return true
         }
 
-        return other is FileRenameResponse &&
+        return other is FileRetrieveResponse &&
             data == other.data &&
             success == other.success &&
             additionalProperties == other.additionalProperties
@@ -1239,5 +1239,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "FileRenameResponse{data=$data, success=$success, additionalProperties=$additionalProperties}"
+        "FileRetrieveResponse{data=$data, success=$success, additionalProperties=$additionalProperties}"
 }

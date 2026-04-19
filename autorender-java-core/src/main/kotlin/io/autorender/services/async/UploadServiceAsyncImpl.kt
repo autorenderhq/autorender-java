@@ -16,12 +16,14 @@ import io.autorender.core.http.json
 import io.autorender.core.http.multipartFormData
 import io.autorender.core.http.parseable
 import io.autorender.core.prepareAsync
-import io.autorender.models.uploads.Upload
 import io.autorender.models.uploads.UploadCreateFromUrlParams
+import io.autorender.models.uploads.UploadCreateFromUrlResponse
 import io.autorender.models.uploads.UploadCreateParams
+import io.autorender.models.uploads.UploadCreateResponse
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
+/** Upload endpoints (API key required) */
 class UploadServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
     UploadServiceAsync {
 
@@ -37,14 +39,14 @@ class UploadServiceAsyncImpl internal constructor(private val clientOptions: Cli
     override fun create(
         params: UploadCreateParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<Upload> =
+    ): CompletableFuture<UploadCreateResponse> =
         // post /api/v1/uploads
         withRawResponse().create(params, requestOptions).thenApply { it.parse() }
 
     override fun createFromUrl(
         params: UploadCreateFromUrlParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<Upload> =
+    ): CompletableFuture<UploadCreateFromUrlResponse> =
         // post /api/v1/uploads/remote
         withRawResponse().createFromUrl(params, requestOptions).thenApply { it.parse() }
 
@@ -61,12 +63,13 @@ class UploadServiceAsyncImpl internal constructor(private val clientOptions: Cli
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val createHandler: Handler<Upload> = jsonHandler<Upload>(clientOptions.jsonMapper)
+        private val createHandler: Handler<UploadCreateResponse> =
+            jsonHandler<UploadCreateResponse>(clientOptions.jsonMapper)
 
         override fun create(
             params: UploadCreateParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<Upload>> {
+        ): CompletableFuture<HttpResponseFor<UploadCreateResponse>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
@@ -91,13 +94,13 @@ class UploadServiceAsyncImpl internal constructor(private val clientOptions: Cli
                 }
         }
 
-        private val createFromUrlHandler: Handler<Upload> =
-            jsonHandler<Upload>(clientOptions.jsonMapper)
+        private val createFromUrlHandler: Handler<UploadCreateFromUrlResponse> =
+            jsonHandler<UploadCreateFromUrlResponse>(clientOptions.jsonMapper)
 
         override fun createFromUrl(
             params: UploadCreateFromUrlParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<Upload>> {
+        ): CompletableFuture<HttpResponseFor<UploadCreateFromUrlResponse>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)

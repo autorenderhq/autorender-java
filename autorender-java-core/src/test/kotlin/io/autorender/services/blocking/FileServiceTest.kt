@@ -14,37 +14,28 @@ internal class FileServiceTest {
 
     @Test
     fun retrieve() {
-        val client =
-            AutorenderOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = AutorenderOkHttpClient.builder().baseUrl(TestServerExtension.BASE_URL).build()
         val fileService = client.files()
 
-        val fileObject = fileService.retrieve("2353377462")
+        val file = fileService.retrieve("fileNo")
 
-        fileObject.validate()
+        file.validate()
     }
 
     @Test
     fun list() {
-        val client =
-            AutorenderOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = AutorenderOkHttpClient.builder().baseUrl(TestServerExtension.BASE_URL).build()
         val fileService = client.files()
 
         val files =
             fileService.list(
                 FileListParams.builder()
-                    .folderNo("folder_no")
-                    .limit(0L)
+                    .folderNo("folderNo")
+                    .limit(1L)
                     .name("name")
-                    .page(0L)
+                    .page(1L)
                     .path("path")
-                    .sortField(FileListParams.SortField.FILE_SIZE)
-                    .sortOrder(FileListParams.SortOrder.ASC)
+                    .sort(FileListParams.Sort.CREATED_AT_ASC)
                     .tags("tags")
                     .build()
             )
@@ -54,29 +45,19 @@ internal class FileServiceTest {
 
     @Test
     fun delete() {
-        val client =
-            AutorenderOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = AutorenderOkHttpClient.builder().baseUrl(TestServerExtension.BASE_URL).build()
         val fileService = client.files()
 
-        val file = fileService.delete("2338056701")
-
-        file.validate()
+        fileService.delete("fileNo")
     }
 
     @Test
     fun rename() {
-        val client =
-            AutorenderOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = AutorenderOkHttpClient.builder().baseUrl(TestServerExtension.BASE_URL).build()
         val fileService = client.files()
 
         val response =
-            fileService.rename(FileRenameParams.builder().fileNo("2338045312").name("demo").build())
+            fileService.rename(FileRenameParams.builder().fileNo("fileNo").name("name").build())
 
         response.validate()
     }
