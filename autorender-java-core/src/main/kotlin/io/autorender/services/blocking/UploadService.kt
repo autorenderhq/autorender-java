@@ -67,24 +67,24 @@ interface UploadService {
      * Upload a file directly from the browser using a token from /generate-token. Send the raw file
      * as binary in the request body.
      */
-    fun uploadWithToken(token: String, body: String): UploadUploadWithTokenResponse =
-        uploadWithToken(token, body, UploadUploadWithTokenParams.none())
+    fun uploadWithToken(token: String, file: String): UploadUploadWithTokenResponse =
+        uploadWithToken(token, file, UploadUploadWithTokenParams.none())
 
     /** @see uploadWithToken */
     fun uploadWithToken(
         token: String,
-        body: String,
+        file: String,
         params: UploadUploadWithTokenParams = UploadUploadWithTokenParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
     ): UploadUploadWithTokenResponse =
-        uploadWithToken(params.toBuilder().token(token).body(body).build(), requestOptions)
+        uploadWithToken(params.toBuilder().token(token).file(file).build(), requestOptions)
 
     /** @see uploadWithToken */
     fun uploadWithToken(
         token: String,
-        body: String,
+        file: String,
         params: UploadUploadWithTokenParams = UploadUploadWithTokenParams.none(),
-    ): UploadUploadWithTokenResponse = uploadWithToken(token, body, params, RequestOptions.none())
+    ): UploadUploadWithTokenResponse = uploadWithToken(token, file, params, RequestOptions.none())
 
     /** @see uploadWithToken */
     fun uploadWithToken(
@@ -99,10 +99,10 @@ interface UploadService {
     /** @see uploadWithToken */
     fun uploadWithToken(
         token: String,
-        body: String,
+        file: String,
         requestOptions: RequestOptions,
     ): UploadUploadWithTokenResponse =
-        uploadWithToken(token, body, UploadUploadWithTokenParams.none(), requestOptions)
+        uploadWithToken(token, file, UploadUploadWithTokenParams.none(), requestOptions)
 
     /** A view of [UploadService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
@@ -170,28 +170,28 @@ interface UploadService {
         @MustBeClosed
         fun uploadWithToken(
             token: String,
-            body: String,
+            file: String,
         ): HttpResponseFor<UploadUploadWithTokenResponse> =
-            uploadWithToken(token, body, UploadUploadWithTokenParams.none())
+            uploadWithToken(token, file, UploadUploadWithTokenParams.none())
 
         /** @see uploadWithToken */
         @MustBeClosed
         fun uploadWithToken(
             token: String,
-            body: String,
+            file: String,
             params: UploadUploadWithTokenParams = UploadUploadWithTokenParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<UploadUploadWithTokenResponse> =
-            uploadWithToken(params.toBuilder().token(token).body(body).build(), requestOptions)
+            uploadWithToken(params.toBuilder().token(token).file(file).build(), requestOptions)
 
         /** @see uploadWithToken */
         @MustBeClosed
         fun uploadWithToken(
             token: String,
-            body: String,
+            file: String,
             params: UploadUploadWithTokenParams = UploadUploadWithTokenParams.none(),
         ): HttpResponseFor<UploadUploadWithTokenResponse> =
-            uploadWithToken(token, body, params, RequestOptions.none())
+            uploadWithToken(token, file, params, RequestOptions.none())
 
         /** @see uploadWithToken */
         @MustBeClosed
@@ -211,9 +211,9 @@ interface UploadService {
         @MustBeClosed
         fun uploadWithToken(
             token: String,
-            body: String,
+            file: String,
             requestOptions: RequestOptions,
         ): HttpResponseFor<UploadUploadWithTokenResponse> =
-            uploadWithToken(token, body, UploadUploadWithTokenParams.none(), requestOptions)
+            uploadWithToken(token, file, UploadUploadWithTokenParams.none(), requestOptions)
     }
 }

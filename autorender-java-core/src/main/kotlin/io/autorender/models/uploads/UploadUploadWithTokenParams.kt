@@ -16,7 +16,7 @@ import kotlin.jvm.optionals.getOrNull
 class UploadUploadWithTokenParams
 private constructor(
     private val token: String?,
-    private val body: String?,
+    private val file: String?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
@@ -24,7 +24,7 @@ private constructor(
     fun token(): Optional<String> = Optional.ofNullable(token)
 
     /** Raw file bytes. Accepts any file type (images, documents, videos, etc.). */
-    fun body(): Optional<String> = Optional.ofNullable(body)
+    fun file(): Optional<String> = Optional.ofNullable(file)
 
     /** Additional headers to send with the request. */
     fun _additionalHeaders(): Headers = additionalHeaders
@@ -48,14 +48,14 @@ private constructor(
     class Builder internal constructor() {
 
         private var token: String? = null
-        private var body: String? = null
+        private var file: String? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
         @JvmSynthetic
         internal fun from(uploadUploadWithTokenParams: UploadUploadWithTokenParams) = apply {
             token = uploadUploadWithTokenParams.token
-            body = uploadUploadWithTokenParams.body
+            file = uploadUploadWithTokenParams.file
             additionalHeaders = uploadUploadWithTokenParams.additionalHeaders.toBuilder()
             additionalQueryParams = uploadUploadWithTokenParams.additionalQueryParams.toBuilder()
         }
@@ -66,10 +66,10 @@ private constructor(
         fun token(token: Optional<String>) = token(token.getOrNull())
 
         /** Raw file bytes. Accepts any file type (images, documents, videos, etc.). */
-        fun body(body: String?) = apply { this.body = body }
+        fun file(file: String?) = apply { this.file = file }
 
-        /** Alias for calling [Builder.body] with `body.orElse(null)`. */
-        fun body(body: Optional<String>) = body(body.getOrNull())
+        /** Alias for calling [Builder.file] with `file.orElse(null)`. */
+        fun file(file: Optional<String>) = file(file.getOrNull())
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -177,13 +177,13 @@ private constructor(
         fun build(): UploadUploadWithTokenParams =
             UploadUploadWithTokenParams(
                 token,
-                body,
+                file,
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
             )
     }
 
-    fun _body(): Optional<String> = Optional.ofNullable(body)
+    fun _body(): Optional<String> = Optional.ofNullable(file)
 
     fun _pathParam(index: Int): String =
         when (index) {
@@ -202,14 +202,14 @@ private constructor(
 
         return other is UploadUploadWithTokenParams &&
             token == other.token &&
-            body == other.body &&
+            file == other.file &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
 
     override fun hashCode(): Int =
-        Objects.hash(token, body, additionalHeaders, additionalQueryParams)
+        Objects.hash(token, file, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "UploadUploadWithTokenParams{token=$token, body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "UploadUploadWithTokenParams{token=$token, file=$file, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }
