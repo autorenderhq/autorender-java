@@ -46,7 +46,7 @@ internal class ProGuardCompatibilityTest {
 
     @Test
     fun client() {
-        val client = AutorenderOkHttpClient.fromEnv()
+        val client = AutorenderOkHttpClient.builder().apiKey("My API Key").build()
 
         assertThat(client).isNotNull()
         assertThat(client.uploads()).isNotNull()

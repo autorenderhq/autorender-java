@@ -22,14 +22,26 @@ internal class ClientOptionsTest {
             ClientOptions.builder()
                 .httpClient(httpClient)
                 .putHeader("User-Agent", "My User Agent")
+                .apiKey("My API Key")
                 .build()
 
         assertThat(clientOptions.headers.values("User-Agent")).containsExactly("My User Agent")
     }
 
     @Test
+    fun toBuilder_apiKeyCanBeUpdated() {
+        var clientOptions =
+            ClientOptions.builder().httpClient(httpClient).apiKey("My API Key").build()
+
+        clientOptions = clientOptions.toBuilder().apiKey("another My API Key").build()
+
+        assertThat(clientOptions.headers.values("x-api-key")).containsExactly("another My API Key")
+    }
+
+    @Test
     fun toBuilder_whenOriginalClientOptionsGarbageCollected_doesNotCloseOriginalClient() {
-        var clientOptions = ClientOptions.builder().httpClient(httpClient).build()
+        var clientOptions =
+            ClientOptions.builder().httpClient(httpClient).apiKey("My API Key").build()
         verify(httpClient, never()).close()
 
         // Overwrite the `clientOptions` variable so that the original `ClientOptions` is GC'd.

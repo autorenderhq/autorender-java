@@ -15,7 +15,10 @@ internal class FolderServiceAsyncTest {
     @Test
     fun create() {
         val client =
-            AutorenderOkHttpClientAsync.builder().baseUrl(TestServerExtension.BASE_URL).build()
+            AutorenderOkHttpClientAsync.builder()
+                .baseUrl(TestServerExtension.BASE_URL)
+                .apiKey("My API Key")
+                .build()
         val folderServiceAsync = client.folders()
 
         val folderFuture =
@@ -30,7 +33,10 @@ internal class FolderServiceAsyncTest {
     @Test
     fun delete() {
         val client =
-            AutorenderOkHttpClientAsync.builder().baseUrl(TestServerExtension.BASE_URL).build()
+            AutorenderOkHttpClientAsync.builder()
+                .baseUrl(TestServerExtension.BASE_URL)
+                .apiKey("My API Key")
+                .build()
         val folderServiceAsync = client.folders()
 
         val future = folderServiceAsync.delete("folderNo")
@@ -41,7 +47,10 @@ internal class FolderServiceAsyncTest {
     @Test
     fun rename() {
         val client =
-            AutorenderOkHttpClientAsync.builder().baseUrl(TestServerExtension.BASE_URL).build()
+            AutorenderOkHttpClientAsync.builder()
+                .baseUrl(TestServerExtension.BASE_URL)
+                .apiKey("My API Key")
+                .build()
         val folderServiceAsync = client.folders()
 
         val responseFuture =

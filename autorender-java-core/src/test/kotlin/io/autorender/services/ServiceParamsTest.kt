@@ -28,7 +28,11 @@ internal class ServiceParamsTest {
 
     @BeforeEach
     fun beforeEach(wmRuntimeInfo: WireMockRuntimeInfo) {
-        client = AutorenderOkHttpClient.builder().baseUrl(wmRuntimeInfo.httpBaseUrl).build()
+        client =
+            AutorenderOkHttpClient.builder()
+                .baseUrl(wmRuntimeInfo.httpBaseUrl)
+                .apiKey("My API Key")
+                .build()
     }
 
     @Test
