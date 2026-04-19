@@ -48,8 +48,8 @@ This library requires Java 8 or later.
 ```java
 import io.autorender.client.AutorenderClient;
 import io.autorender.client.okhttp.AutorenderOkHttpClient;
-import io.autorender.models.uploads.Upload;
 import io.autorender.models.uploads.UploadCreateParams;
+import io.autorender.models.uploads.UploadCreateResponse;
 import java.io.ByteArrayInputStream;
 
 // Configures using the `autorender.apiKey` and `autorender.baseUrl` system properties
@@ -58,9 +58,9 @@ AutorenderClient client = AutorenderOkHttpClient.fromEnv();
 
 UploadCreateParams params = UploadCreateParams.builder()
     .file(new ByteArrayInputStream("Example data".getBytes()))
-    .fileName("file_name")
+    .fileName("product.jpg")
     .build();
-Upload upload = client.uploads().create(params);
+UploadCreateResponse upload = client.uploads().create(params);
 ```
 
 ## Client configuration
@@ -82,9 +82,7 @@ Or manually:
 import io.autorender.client.AutorenderClient;
 import io.autorender.client.okhttp.AutorenderOkHttpClient;
 
-AutorenderClient client = AutorenderOkHttpClient.builder()
-    .apiKey("My API Key")
-    .build();
+AutorenderClient client = AutorenderOkHttpClient.fromEnv();
 ```
 
 Or using a combination of the two approaches:
@@ -133,7 +131,7 @@ The `withOptions()` method does not affect the original client or service.
 
 To send a request to the Autorender API, build an instance of some `Params` class and pass it to the corresponding client method. When the response is received, it will be deserialized into an instance of a Java class.
 
-For example, `client.uploads().create(...)` should be called with an instance of `UploadCreateParams`, and it will return an instance of `Upload`.
+For example, `client.uploads().create(...)` should be called with an instance of `UploadCreateParams`, and it will return an instance of `UploadCreateResponse`.
 
 ## Immutability
 
@@ -150,8 +148,8 @@ The default client is synchronous. To switch to asynchronous execution, call the
 ```java
 import io.autorender.client.AutorenderClient;
 import io.autorender.client.okhttp.AutorenderOkHttpClient;
-import io.autorender.models.uploads.Upload;
 import io.autorender.models.uploads.UploadCreateParams;
+import io.autorender.models.uploads.UploadCreateResponse;
 import java.io.ByteArrayInputStream;
 import java.util.concurrent.CompletableFuture;
 
@@ -161,9 +159,9 @@ AutorenderClient client = AutorenderOkHttpClient.fromEnv();
 
 UploadCreateParams params = UploadCreateParams.builder()
     .file(new ByteArrayInputStream("Example data".getBytes()))
-    .fileName("file_name")
+    .fileName("product.jpg")
     .build();
-CompletableFuture<Upload> upload = client.async().uploads().create(params);
+CompletableFuture<UploadCreateResponse> upload = client.async().uploads().create(params);
 ```
 
 Or create an asynchronous client from the beginning:
@@ -171,8 +169,8 @@ Or create an asynchronous client from the beginning:
 ```java
 import io.autorender.client.AutorenderClientAsync;
 import io.autorender.client.okhttp.AutorenderOkHttpClientAsync;
-import io.autorender.models.uploads.Upload;
 import io.autorender.models.uploads.UploadCreateParams;
+import io.autorender.models.uploads.UploadCreateResponse;
 import java.io.ByteArrayInputStream;
 import java.util.concurrent.CompletableFuture;
 
@@ -182,9 +180,9 @@ AutorenderClientAsync client = AutorenderOkHttpClientAsync.fromEnv();
 
 UploadCreateParams params = UploadCreateParams.builder()
     .file(new ByteArrayInputStream("Example data".getBytes()))
-    .fileName("file_name")
+    .fileName("product.jpg")
     .build();
-CompletableFuture<Upload> upload = client.uploads().create(params);
+CompletableFuture<UploadCreateResponse> upload = client.uploads().create(params);
 ```
 
 The asynchronous client supports the same options as the synchronous one, except most methods return `CompletableFuture`s.
@@ -196,61 +194,61 @@ The SDK defines methods that accept files.
 To upload a file, pass a [`Path`](https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html):
 
 ```java
-import io.autorender.models.uploads.Upload;
 import io.autorender.models.uploads.UploadCreateParams;
+import io.autorender.models.uploads.UploadCreateResponse;
 import java.nio.file.Paths;
 
 UploadCreateParams params = UploadCreateParams.builder()
-    .fileName("file_name")
+    .fileName("product.jpg")
     .file(Paths.get("/path/to/file"))
     .build();
-Upload upload = client.uploads().create(params);
+UploadCreateResponse upload = client.uploads().create(params);
 ```
 
 Or an arbitrary [`InputStream`](https://docs.oracle.com/javase/8/docs/api/java/io/InputStream.html):
 
 ```java
-import io.autorender.models.uploads.Upload;
 import io.autorender.models.uploads.UploadCreateParams;
+import io.autorender.models.uploads.UploadCreateResponse;
 import java.net.URL;
 
 UploadCreateParams params = UploadCreateParams.builder()
-    .fileName("file_name")
+    .fileName("product.jpg")
     .file(new URL("https://example.com//path/to/file").openStream())
     .build();
-Upload upload = client.uploads().create(params);
+UploadCreateResponse upload = client.uploads().create(params);
 ```
 
 Or a `byte[]` array:
 
 ```java
-import io.autorender.models.uploads.Upload;
 import io.autorender.models.uploads.UploadCreateParams;
+import io.autorender.models.uploads.UploadCreateResponse;
 
 UploadCreateParams params = UploadCreateParams.builder()
-    .fileName("file_name")
+    .fileName("product.jpg")
     .file("content".getBytes())
     .build();
-Upload upload = client.uploads().create(params);
+UploadCreateResponse upload = client.uploads().create(params);
 ```
 
 Note that when passing a non-`Path` its filename is unknown so it will not be included in the request. To manually set a filename, pass a [`MultipartField`](autorender-java-core/src/main/kotlin/io/autorender/core/Values.kt):
 
 ```java
 import io.autorender.core.MultipartField;
-import io.autorender.models.uploads.Upload;
 import io.autorender.models.uploads.UploadCreateParams;
+import io.autorender.models.uploads.UploadCreateResponse;
 import java.io.InputStream;
 import java.net.URL;
 
 UploadCreateParams params = UploadCreateParams.builder()
-    .fileName("file_name")
+    .fileName("product.jpg")
     .file(MultipartField.<InputStream>builder()
         .value(new URL("https://example.com//path/to/file").openStream())
         .filename("/path/to/file")
         .build())
     .build();
-Upload upload = client.uploads().create(params);
+UploadCreateResponse upload = client.uploads().create(params);
 ```
 
 ## Raw responses
@@ -262,15 +260,15 @@ To access this data, prefix any HTTP method call on a client or service with `wi
 ```java
 import io.autorender.core.http.Headers;
 import io.autorender.core.http.HttpResponseFor;
-import io.autorender.models.uploads.Upload;
 import io.autorender.models.uploads.UploadCreateParams;
+import io.autorender.models.uploads.UploadCreateResponse;
 import java.io.ByteArrayInputStream;
 
 UploadCreateParams params = UploadCreateParams.builder()
     .file(new ByteArrayInputStream("Example data".getBytes()))
-    .fileName("file_name")
+    .fileName("product.jpg")
     .build();
-HttpResponseFor<Upload> upload = client.uploads().withRawResponse().create(params);
+HttpResponseFor<UploadCreateResponse> upload = client.uploads().withRawResponse().create(params);
 
 int statusCode = upload.statusCode();
 Headers headers = upload.headers();
@@ -279,9 +277,9 @@ Headers headers = upload.headers();
 You can still deserialize the response into an instance of a Java class if needed:
 
 ```java
-import io.autorender.models.uploads.Upload;
+import io.autorender.models.uploads.UploadCreateResponse;
 
-Upload parsedUpload = upload.parse();
+UploadCreateResponse parsedUpload = upload.parse();
 ```
 
 ## Error handling
@@ -379,9 +377,9 @@ Requests time out after 1 minute by default.
 To set a custom timeout, configure the method call using the `timeout` method:
 
 ```java
-import io.autorender.models.uploads.Upload;
+import io.autorender.models.uploads.UploadCreateResponse;
 
-Upload upload = client.uploads().create(
+UploadCreateResponse upload = client.uploads().create(
   params, RequestOptions.builder().timeout(Duration.ofSeconds(30)).build()
 );
 ```
@@ -524,7 +522,7 @@ import io.autorender.models.uploads.UploadCreateParams;
 
 UploadCreateParams params = UploadCreateParams.builder()
     .file(JsonValue.from(42))
-    .fileName("file_name")
+    .fileName("product.jpg")
     .build();
 ```
 
@@ -576,7 +574,7 @@ import io.autorender.core.JsonMissing;
 import io.autorender.models.uploads.UploadCreateParams;
 
 UploadCreateParams params = UploadCreateParams.builder()
-    .fileName("file_name")
+    .fileName("product.jpg")
     .file(JsonMissing.of())
     .build();
 ```
@@ -645,17 +643,17 @@ By default, the SDK will not throw an exception in this case. It will throw [`Au
 If you would prefer to check that the response is completely well-typed upfront, then either call `validate()`:
 
 ```java
-import io.autorender.models.uploads.Upload;
+import io.autorender.models.uploads.UploadCreateResponse;
 
-Upload upload = client.uploads().create(params).validate();
+UploadCreateResponse upload = client.uploads().create(params).validate();
 ```
 
 Or configure the method call to validate the response using the `responseValidation` method:
 
 ```java
-import io.autorender.models.uploads.Upload;
+import io.autorender.models.uploads.UploadCreateResponse;
 
-Upload upload = client.uploads().create(
+UploadCreateResponse upload = client.uploads().create(
   params, RequestOptions.builder().responseValidation(true).build()
 );
 ```

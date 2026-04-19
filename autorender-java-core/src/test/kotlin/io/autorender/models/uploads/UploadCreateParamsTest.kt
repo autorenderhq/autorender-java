@@ -13,13 +13,14 @@ internal class UploadCreateParamsTest {
     fun create() {
         UploadCreateParams.builder()
             .file("Example data".byteInputStream())
-            .fileName("file_name")
-            .customId("custom_id")
-            .folder("folder")
-            .metadata("metadata")
+            .fileName("product.jpg")
+            .customId("sku123")
+            .folder("products/sku123")
+            .metadata("{\"productId\":\"123\"}")
             .randomPrefix("random_prefix")
-            .tags("tags")
+            .tags("product,thumbnail")
             .transform("transform")
+            .webhookUrl("webhook_url")
             .build()
     }
 
@@ -28,13 +29,14 @@ internal class UploadCreateParamsTest {
         val params =
             UploadCreateParams.builder()
                 .file("Example data".byteInputStream())
-                .fileName("file_name")
-                .customId("custom_id")
-                .folder("folder")
-                .metadata("metadata")
+                .fileName("product.jpg")
+                .customId("sku123")
+                .folder("products/sku123")
+                .metadata("{\"productId\":\"123\"}")
                 .randomPrefix("random_prefix")
-                .tags("tags")
+                .tags("product,thumbnail")
                 .transform("transform")
+                .webhookUrl("webhook_url")
                 .build()
 
         val body = params._body()
@@ -50,13 +52,14 @@ internal class UploadCreateParamsTest {
             .isEqualTo(
                 mapOf(
                         "file" to MultipartField.of("Example data".byteInputStream()),
-                        "file_name" to MultipartField.of("file_name"),
-                        "custom_id" to MultipartField.of("custom_id"),
-                        "folder" to MultipartField.of("folder"),
-                        "metadata" to MultipartField.of("metadata"),
+                        "file_name" to MultipartField.of("product.jpg"),
+                        "custom_id" to MultipartField.of("sku123"),
+                        "folder" to MultipartField.of("products/sku123"),
+                        "metadata" to MultipartField.of("{\"productId\":\"123\"}"),
                         "random_prefix" to MultipartField.of("random_prefix"),
-                        "tags" to MultipartField.of("tags"),
+                        "tags" to MultipartField.of("product,thumbnail"),
                         "transform" to MultipartField.of("transform"),
+                        "webhook_url" to MultipartField.of("webhook_url"),
                     )
                     .mapValues { (_, field) ->
                         field.map { (it as? ByteArray)?.inputStream() ?: it }
@@ -69,7 +72,7 @@ internal class UploadCreateParamsTest {
         val params =
             UploadCreateParams.builder()
                 .file("Example data".byteInputStream())
-                .fileName("file_name")
+                .fileName("product.jpg")
                 .build()
 
         val body = params._body()
@@ -85,7 +88,7 @@ internal class UploadCreateParamsTest {
             .isEqualTo(
                 mapOf(
                         "file" to MultipartField.of("Example data".byteInputStream()),
-                        "file_name" to MultipartField.of("file_name"),
+                        "file_name" to MultipartField.of("product.jpg"),
                     )
                     .mapValues { (_, field) ->
                         field.map { (it as? ByteArray)?.inputStream() ?: it }

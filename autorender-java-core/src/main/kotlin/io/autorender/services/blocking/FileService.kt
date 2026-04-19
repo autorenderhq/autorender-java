@@ -5,17 +5,18 @@ package io.autorender.services.blocking
 import com.google.errorprone.annotations.MustBeClosed
 import io.autorender.core.ClientOptions
 import io.autorender.core.RequestOptions
+import io.autorender.core.http.HttpResponse
 import io.autorender.core.http.HttpResponseFor
 import io.autorender.models.files.FileDeleteParams
-import io.autorender.models.files.FileDeleteResponse
 import io.autorender.models.files.FileListParams
 import io.autorender.models.files.FileListResponse
-import io.autorender.models.files.FileObject
 import io.autorender.models.files.FileRenameParams
 import io.autorender.models.files.FileRenameResponse
 import io.autorender.models.files.FileRetrieveParams
+import io.autorender.models.files.FileRetrieveResponse
 import java.util.function.Consumer
 
+/** File management endpoints (API key required) */
 interface FileService {
 
     /**
@@ -30,39 +31,37 @@ interface FileService {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): FileService
 
-    /** Retrieve detailed information about a file by numeric file id (`file_no`). */
-    fun retrieve(fileNo: String): FileObject = retrieve(fileNo, FileRetrieveParams.none())
+    /** Get file details */
+    fun retrieve(fileNo: String): FileRetrieveResponse = retrieve(fileNo, FileRetrieveParams.none())
 
     /** @see retrieve */
     fun retrieve(
         fileNo: String,
         params: FileRetrieveParams = FileRetrieveParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): FileObject = retrieve(params.toBuilder().fileNo(fileNo).build(), requestOptions)
+    ): FileRetrieveResponse = retrieve(params.toBuilder().fileNo(fileNo).build(), requestOptions)
 
     /** @see retrieve */
     fun retrieve(
         fileNo: String,
         params: FileRetrieveParams = FileRetrieveParams.none(),
-    ): FileObject = retrieve(fileNo, params, RequestOptions.none())
+    ): FileRetrieveResponse = retrieve(fileNo, params, RequestOptions.none())
 
     /** @see retrieve */
     fun retrieve(
         params: FileRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): FileObject
+    ): FileRetrieveResponse
 
     /** @see retrieve */
-    fun retrieve(params: FileRetrieveParams): FileObject = retrieve(params, RequestOptions.none())
+    fun retrieve(params: FileRetrieveParams): FileRetrieveResponse =
+        retrieve(params, RequestOptions.none())
 
     /** @see retrieve */
-    fun retrieve(fileNo: String, requestOptions: RequestOptions): FileObject =
+    fun retrieve(fileNo: String, requestOptions: RequestOptions): FileRetrieveResponse =
         retrieve(fileNo, FileRetrieveParams.none(), requestOptions)
 
-    /**
-     * Paginated list of files in the workspace. Filter by folder, sort by field and order, and page
-     * through results.
-     */
+    /** List/search files with pagination, filtering, and sorting. */
     fun list(): FileListResponse = list(FileListParams.none())
 
     /** @see list */
@@ -79,39 +78,31 @@ interface FileService {
     fun list(requestOptions: RequestOptions): FileListResponse =
         list(FileListParams.none(), requestOptions)
 
-    /** Permanently delete a file. No request body is required. */
-    fun delete(fileNo: String): FileDeleteResponse = delete(fileNo, FileDeleteParams.none())
+    /** Delete file */
+    fun delete(fileNo: String) = delete(fileNo, FileDeleteParams.none())
 
     /** @see delete */
     fun delete(
         fileNo: String,
         params: FileDeleteParams = FileDeleteParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): FileDeleteResponse = delete(params.toBuilder().fileNo(fileNo).build(), requestOptions)
+    ) = delete(params.toBuilder().fileNo(fileNo).build(), requestOptions)
 
     /** @see delete */
-    fun delete(
-        fileNo: String,
-        params: FileDeleteParams = FileDeleteParams.none(),
-    ): FileDeleteResponse = delete(fileNo, params, RequestOptions.none())
+    fun delete(fileNo: String, params: FileDeleteParams = FileDeleteParams.none()) =
+        delete(fileNo, params, RequestOptions.none())
 
     /** @see delete */
-    fun delete(
-        params: FileDeleteParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): FileDeleteResponse
+    fun delete(params: FileDeleteParams, requestOptions: RequestOptions = RequestOptions.none())
 
     /** @see delete */
-    fun delete(params: FileDeleteParams): FileDeleteResponse = delete(params, RequestOptions.none())
+    fun delete(params: FileDeleteParams) = delete(params, RequestOptions.none())
 
     /** @see delete */
-    fun delete(fileNo: String, requestOptions: RequestOptions): FileDeleteResponse =
+    fun delete(fileNo: String, requestOptions: RequestOptions) =
         delete(fileNo, FileDeleteParams.none(), requestOptions)
 
-    /**
-     * Rename a file. The API may preserve or normalize the file extension (e.g. `demo` →
-     * `demo.png`).
-     */
+    /** Rename file */
     fun rename(fileNo: String, params: FileRenameParams): FileRenameResponse =
         rename(fileNo, params, RequestOptions.none())
 
@@ -146,7 +137,7 @@ interface FileService {
          * as [FileService.retrieve].
          */
         @MustBeClosed
-        fun retrieve(fileNo: String): HttpResponseFor<FileObject> =
+        fun retrieve(fileNo: String): HttpResponseFor<FileRetrieveResponse> =
             retrieve(fileNo, FileRetrieveParams.none())
 
         /** @see retrieve */
@@ -155,7 +146,7 @@ interface FileService {
             fileNo: String,
             params: FileRetrieveParams = FileRetrieveParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<FileObject> =
+        ): HttpResponseFor<FileRetrieveResponse> =
             retrieve(params.toBuilder().fileNo(fileNo).build(), requestOptions)
 
         /** @see retrieve */
@@ -163,23 +154,26 @@ interface FileService {
         fun retrieve(
             fileNo: String,
             params: FileRetrieveParams = FileRetrieveParams.none(),
-        ): HttpResponseFor<FileObject> = retrieve(fileNo, params, RequestOptions.none())
+        ): HttpResponseFor<FileRetrieveResponse> = retrieve(fileNo, params, RequestOptions.none())
 
         /** @see retrieve */
         @MustBeClosed
         fun retrieve(
             params: FileRetrieveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<FileObject>
+        ): HttpResponseFor<FileRetrieveResponse>
 
         /** @see retrieve */
         @MustBeClosed
-        fun retrieve(params: FileRetrieveParams): HttpResponseFor<FileObject> =
+        fun retrieve(params: FileRetrieveParams): HttpResponseFor<FileRetrieveResponse> =
             retrieve(params, RequestOptions.none())
 
         /** @see retrieve */
         @MustBeClosed
-        fun retrieve(fileNo: String, requestOptions: RequestOptions): HttpResponseFor<FileObject> =
+        fun retrieve(
+            fileNo: String,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<FileRetrieveResponse> =
             retrieve(fileNo, FileRetrieveParams.none(), requestOptions)
 
         /**
@@ -211,8 +205,7 @@ interface FileService {
          * same as [FileService.delete].
          */
         @MustBeClosed
-        fun delete(fileNo: String): HttpResponseFor<FileDeleteResponse> =
-            delete(fileNo, FileDeleteParams.none())
+        fun delete(fileNo: String): HttpResponse = delete(fileNo, FileDeleteParams.none())
 
         /** @see delete */
         @MustBeClosed
@@ -220,34 +213,29 @@ interface FileService {
             fileNo: String,
             params: FileDeleteParams = FileDeleteParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<FileDeleteResponse> =
-            delete(params.toBuilder().fileNo(fileNo).build(), requestOptions)
+        ): HttpResponse = delete(params.toBuilder().fileNo(fileNo).build(), requestOptions)
 
         /** @see delete */
         @MustBeClosed
         fun delete(
             fileNo: String,
             params: FileDeleteParams = FileDeleteParams.none(),
-        ): HttpResponseFor<FileDeleteResponse> = delete(fileNo, params, RequestOptions.none())
+        ): HttpResponse = delete(fileNo, params, RequestOptions.none())
 
         /** @see delete */
         @MustBeClosed
         fun delete(
             params: FileDeleteParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<FileDeleteResponse>
+        ): HttpResponse
 
         /** @see delete */
         @MustBeClosed
-        fun delete(params: FileDeleteParams): HttpResponseFor<FileDeleteResponse> =
-            delete(params, RequestOptions.none())
+        fun delete(params: FileDeleteParams): HttpResponse = delete(params, RequestOptions.none())
 
         /** @see delete */
         @MustBeClosed
-        fun delete(
-            fileNo: String,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<FileDeleteResponse> =
+        fun delete(fileNo: String, requestOptions: RequestOptions): HttpResponse =
             delete(fileNo, FileDeleteParams.none(), requestOptions)
 
         /**

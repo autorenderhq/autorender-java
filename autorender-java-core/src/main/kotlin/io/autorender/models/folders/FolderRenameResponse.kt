@@ -18,8 +18,8 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Folder created */
-class FolderCreateResponse
+/** Renamed folder */
+class FolderRenameResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val id: JsonField<String>,
@@ -161,7 +161,7 @@ private constructor(
     companion object {
 
         /**
-         * Returns a mutable builder for constructing an instance of [FolderCreateResponse].
+         * Returns a mutable builder for constructing an instance of [FolderRenameResponse].
          *
          * The following fields are required:
          * ```java
@@ -177,7 +177,7 @@ private constructor(
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [FolderCreateResponse]. */
+    /** A builder for [FolderRenameResponse]. */
     class Builder internal constructor() {
 
         private var id: JsonField<String>? = null
@@ -190,15 +190,15 @@ private constructor(
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(folderCreateResponse: FolderCreateResponse) = apply {
-            id = folderCreateResponse.id
-            createdAt = folderCreateResponse.createdAt
-            folderNo = folderCreateResponse.folderNo
-            name = folderCreateResponse.name
-            parentFolderNo = folderCreateResponse.parentFolderNo
-            path = folderCreateResponse.path
-            updatedAt = folderCreateResponse.updatedAt
-            additionalProperties = folderCreateResponse.additionalProperties.toMutableMap()
+        internal fun from(folderRenameResponse: FolderRenameResponse) = apply {
+            id = folderRenameResponse.id
+            createdAt = folderRenameResponse.createdAt
+            folderNo = folderRenameResponse.folderNo
+            name = folderRenameResponse.name
+            parentFolderNo = folderRenameResponse.parentFolderNo
+            path = folderRenameResponse.path
+            updatedAt = folderRenameResponse.updatedAt
+            additionalProperties = folderRenameResponse.additionalProperties.toMutableMap()
         }
 
         fun id(id: String) = id(JsonField.of(id))
@@ -304,7 +304,7 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [FolderCreateResponse].
+         * Returns an immutable instance of [FolderRenameResponse].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          *
@@ -321,8 +321,8 @@ private constructor(
          *
          * @throws IllegalStateException if any required field is unset.
          */
-        fun build(): FolderCreateResponse =
-            FolderCreateResponse(
+        fun build(): FolderRenameResponse =
+            FolderRenameResponse(
                 checkRequired("id", id),
                 checkRequired("createdAt", createdAt),
                 checkRequired("folderNo", folderNo),
@@ -336,7 +336,7 @@ private constructor(
 
     private var validated: Boolean = false
 
-    fun validate(): FolderCreateResponse = apply {
+    fun validate(): FolderRenameResponse = apply {
         if (validated) {
             return@apply
         }
@@ -379,7 +379,7 @@ private constructor(
             return true
         }
 
-        return other is FolderCreateResponse &&
+        return other is FolderRenameResponse &&
             id == other.id &&
             createdAt == other.createdAt &&
             folderNo == other.folderNo &&
@@ -406,5 +406,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "FolderCreateResponse{id=$id, createdAt=$createdAt, folderNo=$folderNo, name=$name, parentFolderNo=$parentFolderNo, path=$path, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
+        "FolderRenameResponse{id=$id, createdAt=$createdAt, folderNo=$folderNo, name=$name, parentFolderNo=$parentFolderNo, path=$path, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
 }

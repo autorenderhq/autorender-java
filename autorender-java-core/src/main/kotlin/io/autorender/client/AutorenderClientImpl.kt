@@ -42,10 +42,13 @@ class AutorenderClientImpl(private val clientOptions: ClientOptions) : Autorende
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): AutorenderClient =
         AutorenderClientImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
+    /** Upload endpoints (API key required) */
     override fun uploads(): UploadService = uploads
 
+    /** File management endpoints (API key required) */
     override fun files(): FileService = files
 
+    /** Folder management endpoints (API key required) */
     override fun folders(): FolderService = folders
 
     override fun close() = clientOptions.close()
@@ -72,10 +75,13 @@ class AutorenderClientImpl(private val clientOptions: ClientOptions) : Autorende
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
+        /** Upload endpoints (API key required) */
         override fun uploads(): UploadService.WithRawResponse = uploads
 
+        /** File management endpoints (API key required) */
         override fun files(): FileService.WithRawResponse = files
 
+        /** Folder management endpoints (API key required) */
         override fun folders(): FolderService.WithRawResponse = folders
     }
 }

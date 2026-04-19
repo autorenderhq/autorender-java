@@ -407,11 +407,6 @@ private constructor(
             // We replace after all the default headers to allow end-users to overwrite them.
             headers.replaceAll(this.headers.build())
             queryParams.replaceAll(this.queryParams.build())
-            apiKey?.let {
-                if (!it.isEmpty()) {
-                    headers.replace("Authorization", "Bearer $it")
-                }
-            }
 
             return ClientOptions(
                 httpClient,

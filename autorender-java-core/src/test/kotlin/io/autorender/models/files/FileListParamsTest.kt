@@ -11,13 +11,12 @@ internal class FileListParamsTest {
     @Test
     fun create() {
         FileListParams.builder()
-            .folderNo("folder_no")
-            .limit(0L)
+            .folderNo("folderNo")
+            .limit(1L)
             .name("name")
-            .page(0L)
+            .page(1L)
             .path("path")
-            .sortField(FileListParams.SortField.FILE_SIZE)
-            .sortOrder(FileListParams.SortOrder.ASC)
+            .sort(FileListParams.Sort.CREATED_AT_ASC)
             .tags("tags")
             .build()
     }
@@ -26,13 +25,12 @@ internal class FileListParamsTest {
     fun queryParams() {
         val params =
             FileListParams.builder()
-                .folderNo("folder_no")
-                .limit(0L)
+                .folderNo("folderNo")
+                .limit(1L)
                 .name("name")
-                .page(0L)
+                .page(1L)
                 .path("path")
-                .sortField(FileListParams.SortField.FILE_SIZE)
-                .sortOrder(FileListParams.SortOrder.ASC)
+                .sort(FileListParams.Sort.CREATED_AT_ASC)
                 .tags("tags")
                 .build()
 
@@ -41,13 +39,12 @@ internal class FileListParamsTest {
         assertThat(queryParams)
             .isEqualTo(
                 QueryParams.builder()
-                    .put("folder_no", "folder_no")
-                    .put("limit", "0")
+                    .put("folderNo", "folderNo")
+                    .put("limit", "1")
                     .put("name", "name")
-                    .put("page", "0")
+                    .put("page", "1")
                     .put("path", "path")
-                    .put("sort_field", "file_size")
-                    .put("sort_order", "asc")
+                    .put("sort", "created_at_asc")
                     .put("tags", "tags")
                     .build()
             )

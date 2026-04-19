@@ -22,10 +22,7 @@ import java.util.Optional
 import kotlin.io.path.inputStream
 import kotlin.io.path.name
 
-/**
- * Upload a file to your AutoRender workspace with optional transformations, tags, and folder
- * organization
- */
+/** Upload a file from your backend server using multipart/form-data. */
 class UploadCreateParams
 private constructor(
     private val body: Body,
@@ -34,7 +31,7 @@ private constructor(
 ) : Params {
 
     /**
-     * The file to upload (binary data)
+     * File to upload.
      *
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
@@ -42,7 +39,7 @@ private constructor(
     fun file(): InputStream = body.file()
 
     /**
-     * File name for the uploaded file (e.g., my-image.jpg)
+     * File name (e.g. product.jpg)
      *
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
@@ -50,7 +47,7 @@ private constructor(
     fun fileName(): String = body.fileName()
 
     /**
-     * Custom identifier for the file
+     * Custom identifier
      *
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -58,7 +55,7 @@ private constructor(
     fun customId(): Optional<String> = body.customId()
 
     /**
-     * Folder path where the file will be stored (e.g., uploads/my-folder)
+     * Optional folder path
      *
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -66,7 +63,7 @@ private constructor(
     fun folder(): Optional<String> = body.folder()
 
     /**
-     * JSON string for custom metadata (e.g., {"key": "value"})
+     * JSON string of metadata
      *
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -74,7 +71,7 @@ private constructor(
     fun metadata(): Optional<String> = body.metadata()
 
     /**
-     * Set to "true" to add a random suffix to filename
+     * true/false to append random suffix
      *
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -82,7 +79,7 @@ private constructor(
     fun randomPrefix(): Optional<String> = body.randomPrefix()
 
     /**
-     * Comma-separated tags (e.g., tag1,tag2,tag3)
+     * Comma-separated tags
      *
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -90,12 +87,20 @@ private constructor(
     fun tags(): Optional<String> = body.tags()
 
     /**
-     * Image transformation string (e.g., w_800,h_600,q_90)
+     * Transform string (w_300,h_300,c_crop,...)
      *
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun transform(): Optional<String> = body.transform()
+
+    /**
+     * URL to notify on success
+     *
+     * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun webhookUrl(): Optional<String> = body.webhookUrl()
 
     /**
      * Returns the raw multipart value of [file].
@@ -154,6 +159,13 @@ private constructor(
      */
     fun _transform(): MultipartField<String> = body._transform()
 
+    /**
+     * Returns the raw multipart value of [webhookUrl].
+     *
+     * Unlike [webhookUrl], this method doesn't throw if the multipart field has an unexpected type.
+     */
+    fun _webhookUrl(): MultipartField<String> = body._webhookUrl()
+
     fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
     /** Additional headers to send with the request. */
@@ -206,7 +218,7 @@ private constructor(
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
-        /** The file to upload (binary data) */
+        /** File to upload. */
         fun file(file: InputStream) = apply { body.file(file) }
 
         /**
@@ -218,13 +230,13 @@ private constructor(
          */
         fun file(file: MultipartField<InputStream>) = apply { body.file(file) }
 
-        /** The file to upload (binary data) */
+        /** File to upload. */
         fun file(file: ByteArray) = apply { body.file(file) }
 
-        /** The file to upload (binary data) */
+        /** File to upload. */
         fun file(path: Path) = apply { body.file(path) }
 
-        /** File name for the uploaded file (e.g., my-image.jpg) */
+        /** File name (e.g. product.jpg) */
         fun fileName(fileName: String) = apply { body.fileName(fileName) }
 
         /**
@@ -235,7 +247,7 @@ private constructor(
          */
         fun fileName(fileName: MultipartField<String>) = apply { body.fileName(fileName) }
 
-        /** Custom identifier for the file */
+        /** Custom identifier */
         fun customId(customId: String) = apply { body.customId(customId) }
 
         /**
@@ -246,7 +258,7 @@ private constructor(
          */
         fun customId(customId: MultipartField<String>) = apply { body.customId(customId) }
 
-        /** Folder path where the file will be stored (e.g., uploads/my-folder) */
+        /** Optional folder path */
         fun folder(folder: String) = apply { body.folder(folder) }
 
         /**
@@ -257,7 +269,7 @@ private constructor(
          */
         fun folder(folder: MultipartField<String>) = apply { body.folder(folder) }
 
-        /** JSON string for custom metadata (e.g., {"key": "value"}) */
+        /** JSON string of metadata */
         fun metadata(metadata: String) = apply { body.metadata(metadata) }
 
         /**
@@ -268,7 +280,7 @@ private constructor(
          */
         fun metadata(metadata: MultipartField<String>) = apply { body.metadata(metadata) }
 
-        /** Set to "true" to add a random suffix to filename */
+        /** true/false to append random suffix */
         fun randomPrefix(randomPrefix: String) = apply { body.randomPrefix(randomPrefix) }
 
         /**
@@ -282,7 +294,7 @@ private constructor(
             body.randomPrefix(randomPrefix)
         }
 
-        /** Comma-separated tags (e.g., tag1,tag2,tag3) */
+        /** Comma-separated tags */
         fun tags(tags: String) = apply { body.tags(tags) }
 
         /**
@@ -293,7 +305,7 @@ private constructor(
          */
         fun tags(tags: MultipartField<String>) = apply { body.tags(tags) }
 
-        /** Image transformation string (e.g., w_800,h_600,q_90) */
+        /** Transform string (w_300,h_300,c_crop,...) */
         fun transform(transform: String) = apply { body.transform(transform) }
 
         /**
@@ -304,6 +316,18 @@ private constructor(
          * value.
          */
         fun transform(transform: MultipartField<String>) = apply { body.transform(transform) }
+
+        /** URL to notify on success */
+        fun webhookUrl(webhookUrl: String) = apply { body.webhookUrl(webhookUrl) }
+
+        /**
+         * Sets [Builder.webhookUrl] to an arbitrary multipart value.
+         *
+         * You should usually call [Builder.webhookUrl] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun webhookUrl(webhookUrl: MultipartField<String>) = apply { body.webhookUrl(webhookUrl) }
 
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
             body.additionalProperties(additionalBodyProperties)
@@ -453,6 +477,7 @@ private constructor(
                 "random_prefix" to _randomPrefix(),
                 "tags" to _tags(),
                 "transform" to _transform(),
+                "webhook_url" to _webhookUrl(),
             ) + _additionalBodyProperties().mapValues { (_, value) -> MultipartField.of(value) })
             .toImmutable()
 
@@ -470,11 +495,12 @@ private constructor(
         private val randomPrefix: MultipartField<String>,
         private val tags: MultipartField<String>,
         private val transform: MultipartField<String>,
+        private val webhookUrl: MultipartField<String>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
         /**
-         * The file to upload (binary data)
+         * File to upload.
          *
          * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
@@ -482,7 +508,7 @@ private constructor(
         fun file(): InputStream = file.value.getRequired("file")
 
         /**
-         * File name for the uploaded file (e.g., my-image.jpg)
+         * File name (e.g. product.jpg)
          *
          * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
@@ -490,7 +516,7 @@ private constructor(
         fun fileName(): String = fileName.value.getRequired("file_name")
 
         /**
-         * Custom identifier for the file
+         * Custom identifier
          *
          * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -498,7 +524,7 @@ private constructor(
         fun customId(): Optional<String> = customId.value.getOptional("custom_id")
 
         /**
-         * Folder path where the file will be stored (e.g., uploads/my-folder)
+         * Optional folder path
          *
          * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -506,7 +532,7 @@ private constructor(
         fun folder(): Optional<String> = folder.value.getOptional("folder")
 
         /**
-         * JSON string for custom metadata (e.g., {"key": "value"})
+         * JSON string of metadata
          *
          * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -514,7 +540,7 @@ private constructor(
         fun metadata(): Optional<String> = metadata.value.getOptional("metadata")
 
         /**
-         * Set to "true" to add a random suffix to filename
+         * true/false to append random suffix
          *
          * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -522,7 +548,7 @@ private constructor(
         fun randomPrefix(): Optional<String> = randomPrefix.value.getOptional("random_prefix")
 
         /**
-         * Comma-separated tags (e.g., tag1,tag2,tag3)
+         * Comma-separated tags
          *
          * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -530,12 +556,20 @@ private constructor(
         fun tags(): Optional<String> = tags.value.getOptional("tags")
 
         /**
-         * Image transformation string (e.g., w_800,h_600,q_90)
+         * Transform string (w_300,h_300,c_crop,...)
          *
          * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun transform(): Optional<String> = transform.value.getOptional("transform")
+
+        /**
+         * URL to notify on success
+         *
+         * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun webhookUrl(): Optional<String> = webhookUrl.value.getOptional("webhook_url")
 
         /**
          * Returns the raw multipart value of [file].
@@ -606,6 +640,16 @@ private constructor(
         @ExcludeMissing
         fun _transform(): MultipartField<String> = transform
 
+        /**
+         * Returns the raw multipart value of [webhookUrl].
+         *
+         * Unlike [webhookUrl], this method doesn't throw if the multipart field has an unexpected
+         * type.
+         */
+        @JsonProperty("webhook_url")
+        @ExcludeMissing
+        fun _webhookUrl(): MultipartField<String> = webhookUrl
+
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
             additionalProperties.put(key, value)
@@ -643,6 +687,7 @@ private constructor(
             private var randomPrefix: MultipartField<String> = MultipartField.of(null)
             private var tags: MultipartField<String> = MultipartField.of(null)
             private var transform: MultipartField<String> = MultipartField.of(null)
+            private var webhookUrl: MultipartField<String> = MultipartField.of(null)
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
@@ -655,10 +700,11 @@ private constructor(
                 randomPrefix = body.randomPrefix
                 tags = body.tags
                 transform = body.transform
+                webhookUrl = body.webhookUrl
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
-            /** The file to upload (binary data) */
+            /** File to upload. */
             fun file(file: InputStream) = file(MultipartField.of(file))
 
             /**
@@ -670,10 +716,10 @@ private constructor(
              */
             fun file(file: MultipartField<InputStream>) = apply { this.file = file }
 
-            /** The file to upload (binary data) */
+            /** File to upload. */
             fun file(file: ByteArray) = file(file.inputStream())
 
-            /** The file to upload (binary data) */
+            /** File to upload. */
             fun file(path: Path) =
                 file(
                     MultipartField.builder<InputStream>()
@@ -682,7 +728,7 @@ private constructor(
                         .build()
                 )
 
-            /** File name for the uploaded file (e.g., my-image.jpg) */
+            /** File name (e.g. product.jpg) */
             fun fileName(fileName: String) = fileName(MultipartField.of(fileName))
 
             /**
@@ -694,7 +740,7 @@ private constructor(
              */
             fun fileName(fileName: MultipartField<String>) = apply { this.fileName = fileName }
 
-            /** Custom identifier for the file */
+            /** Custom identifier */
             fun customId(customId: String) = customId(MultipartField.of(customId))
 
             /**
@@ -706,7 +752,7 @@ private constructor(
              */
             fun customId(customId: MultipartField<String>) = apply { this.customId = customId }
 
-            /** Folder path where the file will be stored (e.g., uploads/my-folder) */
+            /** Optional folder path */
             fun folder(folder: String) = folder(MultipartField.of(folder))
 
             /**
@@ -718,7 +764,7 @@ private constructor(
              */
             fun folder(folder: MultipartField<String>) = apply { this.folder = folder }
 
-            /** JSON string for custom metadata (e.g., {"key": "value"}) */
+            /** JSON string of metadata */
             fun metadata(metadata: String) = metadata(MultipartField.of(metadata))
 
             /**
@@ -730,7 +776,7 @@ private constructor(
              */
             fun metadata(metadata: MultipartField<String>) = apply { this.metadata = metadata }
 
-            /** Set to "true" to add a random suffix to filename */
+            /** true/false to append random suffix */
             fun randomPrefix(randomPrefix: String) = randomPrefix(MultipartField.of(randomPrefix))
 
             /**
@@ -744,7 +790,7 @@ private constructor(
                 this.randomPrefix = randomPrefix
             }
 
-            /** Comma-separated tags (e.g., tag1,tag2,tag3) */
+            /** Comma-separated tags */
             fun tags(tags: String) = tags(MultipartField.of(tags))
 
             /**
@@ -756,7 +802,7 @@ private constructor(
              */
             fun tags(tags: MultipartField<String>) = apply { this.tags = tags }
 
-            /** Image transformation string (e.g., w_800,h_600,q_90) */
+            /** Transform string (w_300,h_300,c_crop,...) */
             fun transform(transform: String) = transform(MultipartField.of(transform))
 
             /**
@@ -767,6 +813,20 @@ private constructor(
              * supported value.
              */
             fun transform(transform: MultipartField<String>) = apply { this.transform = transform }
+
+            /** URL to notify on success */
+            fun webhookUrl(webhookUrl: String) = webhookUrl(MultipartField.of(webhookUrl))
+
+            /**
+             * Sets [Builder.webhookUrl] to an arbitrary multipart value.
+             *
+             * You should usually call [Builder.webhookUrl] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun webhookUrl(webhookUrl: MultipartField<String>) = apply {
+                this.webhookUrl = webhookUrl
+            }
 
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
@@ -810,6 +870,7 @@ private constructor(
                     randomPrefix,
                     tags,
                     transform,
+                    webhookUrl,
                     additionalProperties.toMutableMap(),
                 )
         }
@@ -829,6 +890,7 @@ private constructor(
             randomPrefix()
             tags()
             transform()
+            webhookUrl()
             validated = true
         }
 
@@ -854,6 +916,7 @@ private constructor(
                 randomPrefix == other.randomPrefix &&
                 tags == other.tags &&
                 transform == other.transform &&
+                webhookUrl == other.webhookUrl &&
                 additionalProperties == other.additionalProperties
         }
 
@@ -867,6 +930,7 @@ private constructor(
                 randomPrefix,
                 tags,
                 transform,
+                webhookUrl,
                 additionalProperties,
             )
         }
@@ -874,7 +938,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{file=$file, fileName=$fileName, customId=$customId, folder=$folder, metadata=$metadata, randomPrefix=$randomPrefix, tags=$tags, transform=$transform, additionalProperties=$additionalProperties}"
+            "Body{file=$file, fileName=$fileName, customId=$customId, folder=$folder, metadata=$metadata, randomPrefix=$randomPrefix, tags=$tags, transform=$transform, webhookUrl=$webhookUrl, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

@@ -11,7 +11,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Permanently delete a file. No request body is required. */
+/** Delete file */
 class FileDeleteParams
 private constructor(
     private val fileNo: String?,

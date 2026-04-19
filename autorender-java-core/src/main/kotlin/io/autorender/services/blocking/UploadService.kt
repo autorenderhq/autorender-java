@@ -6,11 +6,13 @@ import com.google.errorprone.annotations.MustBeClosed
 import io.autorender.core.ClientOptions
 import io.autorender.core.RequestOptions
 import io.autorender.core.http.HttpResponseFor
-import io.autorender.models.uploads.Upload
 import io.autorender.models.uploads.UploadCreateFromUrlParams
+import io.autorender.models.uploads.UploadCreateFromUrlResponse
 import io.autorender.models.uploads.UploadCreateParams
+import io.autorender.models.uploads.UploadCreateResponse
 import java.util.function.Consumer
 
+/** Upload endpoints (API key required) */
 interface UploadService {
 
     /**
@@ -25,27 +27,25 @@ interface UploadService {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): UploadService
 
-    /**
-     * Upload a file to your AutoRender workspace with optional transformations, tags, and folder
-     * organization
-     */
-    fun create(params: UploadCreateParams): Upload = create(params, RequestOptions.none())
+    /** Upload a file from your backend server using multipart/form-data. */
+    fun create(params: UploadCreateParams): UploadCreateResponse =
+        create(params, RequestOptions.none())
 
     /** @see create */
     fun create(
         params: UploadCreateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): Upload
+    ): UploadCreateResponse
 
-    /** Fetch a file from a remote URL and store it in your AutoRender workspace. */
-    fun createFromUrl(params: UploadCreateFromUrlParams): Upload =
+    /** Download a file from a remote URL and store it in AutoRender. */
+    fun createFromUrl(params: UploadCreateFromUrlParams): UploadCreateFromUrlResponse =
         createFromUrl(params, RequestOptions.none())
 
     /** @see createFromUrl */
     fun createFromUrl(
         params: UploadCreateFromUrlParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): Upload
+    ): UploadCreateFromUrlResponse
 
     /** A view of [UploadService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
@@ -62,7 +62,7 @@ interface UploadService {
          * [UploadService.create].
          */
         @MustBeClosed
-        fun create(params: UploadCreateParams): HttpResponseFor<Upload> =
+        fun create(params: UploadCreateParams): HttpResponseFor<UploadCreateResponse> =
             create(params, RequestOptions.none())
 
         /** @see create */
@@ -70,14 +70,16 @@ interface UploadService {
         fun create(
             params: UploadCreateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<Upload>
+        ): HttpResponseFor<UploadCreateResponse>
 
         /**
          * Returns a raw HTTP response for `post /api/v1/uploads/remote`, but is otherwise the same
          * as [UploadService.createFromUrl].
          */
         @MustBeClosed
-        fun createFromUrl(params: UploadCreateFromUrlParams): HttpResponseFor<Upload> =
+        fun createFromUrl(
+            params: UploadCreateFromUrlParams
+        ): HttpResponseFor<UploadCreateFromUrlResponse> =
             createFromUrl(params, RequestOptions.none())
 
         /** @see createFromUrl */
@@ -85,6 +87,6 @@ interface UploadService {
         fun createFromUrl(
             params: UploadCreateFromUrlParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<Upload>
+        ): HttpResponseFor<UploadCreateFromUrlResponse>
     }
 }

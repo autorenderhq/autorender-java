@@ -5,6 +5,7 @@ package io.autorender.services.async
 import io.autorender.core.ClientOptions
 import io.autorender.core.RequestOptions
 import io.autorender.core.checkRequired
+import io.autorender.core.handlers.emptyHandler
 import io.autorender.core.handlers.errorBodyHandler
 import io.autorender.core.handlers.errorHandler
 import io.autorender.core.handlers.jsonHandler
@@ -16,18 +17,16 @@ import io.autorender.core.http.HttpResponseFor
 import io.autorender.core.http.json
 import io.autorender.core.http.parseable
 import io.autorender.core.prepareAsync
-import io.autorender.models.folders.Folder
 import io.autorender.models.folders.FolderCreateParams
 import io.autorender.models.folders.FolderCreateResponse
 import io.autorender.models.folders.FolderDeleteParams
-import io.autorender.models.folders.FolderDeleteResponse
-import io.autorender.models.folders.FolderListParams
-import io.autorender.models.folders.FolderListResponse
 import io.autorender.models.folders.FolderRenameParams
+import io.autorender.models.folders.FolderRenameResponse
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
+/** Folder management endpoints (API key required) */
 class FolderServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
     FolderServiceAsync {
 
@@ -47,24 +46,17 @@ class FolderServiceAsyncImpl internal constructor(private val clientOptions: Cli
         // post /api/v1/folders
         withRawResponse().create(params, requestOptions).thenApply { it.parse() }
 
-    override fun list(
-        params: FolderListParams,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<FolderListResponse> =
-        // get /api/v1/folders
-        withRawResponse().list(params, requestOptions).thenApply { it.parse() }
-
     override fun delete(
         params: FolderDeleteParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<FolderDeleteResponse> =
+    ): CompletableFuture<Void?> =
         // delete /api/v1/folders/{folderNo}
-        withRawResponse().delete(params, requestOptions).thenApply { it.parse() }
+        withRawResponse().delete(params, requestOptions).thenAccept {}
 
     override fun rename(
         params: FolderRenameParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<Folder> =
+    ): CompletableFuture<FolderRenameResponse> =
         // post /api/v1/folders/rename/{folderNo}
         withRawResponse().rename(params, requestOptions).thenApply { it.parse() }
 
@@ -112,43 +104,12 @@ class FolderServiceAsyncImpl internal constructor(private val clientOptions: Cli
                 }
         }
 
-        private val listHandler: Handler<FolderListResponse> =
-            jsonHandler<FolderListResponse>(clientOptions.jsonMapper)
-
-        override fun list(
-            params: FolderListParams,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<FolderListResponse>> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.GET)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "folders")
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            return request
-                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
-                .thenApply { response ->
-                    errorHandler.handle(response).parseable {
-                        response
-                            .use { listHandler.handle(it) }
-                            .also {
-                                if (requestOptions.responseValidation!!) {
-                                    it.validate()
-                                }
-                            }
-                    }
-                }
-        }
-
-        private val deleteHandler: Handler<FolderDeleteResponse> =
-            jsonHandler<FolderDeleteResponse>(clientOptions.jsonMapper)
+        private val deleteHandler: Handler<Void?> = emptyHandler()
 
         override fun delete(
             params: FolderDeleteParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<FolderDeleteResponse>> {
+        ): CompletableFuture<HttpResponse> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("folderNo", params.folderNo().getOrNull())
@@ -165,23 +126,18 @@ class FolderServiceAsyncImpl internal constructor(private val clientOptions: Cli
                 .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
                 .thenApply { response ->
                     errorHandler.handle(response).parseable {
-                        response
-                            .use { deleteHandler.handle(it) }
-                            .also {
-                                if (requestOptions.responseValidation!!) {
-                                    it.validate()
-                                }
-                            }
+                        response.use { deleteHandler.handle(it) }
                     }
                 }
         }
 
-        private val renameHandler: Handler<Folder> = jsonHandler<Folder>(clientOptions.jsonMapper)
+        private val renameHandler: Handler<FolderRenameResponse> =
+            jsonHandler<FolderRenameResponse>(clientOptions.jsonMapper)
 
         override fun rename(
             params: FolderRenameParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<Folder>> {
+        ): CompletableFuture<HttpResponseFor<FolderRenameResponse>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("folderNo", params.folderNo().getOrNull())

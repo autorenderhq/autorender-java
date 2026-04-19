@@ -44,10 +44,13 @@ interface AutorenderClientAsync {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): AutorenderClientAsync
 
+    /** Upload endpoints (API key required) */
     fun uploads(): UploadServiceAsync
 
+    /** File management endpoints (API key required) */
     fun files(): FileServiceAsync
 
+    /** Folder management endpoints (API key required) */
     fun folders(): FolderServiceAsync
 
     /**
@@ -77,10 +80,13 @@ interface AutorenderClientAsync {
             modifier: Consumer<ClientOptions.Builder>
         ): AutorenderClientAsync.WithRawResponse
 
+        /** Upload endpoints (API key required) */
         fun uploads(): UploadServiceAsync.WithRawResponse
 
+        /** File management endpoints (API key required) */
         fun files(): FileServiceAsync.WithRawResponse
 
+        /** Folder management endpoints (API key required) */
         fun folders(): FolderServiceAsync.WithRawResponse
     }
 }

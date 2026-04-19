@@ -4,18 +4,19 @@ package io.autorender.services.async
 
 import io.autorender.core.ClientOptions
 import io.autorender.core.RequestOptions
+import io.autorender.core.http.HttpResponse
 import io.autorender.core.http.HttpResponseFor
 import io.autorender.models.files.FileDeleteParams
-import io.autorender.models.files.FileDeleteResponse
 import io.autorender.models.files.FileListParams
 import io.autorender.models.files.FileListResponse
-import io.autorender.models.files.FileObject
 import io.autorender.models.files.FileRenameParams
 import io.autorender.models.files.FileRenameResponse
 import io.autorender.models.files.FileRetrieveParams
+import io.autorender.models.files.FileRetrieveResponse
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
+/** File management endpoints (API key required) */
 interface FileServiceAsync {
 
     /**
@@ -30,8 +31,8 @@ interface FileServiceAsync {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): FileServiceAsync
 
-    /** Retrieve detailed information about a file by numeric file id (`file_no`). */
-    fun retrieve(fileNo: String): CompletableFuture<FileObject> =
+    /** Get file details */
+    fun retrieve(fileNo: String): CompletableFuture<FileRetrieveResponse> =
         retrieve(fileNo, FileRetrieveParams.none())
 
     /** @see retrieve */
@@ -39,33 +40,33 @@ interface FileServiceAsync {
         fileNo: String,
         params: FileRetrieveParams = FileRetrieveParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<FileObject> =
+    ): CompletableFuture<FileRetrieveResponse> =
         retrieve(params.toBuilder().fileNo(fileNo).build(), requestOptions)
 
     /** @see retrieve */
     fun retrieve(
         fileNo: String,
         params: FileRetrieveParams = FileRetrieveParams.none(),
-    ): CompletableFuture<FileObject> = retrieve(fileNo, params, RequestOptions.none())
+    ): CompletableFuture<FileRetrieveResponse> = retrieve(fileNo, params, RequestOptions.none())
 
     /** @see retrieve */
     fun retrieve(
         params: FileRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<FileObject>
+    ): CompletableFuture<FileRetrieveResponse>
 
     /** @see retrieve */
-    fun retrieve(params: FileRetrieveParams): CompletableFuture<FileObject> =
+    fun retrieve(params: FileRetrieveParams): CompletableFuture<FileRetrieveResponse> =
         retrieve(params, RequestOptions.none())
 
     /** @see retrieve */
-    fun retrieve(fileNo: String, requestOptions: RequestOptions): CompletableFuture<FileObject> =
+    fun retrieve(
+        fileNo: String,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<FileRetrieveResponse> =
         retrieve(fileNo, FileRetrieveParams.none(), requestOptions)
 
-    /**
-     * Paginated list of files in the workspace. Filter by folder, sort by field and order, and page
-     * through results.
-     */
+    /** List/search files with pagination, filtering, and sorting. */
     fun list(): CompletableFuture<FileListResponse> = list(FileListParams.none())
 
     /** @see list */
@@ -82,45 +83,37 @@ interface FileServiceAsync {
     fun list(requestOptions: RequestOptions): CompletableFuture<FileListResponse> =
         list(FileListParams.none(), requestOptions)
 
-    /** Permanently delete a file. No request body is required. */
-    fun delete(fileNo: String): CompletableFuture<FileDeleteResponse> =
-        delete(fileNo, FileDeleteParams.none())
+    /** Delete file */
+    fun delete(fileNo: String): CompletableFuture<Void?> = delete(fileNo, FileDeleteParams.none())
 
     /** @see delete */
     fun delete(
         fileNo: String,
         params: FileDeleteParams = FileDeleteParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<FileDeleteResponse> =
-        delete(params.toBuilder().fileNo(fileNo).build(), requestOptions)
+    ): CompletableFuture<Void?> = delete(params.toBuilder().fileNo(fileNo).build(), requestOptions)
 
     /** @see delete */
     fun delete(
         fileNo: String,
         params: FileDeleteParams = FileDeleteParams.none(),
-    ): CompletableFuture<FileDeleteResponse> = delete(fileNo, params, RequestOptions.none())
+    ): CompletableFuture<Void?> = delete(fileNo, params, RequestOptions.none())
 
     /** @see delete */
     fun delete(
         params: FileDeleteParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<FileDeleteResponse>
+    ): CompletableFuture<Void?>
 
     /** @see delete */
-    fun delete(params: FileDeleteParams): CompletableFuture<FileDeleteResponse> =
+    fun delete(params: FileDeleteParams): CompletableFuture<Void?> =
         delete(params, RequestOptions.none())
 
     /** @see delete */
-    fun delete(
-        fileNo: String,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<FileDeleteResponse> =
+    fun delete(fileNo: String, requestOptions: RequestOptions): CompletableFuture<Void?> =
         delete(fileNo, FileDeleteParams.none(), requestOptions)
 
-    /**
-     * Rename a file. The API may preserve or normalize the file extension (e.g. `demo` →
-     * `demo.png`).
-     */
+    /** Rename file */
     fun rename(fileNo: String, params: FileRenameParams): CompletableFuture<FileRenameResponse> =
         rename(fileNo, params, RequestOptions.none())
 
@@ -156,7 +149,7 @@ interface FileServiceAsync {
          * Returns a raw HTTP response for `get /api/v1/files/{fileNo}`, but is otherwise the same
          * as [FileServiceAsync.retrieve].
          */
-        fun retrieve(fileNo: String): CompletableFuture<HttpResponseFor<FileObject>> =
+        fun retrieve(fileNo: String): CompletableFuture<HttpResponseFor<FileRetrieveResponse>> =
             retrieve(fileNo, FileRetrieveParams.none())
 
         /** @see retrieve */
@@ -164,31 +157,33 @@ interface FileServiceAsync {
             fileNo: String,
             params: FileRetrieveParams = FileRetrieveParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<FileObject>> =
+        ): CompletableFuture<HttpResponseFor<FileRetrieveResponse>> =
             retrieve(params.toBuilder().fileNo(fileNo).build(), requestOptions)
 
         /** @see retrieve */
         fun retrieve(
             fileNo: String,
             params: FileRetrieveParams = FileRetrieveParams.none(),
-        ): CompletableFuture<HttpResponseFor<FileObject>> =
+        ): CompletableFuture<HttpResponseFor<FileRetrieveResponse>> =
             retrieve(fileNo, params, RequestOptions.none())
 
         /** @see retrieve */
         fun retrieve(
             params: FileRetrieveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<FileObject>>
+        ): CompletableFuture<HttpResponseFor<FileRetrieveResponse>>
 
         /** @see retrieve */
-        fun retrieve(params: FileRetrieveParams): CompletableFuture<HttpResponseFor<FileObject>> =
+        fun retrieve(
+            params: FileRetrieveParams
+        ): CompletableFuture<HttpResponseFor<FileRetrieveResponse>> =
             retrieve(params, RequestOptions.none())
 
         /** @see retrieve */
         fun retrieve(
             fileNo: String,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<FileObject>> =
+        ): CompletableFuture<HttpResponseFor<FileRetrieveResponse>> =
             retrieve(fileNo, FileRetrieveParams.none(), requestOptions)
 
         /**
@@ -220,7 +215,7 @@ interface FileServiceAsync {
          * Returns a raw HTTP response for `delete /api/v1/files/{fileNo}`, but is otherwise the
          * same as [FileServiceAsync.delete].
          */
-        fun delete(fileNo: String): CompletableFuture<HttpResponseFor<FileDeleteResponse>> =
+        fun delete(fileNo: String): CompletableFuture<HttpResponse> =
             delete(fileNo, FileDeleteParams.none())
 
         /** @see delete */
@@ -228,34 +223,30 @@ interface FileServiceAsync {
             fileNo: String,
             params: FileDeleteParams = FileDeleteParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<FileDeleteResponse>> =
+        ): CompletableFuture<HttpResponse> =
             delete(params.toBuilder().fileNo(fileNo).build(), requestOptions)
 
         /** @see delete */
         fun delete(
             fileNo: String,
             params: FileDeleteParams = FileDeleteParams.none(),
-        ): CompletableFuture<HttpResponseFor<FileDeleteResponse>> =
-            delete(fileNo, params, RequestOptions.none())
+        ): CompletableFuture<HttpResponse> = delete(fileNo, params, RequestOptions.none())
 
         /** @see delete */
         fun delete(
             params: FileDeleteParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<FileDeleteResponse>>
+        ): CompletableFuture<HttpResponse>
 
         /** @see delete */
-        fun delete(
-            params: FileDeleteParams
-        ): CompletableFuture<HttpResponseFor<FileDeleteResponse>> =
+        fun delete(params: FileDeleteParams): CompletableFuture<HttpResponse> =
             delete(params, RequestOptions.none())
 
         /** @see delete */
         fun delete(
             fileNo: String,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<FileDeleteResponse>> =
-            delete(fileNo, FileDeleteParams.none(), requestOptions)
+        ): CompletableFuture<HttpResponse> = delete(fileNo, FileDeleteParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `patch /api/v1/files/{fileNo}/rename`, but is otherwise

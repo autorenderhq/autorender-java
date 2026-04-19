@@ -4,9 +4,10 @@ package io.autorender.proguard
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import io.autorender.client.okhttp.AutorenderOkHttpClient
+import io.autorender.core.JsonValue
 import io.autorender.core.jsonMapper
-import io.autorender.models.uploads.Upload
-import io.autorender.models.uploads.UploadData
+import io.autorender.models.uploads.UploadCreateResponse
+import java.time.OffsetDateTime
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.jvm.javaMethod
 import org.assertj.core.api.Assertions.assertThat
@@ -45,7 +46,7 @@ internal class ProGuardCompatibilityTest {
 
     @Test
     fun client() {
-        val client = AutorenderOkHttpClient.builder().apiKey("My API Key").build()
+        val client = AutorenderOkHttpClient.fromEnv()
 
         assertThat(client).isNotNull()
         assertThat(client.uploads()).isNotNull()
@@ -54,30 +55,42 @@ internal class ProGuardCompatibilityTest {
     }
 
     @Test
-    fun uploadRoundtrip() {
+    fun uploadCreateResponseRoundtrip() {
         val jsonMapper = jsonMapper()
-        val upload =
-            Upload.builder()
-                .data(
-                    UploadData.builder()
-                        .id("id")
-                        .fileNo("file_no")
-                        .fileSize(0L)
-                        .format("format")
-                        .height(0L)
-                        .name("name")
-                        .path("path")
-                        .url("url")
-                        .width(0L)
-                        .workspaceNo("workspace_no")
+        val uploadCreateResponse =
+            UploadCreateResponse.builder()
+                .id("id")
+                .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .customId("custom_id")
+                .fileNo("file_no")
+                .folderNo("folder_no")
+                .height(-9007199254740991L)
+                .isDuplicate(true)
+                .isPrivate(true)
+                .metadata(
+                    UploadCreateResponse.Metadata.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
                         .build()
                 )
-                .success(true)
+                .mimeType("mime_type")
+                .name("name")
+                .path("path")
+                .size(-9007199254740991L)
+                .addTag("string")
+                .uploadSource("upload_source")
+                .url("url")
+                .width(-9007199254740991L)
+                .workspaceId("workspace_id")
+                .format("format")
+                .hash("hash")
                 .build()
 
-        val roundtrippedUpload =
-            jsonMapper.readValue(jsonMapper.writeValueAsString(upload), jacksonTypeRef<Upload>())
+        val roundtrippedUploadCreateResponse =
+            jsonMapper.readValue(
+                jsonMapper.writeValueAsString(uploadCreateResponse),
+                jacksonTypeRef<UploadCreateResponse>(),
+            )
 
-        assertThat(roundtrippedUpload).isEqualTo(upload)
+        assertThat(roundtrippedUploadCreateResponse).isEqualTo(uploadCreateResponse)
     }
 }

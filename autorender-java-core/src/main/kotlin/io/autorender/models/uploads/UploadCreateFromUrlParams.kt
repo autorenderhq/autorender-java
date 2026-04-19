@@ -19,7 +19,7 @@ import java.util.Collections
 import java.util.Objects
 import java.util.Optional
 
-/** Fetch a file from a remote URL and store it in your AutoRender workspace. */
+/** Download a file from a remote URL and store it in AutoRender. */
 class UploadCreateFromUrlParams
 private constructor(
     private val body: Body,
@@ -28,7 +28,7 @@ private constructor(
 ) : Params {
 
     /**
-     * The HTTP or HTTPS URL of the image to download
+     * HTTP/HTTPS URL to fetch
      *
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
@@ -36,15 +36,21 @@ private constructor(
     fun remoteUrl(): String = body.remoteUrl()
 
     /**
-     * Custom identifier for tracking the upload
-     *
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun customId(): Optional<String> = body.customId()
 
     /**
-     * Folder path where the file should be stored
+     * Override file name
+     *
+     * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun fileName(): Optional<String> = body.fileName()
+
+    /**
+     * Destination folder path
      *
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -52,7 +58,7 @@ private constructor(
     fun folder(): Optional<String> = body.folder()
 
     /**
-     * JSON string containing custom metadata object
+     * JSON string of metadata object
      *
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -60,7 +66,7 @@ private constructor(
     fun metadata(): Optional<String> = body.metadata()
 
     /**
-     * Set to 'true' to generate a random suffix for the filename
+     * true/false to append random suffix
      *
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -68,7 +74,7 @@ private constructor(
     fun randomPrefix(): Optional<String> = body.randomPrefix()
 
     /**
-     * Comma-separated list of tags to apply to the file
+     * Comma-separated tags
      *
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -76,16 +82,6 @@ private constructor(
     fun tags(): Optional<String> = body.tags()
 
     /**
-     * Transformation string to apply during upload (e.g., w_800,h_600,c_crop)
-     *
-     * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
-     */
-    fun transform(): Optional<String> = body.transform()
-
-    /**
-     * URL to receive webhook notification when upload completes
-     *
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -104,6 +100,13 @@ private constructor(
      * Unlike [customId], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _customId(): JsonField<String> = body._customId()
+
+    /**
+     * Returns the raw JSON value of [fileName].
+     *
+     * Unlike [fileName], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _fileName(): JsonField<String> = body._fileName()
 
     /**
      * Returns the raw JSON value of [folder].
@@ -132,13 +135,6 @@ private constructor(
      * Unlike [tags], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _tags(): JsonField<String> = body._tags()
-
-    /**
-     * Returns the raw JSON value of [transform].
-     *
-     * Unlike [transform], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    fun _transform(): JsonField<String> = body._transform()
 
     /**
      * Returns the raw JSON value of [webhookUrl].
@@ -191,14 +187,14 @@ private constructor(
          * Otherwise, it's more convenient to use the top-level setters instead:
          * - [remoteUrl]
          * - [customId]
+         * - [fileName]
          * - [folder]
          * - [metadata]
-         * - [randomPrefix]
          * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
-        /** The HTTP or HTTPS URL of the image to download */
+        /** HTTP/HTTPS URL to fetch */
         fun remoteUrl(remoteUrl: String) = apply { body.remoteUrl(remoteUrl) }
 
         /**
@@ -210,7 +206,6 @@ private constructor(
          */
         fun remoteUrl(remoteUrl: JsonField<String>) = apply { body.remoteUrl(remoteUrl) }
 
-        /** Custom identifier for tracking the upload */
         fun customId(customId: String) = apply { body.customId(customId) }
 
         /**
@@ -221,7 +216,18 @@ private constructor(
          */
         fun customId(customId: JsonField<String>) = apply { body.customId(customId) }
 
-        /** Folder path where the file should be stored */
+        /** Override file name */
+        fun fileName(fileName: String) = apply { body.fileName(fileName) }
+
+        /**
+         * Sets [Builder.fileName] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.fileName] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun fileName(fileName: JsonField<String>) = apply { body.fileName(fileName) }
+
+        /** Destination folder path */
         fun folder(folder: String) = apply { body.folder(folder) }
 
         /**
@@ -232,7 +238,7 @@ private constructor(
          */
         fun folder(folder: JsonField<String>) = apply { body.folder(folder) }
 
-        /** JSON string containing custom metadata object */
+        /** JSON string of metadata object */
         fun metadata(metadata: String) = apply { body.metadata(metadata) }
 
         /**
@@ -243,7 +249,7 @@ private constructor(
          */
         fun metadata(metadata: JsonField<String>) = apply { body.metadata(metadata) }
 
-        /** Set to 'true' to generate a random suffix for the filename */
+        /** true/false to append random suffix */
         fun randomPrefix(randomPrefix: String) = apply { body.randomPrefix(randomPrefix) }
 
         /**
@@ -257,7 +263,7 @@ private constructor(
             body.randomPrefix(randomPrefix)
         }
 
-        /** Comma-separated list of tags to apply to the file */
+        /** Comma-separated tags */
         fun tags(tags: String) = apply { body.tags(tags) }
 
         /**
@@ -268,19 +274,6 @@ private constructor(
          */
         fun tags(tags: JsonField<String>) = apply { body.tags(tags) }
 
-        /** Transformation string to apply during upload (e.g., w_800,h_600,c_crop) */
-        fun transform(transform: String) = apply { body.transform(transform) }
-
-        /**
-         * Sets [Builder.transform] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.transform] with a well-typed [String] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
-         */
-        fun transform(transform: JsonField<String>) = apply { body.transform(transform) }
-
-        /** URL to receive webhook notification when upload completes */
         fun webhookUrl(webhookUrl: String) = apply { body.webhookUrl(webhookUrl) }
 
         /**
@@ -440,11 +433,11 @@ private constructor(
     private constructor(
         private val remoteUrl: JsonField<String>,
         private val customId: JsonField<String>,
+        private val fileName: JsonField<String>,
         private val folder: JsonField<String>,
         private val metadata: JsonField<String>,
         private val randomPrefix: JsonField<String>,
         private val tags: JsonField<String>,
-        private val transform: JsonField<String>,
         private val webhookUrl: JsonField<String>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
@@ -457,6 +450,9 @@ private constructor(
             @JsonProperty("custom_id")
             @ExcludeMissing
             customId: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("file_name")
+            @ExcludeMissing
+            fileName: JsonField<String> = JsonMissing.of(),
             @JsonProperty("folder") @ExcludeMissing folder: JsonField<String> = JsonMissing.of(),
             @JsonProperty("metadata")
             @ExcludeMissing
@@ -465,26 +461,23 @@ private constructor(
             @ExcludeMissing
             randomPrefix: JsonField<String> = JsonMissing.of(),
             @JsonProperty("tags") @ExcludeMissing tags: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("transform")
-            @ExcludeMissing
-            transform: JsonField<String> = JsonMissing.of(),
             @JsonProperty("webhook_url")
             @ExcludeMissing
             webhookUrl: JsonField<String> = JsonMissing.of(),
         ) : this(
             remoteUrl,
             customId,
+            fileName,
             folder,
             metadata,
             randomPrefix,
             tags,
-            transform,
             webhookUrl,
             mutableMapOf(),
         )
 
         /**
-         * The HTTP or HTTPS URL of the image to download
+         * HTTP/HTTPS URL to fetch
          *
          * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
@@ -492,15 +485,21 @@ private constructor(
         fun remoteUrl(): String = remoteUrl.getRequired("remote_url")
 
         /**
-         * Custom identifier for tracking the upload
-         *
          * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun customId(): Optional<String> = customId.getOptional("custom_id")
 
         /**
-         * Folder path where the file should be stored
+         * Override file name
+         *
+         * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun fileName(): Optional<String> = fileName.getOptional("file_name")
+
+        /**
+         * Destination folder path
          *
          * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -508,7 +507,7 @@ private constructor(
         fun folder(): Optional<String> = folder.getOptional("folder")
 
         /**
-         * JSON string containing custom metadata object
+         * JSON string of metadata object
          *
          * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -516,7 +515,7 @@ private constructor(
         fun metadata(): Optional<String> = metadata.getOptional("metadata")
 
         /**
-         * Set to 'true' to generate a random suffix for the filename
+         * true/false to append random suffix
          *
          * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -524,7 +523,7 @@ private constructor(
         fun randomPrefix(): Optional<String> = randomPrefix.getOptional("random_prefix")
 
         /**
-         * Comma-separated list of tags to apply to the file
+         * Comma-separated tags
          *
          * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -532,16 +531,6 @@ private constructor(
         fun tags(): Optional<String> = tags.getOptional("tags")
 
         /**
-         * Transformation string to apply during upload (e.g., w_800,h_600,c_crop)
-         *
-         * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if
-         *   the server responded with an unexpected value).
-         */
-        fun transform(): Optional<String> = transform.getOptional("transform")
-
-        /**
-         * URL to receive webhook notification when upload completes
-         *
          * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
@@ -560,6 +549,13 @@ private constructor(
          * Unlike [customId], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("custom_id") @ExcludeMissing fun _customId(): JsonField<String> = customId
+
+        /**
+         * Returns the raw JSON value of [fileName].
+         *
+         * Unlike [fileName], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("file_name") @ExcludeMissing fun _fileName(): JsonField<String> = fileName
 
         /**
          * Returns the raw JSON value of [folder].
@@ -591,13 +587,6 @@ private constructor(
          * Unlike [tags], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("tags") @ExcludeMissing fun _tags(): JsonField<String> = tags
-
-        /**
-         * Returns the raw JSON value of [transform].
-         *
-         * Unlike [transform], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("transform") @ExcludeMissing fun _transform(): JsonField<String> = transform
 
         /**
          * Returns the raw JSON value of [webhookUrl].
@@ -638,11 +627,11 @@ private constructor(
 
             private var remoteUrl: JsonField<String>? = null
             private var customId: JsonField<String> = JsonMissing.of()
+            private var fileName: JsonField<String> = JsonMissing.of()
             private var folder: JsonField<String> = JsonMissing.of()
             private var metadata: JsonField<String> = JsonMissing.of()
             private var randomPrefix: JsonField<String> = JsonMissing.of()
             private var tags: JsonField<String> = JsonMissing.of()
-            private var transform: JsonField<String> = JsonMissing.of()
             private var webhookUrl: JsonField<String> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -650,16 +639,16 @@ private constructor(
             internal fun from(body: Body) = apply {
                 remoteUrl = body.remoteUrl
                 customId = body.customId
+                fileName = body.fileName
                 folder = body.folder
                 metadata = body.metadata
                 randomPrefix = body.randomPrefix
                 tags = body.tags
-                transform = body.transform
                 webhookUrl = body.webhookUrl
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
-            /** The HTTP or HTTPS URL of the image to download */
+            /** HTTP/HTTPS URL to fetch */
             fun remoteUrl(remoteUrl: String) = remoteUrl(JsonField.of(remoteUrl))
 
             /**
@@ -671,7 +660,6 @@ private constructor(
              */
             fun remoteUrl(remoteUrl: JsonField<String>) = apply { this.remoteUrl = remoteUrl }
 
-            /** Custom identifier for tracking the upload */
             fun customId(customId: String) = customId(JsonField.of(customId))
 
             /**
@@ -683,7 +671,19 @@ private constructor(
              */
             fun customId(customId: JsonField<String>) = apply { this.customId = customId }
 
-            /** Folder path where the file should be stored */
+            /** Override file name */
+            fun fileName(fileName: String) = fileName(JsonField.of(fileName))
+
+            /**
+             * Sets [Builder.fileName] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.fileName] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun fileName(fileName: JsonField<String>) = apply { this.fileName = fileName }
+
+            /** Destination folder path */
             fun folder(folder: String) = folder(JsonField.of(folder))
 
             /**
@@ -695,7 +695,7 @@ private constructor(
              */
             fun folder(folder: JsonField<String>) = apply { this.folder = folder }
 
-            /** JSON string containing custom metadata object */
+            /** JSON string of metadata object */
             fun metadata(metadata: String) = metadata(JsonField.of(metadata))
 
             /**
@@ -707,7 +707,7 @@ private constructor(
              */
             fun metadata(metadata: JsonField<String>) = apply { this.metadata = metadata }
 
-            /** Set to 'true' to generate a random suffix for the filename */
+            /** true/false to append random suffix */
             fun randomPrefix(randomPrefix: String) = randomPrefix(JsonField.of(randomPrefix))
 
             /**
@@ -721,7 +721,7 @@ private constructor(
                 this.randomPrefix = randomPrefix
             }
 
-            /** Comma-separated list of tags to apply to the file */
+            /** Comma-separated tags */
             fun tags(tags: String) = tags(JsonField.of(tags))
 
             /**
@@ -733,19 +733,6 @@ private constructor(
              */
             fun tags(tags: JsonField<String>) = apply { this.tags = tags }
 
-            /** Transformation string to apply during upload (e.g., w_800,h_600,c_crop) */
-            fun transform(transform: String) = transform(JsonField.of(transform))
-
-            /**
-             * Sets [Builder.transform] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.transform] with a well-typed [String] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun transform(transform: JsonField<String>) = apply { this.transform = transform }
-
-            /** URL to receive webhook notification when upload completes */
             fun webhookUrl(webhookUrl: String) = webhookUrl(JsonField.of(webhookUrl))
 
             /**
@@ -792,11 +779,11 @@ private constructor(
                 Body(
                     checkRequired("remoteUrl", remoteUrl),
                     customId,
+                    fileName,
                     folder,
                     metadata,
                     randomPrefix,
                     tags,
-                    transform,
                     webhookUrl,
                     additionalProperties.toMutableMap(),
                 )
@@ -811,11 +798,11 @@ private constructor(
 
             remoteUrl()
             customId()
+            fileName()
             folder()
             metadata()
             randomPrefix()
             tags()
-            transform()
             webhookUrl()
             validated = true
         }
@@ -838,11 +825,11 @@ private constructor(
         internal fun validity(): Int =
             (if (remoteUrl.asKnown().isPresent) 1 else 0) +
                 (if (customId.asKnown().isPresent) 1 else 0) +
+                (if (fileName.asKnown().isPresent) 1 else 0) +
                 (if (folder.asKnown().isPresent) 1 else 0) +
                 (if (metadata.asKnown().isPresent) 1 else 0) +
                 (if (randomPrefix.asKnown().isPresent) 1 else 0) +
                 (if (tags.asKnown().isPresent) 1 else 0) +
-                (if (transform.asKnown().isPresent) 1 else 0) +
                 (if (webhookUrl.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
@@ -853,11 +840,11 @@ private constructor(
             return other is Body &&
                 remoteUrl == other.remoteUrl &&
                 customId == other.customId &&
+                fileName == other.fileName &&
                 folder == other.folder &&
                 metadata == other.metadata &&
                 randomPrefix == other.randomPrefix &&
                 tags == other.tags &&
-                transform == other.transform &&
                 webhookUrl == other.webhookUrl &&
                 additionalProperties == other.additionalProperties
         }
@@ -866,11 +853,11 @@ private constructor(
             Objects.hash(
                 remoteUrl,
                 customId,
+                fileName,
                 folder,
                 metadata,
                 randomPrefix,
                 tags,
-                transform,
                 webhookUrl,
                 additionalProperties,
             )
@@ -879,7 +866,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{remoteUrl=$remoteUrl, customId=$customId, folder=$folder, metadata=$metadata, randomPrefix=$randomPrefix, tags=$tags, transform=$transform, webhookUrl=$webhookUrl, additionalProperties=$additionalProperties}"
+            "Body{remoteUrl=$remoteUrl, customId=$customId, fileName=$fileName, folder=$folder, metadata=$metadata, randomPrefix=$randomPrefix, tags=$tags, webhookUrl=$webhookUrl, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

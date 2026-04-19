@@ -9,14 +9,14 @@ internal class FolderDeleteParamsTest {
 
     @Test
     fun create() {
-        FolderDeleteParams.builder().folderNo("my8JeLg4tr").build()
+        FolderDeleteParams.builder().folderNo("folderNo").build()
     }
 
     @Test
     fun pathParams() {
-        val params = FolderDeleteParams.builder().folderNo("my8JeLg4tr").build()
+        val params = FolderDeleteParams.builder().folderNo("folderNo").build()
 
-        assertThat(params._pathParam(0)).isEqualTo("my8JeLg4tr")
+        assertThat(params._pathParam(0)).isEqualTo("folderNo")
         // out-of-bound path param
         assertThat(params._pathParam(1)).isEqualTo("")
     }
