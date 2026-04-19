@@ -14,7 +14,11 @@ internal class FolderServiceTest {
 
     @Test
     fun create() {
-        val client = AutorenderOkHttpClient.builder().baseUrl(TestServerExtension.BASE_URL).build()
+        val client =
+            AutorenderOkHttpClient.builder()
+                .baseUrl(TestServerExtension.BASE_URL)
+                .apiKey("My API Key")
+                .build()
         val folderService = client.folders()
 
         val folder =
@@ -27,7 +31,11 @@ internal class FolderServiceTest {
 
     @Test
     fun delete() {
-        val client = AutorenderOkHttpClient.builder().baseUrl(TestServerExtension.BASE_URL).build()
+        val client =
+            AutorenderOkHttpClient.builder()
+                .baseUrl(TestServerExtension.BASE_URL)
+                .apiKey("My API Key")
+                .build()
         val folderService = client.folders()
 
         folderService.delete("folderNo")
@@ -35,7 +43,11 @@ internal class FolderServiceTest {
 
     @Test
     fun rename() {
-        val client = AutorenderOkHttpClient.builder().baseUrl(TestServerExtension.BASE_URL).build()
+        val client =
+            AutorenderOkHttpClient.builder()
+                .baseUrl(TestServerExtension.BASE_URL)
+                .apiKey("My API Key")
+                .build()
         val folderService = client.folders()
 
         val response =

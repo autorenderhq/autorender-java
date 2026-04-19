@@ -57,8 +57,8 @@ import java.io.ByteArrayInputStream;
 AutorenderClient client = AutorenderOkHttpClient.fromEnv();
 
 UploadCreateParams params = UploadCreateParams.builder()
-    .file(new ByteArrayInputStream("Example data".getBytes()))
-    .fileName("product.jpg")
+    .file(new ByteArrayInputStream("<binary>".getBytes()))
+    .fileName("photo.jpg")
     .build();
 UploadCreateResponse upload = client.uploads().create(params);
 ```
@@ -82,7 +82,9 @@ Or manually:
 import io.autorender.client.AutorenderClient;
 import io.autorender.client.okhttp.AutorenderOkHttpClient;
 
-AutorenderClient client = AutorenderOkHttpClient.fromEnv();
+AutorenderClient client = AutorenderOkHttpClient.builder()
+    .apiKey("My API Key")
+    .build();
 ```
 
 Or using a combination of the two approaches:
@@ -158,8 +160,8 @@ import java.util.concurrent.CompletableFuture;
 AutorenderClient client = AutorenderOkHttpClient.fromEnv();
 
 UploadCreateParams params = UploadCreateParams.builder()
-    .file(new ByteArrayInputStream("Example data".getBytes()))
-    .fileName("product.jpg")
+    .file(new ByteArrayInputStream("<binary>".getBytes()))
+    .fileName("photo.jpg")
     .build();
 CompletableFuture<UploadCreateResponse> upload = client.async().uploads().create(params);
 ```
@@ -179,8 +181,8 @@ import java.util.concurrent.CompletableFuture;
 AutorenderClientAsync client = AutorenderOkHttpClientAsync.fromEnv();
 
 UploadCreateParams params = UploadCreateParams.builder()
-    .file(new ByteArrayInputStream("Example data".getBytes()))
-    .fileName("product.jpg")
+    .file(new ByteArrayInputStream("<binary>".getBytes()))
+    .fileName("photo.jpg")
     .build();
 CompletableFuture<UploadCreateResponse> upload = client.uploads().create(params);
 ```
@@ -514,6 +516,21 @@ UploadCreateParams params = UploadCreateParams.builder()
 
 These can be accessed on the built object later using the `_additionalHeaders()`, `_additionalQueryParams()`, and `_additionalBodyProperties()` methods.
 
+To set undocumented parameters on _nested_ headers, query params, or body classes, call the `putAdditionalProperty` method on the nested class:
+
+```java
+import io.autorender.core.JsonValue;
+import io.autorender.models.uploads.UploadGenerateTokenParams;
+
+UploadGenerateTokenParams params = UploadGenerateTokenParams.builder()
+    .allowOverride(UploadGenerateTokenParams.AllowOverride.builder()
+        .putAdditionalProperty("secretProperty", JsonValue.from("42"))
+        .build())
+    .build();
+```
+
+These properties can be accessed on the nested built object later using the `_additionalProperties()` method.
+
 To set a documented parameter or property to an undocumented or not yet supported _value_, pass a [`JsonValue`](autorender-java-core/src/main/kotlin/io/autorender/core/Values.kt) object to its setter:
 
 ```java
@@ -522,7 +539,7 @@ import io.autorender.models.uploads.UploadCreateParams;
 
 UploadCreateParams params = UploadCreateParams.builder()
     .file(JsonValue.from(42))
-    .fileName("product.jpg")
+    .fileName("photo.jpg")
     .build();
 ```
 

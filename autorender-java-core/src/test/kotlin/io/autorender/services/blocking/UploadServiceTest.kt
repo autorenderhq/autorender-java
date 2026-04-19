@@ -4,8 +4,10 @@ package io.autorender.services.blocking
 
 import io.autorender.TestServerExtension
 import io.autorender.client.okhttp.AutorenderOkHttpClient
+import io.autorender.core.JsonValue
 import io.autorender.models.uploads.UploadCreateFromUrlParams
 import io.autorender.models.uploads.UploadCreateParams
+import io.autorender.models.uploads.UploadGenerateTokenParams
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -14,7 +16,11 @@ internal class UploadServiceTest {
 
     @Test
     fun create() {
-        val client = AutorenderOkHttpClient.builder().baseUrl(TestServerExtension.BASE_URL).build()
+        val client =
+            AutorenderOkHttpClient.builder()
+                .baseUrl(TestServerExtension.BASE_URL)
+                .apiKey("My API Key")
+                .build()
         val uploadService = client.uploads()
 
         val upload =
@@ -37,7 +43,11 @@ internal class UploadServiceTest {
 
     @Test
     fun createFromUrl() {
-        val client = AutorenderOkHttpClient.builder().baseUrl(TestServerExtension.BASE_URL).build()
+        val client =
+            AutorenderOkHttpClient.builder()
+                .baseUrl(TestServerExtension.BASE_URL)
+                .apiKey("My API Key")
+                .build()
         val uploadService = client.uploads()
 
         val response =
@@ -53,6 +63,56 @@ internal class UploadServiceTest {
                     .webhookUrl("https://example.com")
                     .build()
             )
+
+        response.validate()
+    }
+
+    @Test
+    fun generateToken() {
+        val client =
+            AutorenderOkHttpClient.builder()
+                .baseUrl(TestServerExtension.BASE_URL)
+                .apiKey("My API Key")
+                .build()
+        val uploadService = client.uploads()
+
+        val response =
+            uploadService.generateToken(
+                UploadGenerateTokenParams.builder()
+                    .fileName("file_name")
+                    .allowOverride(
+                        UploadGenerateTokenParams.AllowOverride.builder()
+                            .folder(true)
+                            .tags(true)
+                            .build()
+                    )
+                    .customId("custom_id")
+                    .folder("folder")
+                    .maxFileSize(-9007199254740991L)
+                    .metadata(
+                        UploadGenerateTokenParams.Metadata.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("bar"))
+                            .build()
+                    )
+                    .randomPrefix(true)
+                    .addTag("string")
+                    .ttlSeconds(-9007199254740991L)
+                    .build()
+            )
+
+        response.validate()
+    }
+
+    @Test
+    fun uploadWithToken() {
+        val client =
+            AutorenderOkHttpClient.builder()
+                .baseUrl(TestServerExtension.BASE_URL)
+                .apiKey("My API Key")
+                .build()
+        val uploadService = client.uploads()
+
+        val response = uploadService.uploadWithToken("token", "Example data")
 
         response.validate()
     }

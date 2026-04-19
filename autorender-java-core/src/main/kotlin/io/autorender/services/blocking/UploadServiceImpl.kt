@@ -4,6 +4,7 @@ package io.autorender.services.blocking
 
 import io.autorender.core.ClientOptions
 import io.autorender.core.RequestOptions
+import io.autorender.core.checkRequired
 import io.autorender.core.handlers.errorBodyHandler
 import io.autorender.core.handlers.errorHandler
 import io.autorender.core.handlers.jsonHandler
@@ -20,7 +21,12 @@ import io.autorender.models.uploads.UploadCreateFromUrlParams
 import io.autorender.models.uploads.UploadCreateFromUrlResponse
 import io.autorender.models.uploads.UploadCreateParams
 import io.autorender.models.uploads.UploadCreateResponse
+import io.autorender.models.uploads.UploadGenerateTokenParams
+import io.autorender.models.uploads.UploadGenerateTokenResponse
+import io.autorender.models.uploads.UploadUploadWithTokenParams
+import io.autorender.models.uploads.UploadUploadWithTokenResponse
 import java.util.function.Consumer
+import kotlin.jvm.optionals.getOrNull
 
 /** Upload endpoints (API key required) */
 class UploadServiceImpl internal constructor(private val clientOptions: ClientOptions) :
@@ -48,6 +54,20 @@ class UploadServiceImpl internal constructor(private val clientOptions: ClientOp
     ): UploadCreateFromUrlResponse =
         // post /api/v1/uploads/remote
         withRawResponse().createFromUrl(params, requestOptions).parse()
+
+    override fun generateToken(
+        params: UploadGenerateTokenParams,
+        requestOptions: RequestOptions,
+    ): UploadGenerateTokenResponse =
+        // post /api/v1/generate-token
+        withRawResponse().generateToken(params, requestOptions).parse()
+
+    override fun uploadWithToken(
+        params: UploadUploadWithTokenParams,
+        requestOptions: RequestOptions,
+    ): UploadUploadWithTokenResponse =
+        // post /api/v1/uploads/{token}
+        withRawResponse().uploadWithToken(params, requestOptions).parse()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         UploadService.WithRawResponse {
@@ -110,6 +130,66 @@ class UploadServiceImpl internal constructor(private val clientOptions: ClientOp
             return errorHandler.handle(response).parseable {
                 response
                     .use { createFromUrlHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
+
+        private val generateTokenHandler: Handler<UploadGenerateTokenResponse> =
+            jsonHandler<UploadGenerateTokenResponse>(clientOptions.jsonMapper)
+
+        override fun generateToken(
+            params: UploadGenerateTokenParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<UploadGenerateTokenResponse> {
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.POST)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v1", "generate-token")
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { generateTokenHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
+
+        private val uploadWithTokenHandler: Handler<UploadUploadWithTokenResponse> =
+            jsonHandler<UploadUploadWithTokenResponse>(clientOptions.jsonMapper)
+
+        override fun uploadWithToken(
+            params: UploadUploadWithTokenParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<UploadUploadWithTokenResponse> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("token", params.token().getOrNull())
+            checkRequired("body", params._body().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.POST)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v1", "uploads", params._pathParam(0))
+                    .apply { params._body().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { uploadWithTokenHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()
