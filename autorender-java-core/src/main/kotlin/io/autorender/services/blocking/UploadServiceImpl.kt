@@ -176,7 +176,7 @@ class UploadServiceImpl internal constructor(private val clientOptions: ClientOp
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("token", params.token().getOrNull())
-            checkRequired("body", params._body().getOrNull())
+            checkRequired("file", params._body().getOrNull())
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)

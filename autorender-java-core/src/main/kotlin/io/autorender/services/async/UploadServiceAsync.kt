@@ -71,26 +71,26 @@ interface UploadServiceAsync {
      */
     fun uploadWithToken(
         token: String,
-        body: String,
+        file: String,
     ): CompletableFuture<UploadUploadWithTokenResponse> =
-        uploadWithToken(token, body, UploadUploadWithTokenParams.none())
+        uploadWithToken(token, file, UploadUploadWithTokenParams.none())
 
     /** @see uploadWithToken */
     fun uploadWithToken(
         token: String,
-        body: String,
+        file: String,
         params: UploadUploadWithTokenParams = UploadUploadWithTokenParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<UploadUploadWithTokenResponse> =
-        uploadWithToken(params.toBuilder().token(token).body(body).build(), requestOptions)
+        uploadWithToken(params.toBuilder().token(token).file(file).build(), requestOptions)
 
     /** @see uploadWithToken */
     fun uploadWithToken(
         token: String,
-        body: String,
+        file: String,
         params: UploadUploadWithTokenParams = UploadUploadWithTokenParams.none(),
     ): CompletableFuture<UploadUploadWithTokenResponse> =
-        uploadWithToken(token, body, params, RequestOptions.none())
+        uploadWithToken(token, file, params, RequestOptions.none())
 
     /** @see uploadWithToken */
     fun uploadWithToken(
@@ -107,10 +107,10 @@ interface UploadServiceAsync {
     /** @see uploadWithToken */
     fun uploadWithToken(
         token: String,
-        body: String,
+        file: String,
         requestOptions: RequestOptions,
     ): CompletableFuture<UploadUploadWithTokenResponse> =
-        uploadWithToken(token, body, UploadUploadWithTokenParams.none(), requestOptions)
+        uploadWithToken(token, file, UploadUploadWithTokenParams.none(), requestOptions)
 
     /**
      * A view of [UploadServiceAsync] that provides access to raw HTTP responses for each method.
@@ -177,26 +177,26 @@ interface UploadServiceAsync {
          */
         fun uploadWithToken(
             token: String,
-            body: String,
+            file: String,
         ): CompletableFuture<HttpResponseFor<UploadUploadWithTokenResponse>> =
-            uploadWithToken(token, body, UploadUploadWithTokenParams.none())
+            uploadWithToken(token, file, UploadUploadWithTokenParams.none())
 
         /** @see uploadWithToken */
         fun uploadWithToken(
             token: String,
-            body: String,
+            file: String,
             params: UploadUploadWithTokenParams = UploadUploadWithTokenParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<UploadUploadWithTokenResponse>> =
-            uploadWithToken(params.toBuilder().token(token).body(body).build(), requestOptions)
+            uploadWithToken(params.toBuilder().token(token).file(file).build(), requestOptions)
 
         /** @see uploadWithToken */
         fun uploadWithToken(
             token: String,
-            body: String,
+            file: String,
             params: UploadUploadWithTokenParams = UploadUploadWithTokenParams.none(),
         ): CompletableFuture<HttpResponseFor<UploadUploadWithTokenResponse>> =
-            uploadWithToken(token, body, params, RequestOptions.none())
+            uploadWithToken(token, file, params, RequestOptions.none())
 
         /** @see uploadWithToken */
         fun uploadWithToken(
@@ -213,9 +213,9 @@ interface UploadServiceAsync {
         /** @see uploadWithToken */
         fun uploadWithToken(
             token: String,
-            body: String,
+            file: String,
             requestOptions: RequestOptions,
         ): CompletableFuture<HttpResponseFor<UploadUploadWithTokenResponse>> =
-            uploadWithToken(token, body, UploadUploadWithTokenParams.none(), requestOptions)
+            uploadWithToken(token, file, UploadUploadWithTokenParams.none(), requestOptions)
     }
 }

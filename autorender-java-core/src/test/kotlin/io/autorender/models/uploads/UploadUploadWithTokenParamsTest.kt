@@ -10,13 +10,13 @@ internal class UploadUploadWithTokenParamsTest {
 
     @Test
     fun create() {
-        UploadUploadWithTokenParams.builder().token("token").body("Example data").build()
+        UploadUploadWithTokenParams.builder().token("token").file("Example data").build()
     }
 
     @Test
     fun pathParams() {
         val params =
-            UploadUploadWithTokenParams.builder().token("token").body("Example data").build()
+            UploadUploadWithTokenParams.builder().token("token").file("Example data").build()
 
         assertThat(params._pathParam(0)).isEqualTo("token")
         // out-of-bound path param
@@ -26,7 +26,7 @@ internal class UploadUploadWithTokenParamsTest {
     @Test
     fun body() {
         val params =
-            UploadUploadWithTokenParams.builder().token("token").body("Example data").build()
+            UploadUploadWithTokenParams.builder().token("token").file("Example data").build()
 
         val body = params._body().getOrNull()
 

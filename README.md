@@ -267,8 +267,8 @@ import io.autorender.models.uploads.UploadCreateResponse;
 import java.io.ByteArrayInputStream;
 
 UploadCreateParams params = UploadCreateParams.builder()
-    .file(new ByteArrayInputStream("Example data".getBytes()))
-    .fileName("product.jpg")
+    .file(new ByteArrayInputStream("<binary>".getBytes()))
+    .fileName("photo.jpg")
     .build();
 HttpResponseFor<UploadCreateResponse> upload = client.uploads().withRawResponse().create(params);
 
