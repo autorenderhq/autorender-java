@@ -376,6 +376,14 @@ private constructor(
             (System.getProperty("autorender.apiKey") ?: System.getenv("AUTORENDER_API_KEY"))?.let {
                 apiKey(it)
             }
+            System.getenv("AUTORENDER_CUSTOM_HEADERS")?.let { customHeadersEnv ->
+                for (line in customHeadersEnv.split("\n")) {
+                    val colon = line.indexOf(':')
+                    if (colon >= 0) {
+                        putHeader(line.substring(0, colon).trim(), line.substring(colon + 1).trim())
+                    }
+                }
+            }
         }
 
         /**
