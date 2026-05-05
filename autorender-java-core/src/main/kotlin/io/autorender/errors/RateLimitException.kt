@@ -5,12 +5,16 @@ package io.autorender.errors
 import io.autorender.core.JsonValue
 import io.autorender.core.checkRequired
 import io.autorender.core.http.Headers
+import io.autorender.core.jsonMapper
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 class RateLimitException
 private constructor(private val headers: Headers, private val body: JsonValue, cause: Throwable?) :
-    AutorenderServiceException("429: $body", cause) {
+    AutorenderServiceException(
+        "429: ${if (body.isMissing()) "Unknown" else jsonMapper().writeValueAsString(body)}",
+        cause,
+    ) {
 
     override fun statusCode(): Int = 429
 
