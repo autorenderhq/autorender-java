@@ -419,6 +419,21 @@ AutorenderClient client = AutorenderOkHttpClient.builder()
     .build();
 ```
 
+If the proxy responds with `407 Proxy Authentication Required`, supply credentials by also configuring `proxyAuthenticator`:
+
+```java
+import io.autorender.client.AutorenderClient;
+import io.autorender.client.okhttp.AutorenderOkHttpClient;
+import io.autorender.core.http.ProxyAuthenticator;
+
+AutorenderClient client = AutorenderOkHttpClient.builder()
+    .fromEnv()
+    .proxy(...)
+    // Or a custom implementation of `ProxyAuthenticator`.
+    .proxyAuthenticator(ProxyAuthenticator.basic("username", "password"))
+    .build();
+```
+
 ### Connection pooling
 
 To customize the underlying OkHttp connection pool, configure the client using the `maxIdleConnections` and `keepAliveDuration` methods:
