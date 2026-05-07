@@ -311,8 +311,6 @@ The SDK throws custom unchecked exception types:
 
 ## Logging
 
-The SDK uses the standard [OkHttp logging interceptor](https://github.com/square/okhttp/tree/master/okhttp-logging-interceptor).
-
 Enable logging by setting the `AUTORENDER_LOG` environment variable to `info`:
 
 ```sh
@@ -323,6 +321,19 @@ Or to `debug` for more verbose logging:
 
 ```sh
 export AUTORENDER_LOG=debug
+```
+
+Or configure the client manually using the `logLevel` method:
+
+```java
+import io.autorender.client.AutorenderClient;
+import io.autorender.client.okhttp.AutorenderOkHttpClient;
+import io.autorender.core.LogLevel;
+
+AutorenderClient client = AutorenderOkHttpClient.builder()
+    .fromEnv()
+    .logLevel(LogLevel.INFO)
+    .build();
 ```
 
 ## ProGuard and R8

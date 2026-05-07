@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper
 import io.autorender.client.AutorenderClientAsync
 import io.autorender.client.AutorenderClientAsyncImpl
 import io.autorender.core.ClientOptions
+import io.autorender.core.LogLevel
 import io.autorender.core.Sleeper
 import io.autorender.core.Timeout
 import io.autorender.core.http.Headers
@@ -276,6 +277,15 @@ class AutorenderOkHttpClientAsync private constructor() {
          * Defaults to 2.
          */
         fun maxRetries(maxRetries: Int) = apply { clientOptions.maxRetries(maxRetries) }
+
+        /**
+         * The level at which to log request and response information.
+         *
+         * [fromEnv] will set the level from environment variables. See [LogLevel.fromEnv].
+         *
+         * Defaults to [LogLevel.fromEnv].
+         */
+        fun logLevel(logLevel: LogLevel) = apply { clientOptions.logLevel(logLevel) }
 
         fun apiKey(apiKey: String?) = apply { clientOptions.apiKey(apiKey) }
 
