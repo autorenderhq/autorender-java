@@ -61,7 +61,9 @@ internal class ServiceParamsTest {
             postRequestedFor(anyUrl())
                 .withHeader("Secret-Header", equalTo("42"))
                 .withQueryParam("secret_query_param", equalTo("42"))
-                .withAnyRequestBodyPart(aMultipart().withName("secretProperty").withBody(equalTo("42")))
+                .withAnyRequestBodyPart(
+                    aMultipart().withName("secretProperty").withBody(equalTo("42"))
+                )
         )
     }
 }
