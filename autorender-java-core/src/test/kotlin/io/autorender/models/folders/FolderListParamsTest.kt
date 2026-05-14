@@ -1,33 +1,29 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package io.autorender.models.files
+package io.autorender.models.folders
 
 import io.autorender.core.http.QueryParams
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class FileListParamsTest {
+internal class FolderListParamsTest {
 
     @Test
     fun create() {
-        FileListParams.builder()
-            .folderNo("folder_no")
-            .limit(1L)
-            .page(1L)
+        FolderListParams.builder()
+            .parentFolderNo("parent_folder_no")
             .search("search")
-            .sort(FileListParams.Sort.NAME_ASC)
+            .sort(FolderListParams.Sort.NAME_ASC)
             .build()
     }
 
     @Test
     fun queryParams() {
         val params =
-            FileListParams.builder()
-                .folderNo("folder_no")
-                .limit(1L)
-                .page(1L)
+            FolderListParams.builder()
+                .parentFolderNo("parent_folder_no")
                 .search("search")
-                .sort(FileListParams.Sort.NAME_ASC)
+                .sort(FolderListParams.Sort.NAME_ASC)
                 .build()
 
         val queryParams = params._queryParams()
@@ -35,9 +31,7 @@ internal class FileListParamsTest {
         assertThat(queryParams)
             .isEqualTo(
                 QueryParams.builder()
-                    .put("folder_no", "folder_no")
-                    .put("limit", "1")
-                    .put("page", "1")
+                    .put("parent_folder_no", "parent_folder_no")
                     .put("search", "search")
                     .put("sort", "name_asc")
                     .build()
@@ -46,7 +40,7 @@ internal class FileListParamsTest {
 
     @Test
     fun queryParamsWithoutOptionalFields() {
-        val params = FileListParams.builder().build()
+        val params = FolderListParams.builder().build()
 
         val queryParams = params._queryParams()
 

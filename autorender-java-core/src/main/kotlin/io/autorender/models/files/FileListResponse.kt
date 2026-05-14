@@ -24,104 +24,42 @@ import kotlin.jvm.optionals.getOrNull
 class FileListResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
-    private val isPageNext: JsonField<Boolean>,
-    private val items: JsonField<List<Item>>,
-    private val limit: JsonField<Long>,
-    private val page: JsonField<Long>,
-    private val totalCount: JsonField<Long>,
-    private val totalPages: JsonField<Long>,
+    private val files: JsonField<List<File>>,
+    private val meta: JsonField<Meta>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
     @JsonCreator
     private constructor(
-        @JsonProperty("is_page_next")
-        @ExcludeMissing
-        isPageNext: JsonField<Boolean> = JsonMissing.of(),
-        @JsonProperty("items") @ExcludeMissing items: JsonField<List<Item>> = JsonMissing.of(),
-        @JsonProperty("limit") @ExcludeMissing limit: JsonField<Long> = JsonMissing.of(),
-        @JsonProperty("page") @ExcludeMissing page: JsonField<Long> = JsonMissing.of(),
-        @JsonProperty("total_count") @ExcludeMissing totalCount: JsonField<Long> = JsonMissing.of(),
-        @JsonProperty("total_pages") @ExcludeMissing totalPages: JsonField<Long> = JsonMissing.of(),
-    ) : this(isPageNext, items, limit, page, totalCount, totalPages, mutableMapOf())
+        @JsonProperty("files") @ExcludeMissing files: JsonField<List<File>> = JsonMissing.of(),
+        @JsonProperty("meta") @ExcludeMissing meta: JsonField<Meta> = JsonMissing.of(),
+    ) : this(files, meta, mutableMapOf())
 
     /**
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
-    fun isPageNext(): Boolean = isPageNext.getRequired("is_page_next")
+    fun files(): List<File> = files.getRequired("files")
 
     /**
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
-    fun items(): List<Item> = items.getRequired("items")
+    fun meta(): Meta = meta.getRequired("meta")
 
     /**
-     * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
-     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
-     */
-    fun limit(): Long = limit.getRequired("limit")
-
-    /**
-     * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
-     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
-     */
-    fun page(): Long = page.getRequired("page")
-
-    /**
-     * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
-     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
-     */
-    fun totalCount(): Long = totalCount.getRequired("total_count")
-
-    /**
-     * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
-     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
-     */
-    fun totalPages(): Long = totalPages.getRequired("total_pages")
-
-    /**
-     * Returns the raw JSON value of [isPageNext].
+     * Returns the raw JSON value of [files].
      *
-     * Unlike [isPageNext], this method doesn't throw if the JSON field has an unexpected type.
+     * Unlike [files], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("is_page_next") @ExcludeMissing fun _isPageNext(): JsonField<Boolean> = isPageNext
+    @JsonProperty("files") @ExcludeMissing fun _files(): JsonField<List<File>> = files
 
     /**
-     * Returns the raw JSON value of [items].
+     * Returns the raw JSON value of [meta].
      *
-     * Unlike [items], this method doesn't throw if the JSON field has an unexpected type.
+     * Unlike [meta], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("items") @ExcludeMissing fun _items(): JsonField<List<Item>> = items
-
-    /**
-     * Returns the raw JSON value of [limit].
-     *
-     * Unlike [limit], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    @JsonProperty("limit") @ExcludeMissing fun _limit(): JsonField<Long> = limit
-
-    /**
-     * Returns the raw JSON value of [page].
-     *
-     * Unlike [page], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    @JsonProperty("page") @ExcludeMissing fun _page(): JsonField<Long> = page
-
-    /**
-     * Returns the raw JSON value of [totalCount].
-     *
-     * Unlike [totalCount], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    @JsonProperty("total_count") @ExcludeMissing fun _totalCount(): JsonField<Long> = totalCount
-
-    /**
-     * Returns the raw JSON value of [totalPages].
-     *
-     * Unlike [totalPages], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    @JsonProperty("total_pages") @ExcludeMissing fun _totalPages(): JsonField<Long> = totalPages
+    @JsonProperty("meta") @ExcludeMissing fun _meta(): JsonField<Meta> = meta
 
     @JsonAnySetter
     private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -142,12 +80,8 @@ private constructor(
          *
          * The following fields are required:
          * ```java
-         * .isPageNext()
-         * .items()
-         * .limit()
-         * .page()
-         * .totalCount()
-         * .totalPages()
+         * .files()
+         * .meta()
          * ```
          */
         @JvmStatic fun builder() = Builder()
@@ -156,98 +90,49 @@ private constructor(
     /** A builder for [FileListResponse]. */
     class Builder internal constructor() {
 
-        private var isPageNext: JsonField<Boolean>? = null
-        private var items: JsonField<MutableList<Item>>? = null
-        private var limit: JsonField<Long>? = null
-        private var page: JsonField<Long>? = null
-        private var totalCount: JsonField<Long>? = null
-        private var totalPages: JsonField<Long>? = null
+        private var files: JsonField<MutableList<File>>? = null
+        private var meta: JsonField<Meta>? = null
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
         internal fun from(fileListResponse: FileListResponse) = apply {
-            isPageNext = fileListResponse.isPageNext
-            items = fileListResponse.items.map { it.toMutableList() }
-            limit = fileListResponse.limit
-            page = fileListResponse.page
-            totalCount = fileListResponse.totalCount
-            totalPages = fileListResponse.totalPages
+            files = fileListResponse.files.map { it.toMutableList() }
+            meta = fileListResponse.meta
             additionalProperties = fileListResponse.additionalProperties.toMutableMap()
         }
 
-        fun isPageNext(isPageNext: Boolean) = isPageNext(JsonField.of(isPageNext))
+        fun files(files: List<File>) = files(JsonField.of(files))
 
         /**
-         * Sets [Builder.isPageNext] to an arbitrary JSON value.
+         * Sets [Builder.files] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.isPageNext] with a well-typed [Boolean] value instead.
+         * You should usually call [Builder.files] with a well-typed `List<File>` value instead.
          * This method is primarily for setting the field to an undocumented or not yet supported
          * value.
          */
-        fun isPageNext(isPageNext: JsonField<Boolean>) = apply { this.isPageNext = isPageNext }
-
-        fun items(items: List<Item>) = items(JsonField.of(items))
-
-        /**
-         * Sets [Builder.items] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.items] with a well-typed `List<Item>` value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
-         */
-        fun items(items: JsonField<List<Item>>) = apply {
-            this.items = items.map { it.toMutableList() }
+        fun files(files: JsonField<List<File>>) = apply {
+            this.files = files.map { it.toMutableList() }
         }
 
         /**
-         * Adds a single [Item] to [items].
+         * Adds a single [File] to [files].
          *
          * @throws IllegalStateException if the field was previously set to a non-list.
          */
-        fun addItem(item: Item) = apply {
-            items =
-                (items ?: JsonField.of(mutableListOf())).also { checkKnown("items", it).add(item) }
+        fun addFile(file: File) = apply {
+            files =
+                (files ?: JsonField.of(mutableListOf())).also { checkKnown("files", it).add(file) }
         }
 
-        fun limit(limit: Long) = limit(JsonField.of(limit))
+        fun meta(meta: Meta) = meta(JsonField.of(meta))
 
         /**
-         * Sets [Builder.limit] to an arbitrary JSON value.
+         * Sets [Builder.meta] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.limit] with a well-typed [Long] value instead. This
+         * You should usually call [Builder.meta] with a well-typed [Meta] value instead. This
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
-        fun limit(limit: JsonField<Long>) = apply { this.limit = limit }
-
-        fun page(page: Long) = page(JsonField.of(page))
-
-        /**
-         * Sets [Builder.page] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.page] with a well-typed [Long] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
-         */
-        fun page(page: JsonField<Long>) = apply { this.page = page }
-
-        fun totalCount(totalCount: Long) = totalCount(JsonField.of(totalCount))
-
-        /**
-         * Sets [Builder.totalCount] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.totalCount] with a well-typed [Long] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
-         */
-        fun totalCount(totalCount: JsonField<Long>) = apply { this.totalCount = totalCount }
-
-        fun totalPages(totalPages: Long) = totalPages(JsonField.of(totalPages))
-
-        /**
-         * Sets [Builder.totalPages] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.totalPages] with a well-typed [Long] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
-         */
-        fun totalPages(totalPages: JsonField<Long>) = apply { this.totalPages = totalPages }
+        fun meta(meta: JsonField<Meta>) = apply { this.meta = meta }
 
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
             this.additionalProperties.clear()
@@ -275,24 +160,16 @@ private constructor(
          *
          * The following fields are required:
          * ```java
-         * .isPageNext()
-         * .items()
-         * .limit()
-         * .page()
-         * .totalCount()
-         * .totalPages()
+         * .files()
+         * .meta()
          * ```
          *
          * @throws IllegalStateException if any required field is unset.
          */
         fun build(): FileListResponse =
             FileListResponse(
-                checkRequired("isPageNext", isPageNext),
-                checkRequired("items", items).map { it.toImmutable() },
-                checkRequired("limit", limit),
-                checkRequired("page", page),
-                checkRequired("totalCount", totalCount),
-                checkRequired("totalPages", totalPages),
+                checkRequired("files", files).map { it.toImmutable() },
+                checkRequired("meta", meta),
                 additionalProperties.toMutableMap(),
             )
     }
@@ -312,12 +189,8 @@ private constructor(
             return@apply
         }
 
-        isPageNext()
-        items().forEach { it.validate() }
-        limit()
-        page()
-        totalCount()
-        totalPages()
+        files().forEach { it.validate() }
+        meta().validate()
         validated = true
     }
 
@@ -336,14 +209,10 @@ private constructor(
      */
     @JvmSynthetic
     internal fun validity(): Int =
-        (if (isPageNext.asKnown().isPresent) 1 else 0) +
-            (items.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
-            (if (limit.asKnown().isPresent) 1 else 0) +
-            (if (page.asKnown().isPresent) 1 else 0) +
-            (if (totalCount.asKnown().isPresent) 1 else 0) +
-            (if (totalPages.asKnown().isPresent) 1 else 0)
+        (files.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
+            (meta.asKnown().getOrNull()?.validity() ?: 0)
 
-    class Item
+    class File
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
         private val id: JsonField<String>,
@@ -660,7 +529,7 @@ private constructor(
         companion object {
 
             /**
-             * Returns a mutable builder for constructing an instance of [Item].
+             * Returns a mutable builder for constructing an instance of [File].
              *
              * The following fields are required:
              * ```java
@@ -686,7 +555,7 @@ private constructor(
             @JvmStatic fun builder() = Builder()
         }
 
-        /** A builder for [Item]. */
+        /** A builder for [File]. */
         class Builder internal constructor() {
 
             private var id: JsonField<String>? = null
@@ -709,25 +578,25 @@ private constructor(
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
-            internal fun from(item: Item) = apply {
-                id = item.id
-                createdAt = item.createdAt
-                fileNo = item.fileNo
-                folderName = item.folderName
-                folderNo = item.folderNo
-                format = item.format
-                height = item.height
-                metadata = item.metadata
-                mimeType = item.mimeType
-                name = item.name
-                path = item.path
-                size = item.size
-                source = item.source
-                tags = item.tags.map { it.toMutableList() }
-                updatedAt = item.updatedAt
-                url = item.url
-                width = item.width
-                additionalProperties = item.additionalProperties.toMutableMap()
+            internal fun from(file: File) = apply {
+                id = file.id
+                createdAt = file.createdAt
+                fileNo = file.fileNo
+                folderName = file.folderName
+                folderNo = file.folderNo
+                format = file.format
+                height = file.height
+                metadata = file.metadata
+                mimeType = file.mimeType
+                name = file.name
+                path = file.path
+                size = file.size
+                source = file.source
+                tags = file.tags.map { it.toMutableList() }
+                updatedAt = file.updatedAt
+                url = file.url
+                width = file.width
+                additionalProperties = file.additionalProperties.toMutableMap()
             }
 
             fun id(id: String) = id(JsonField.of(id))
@@ -988,7 +857,7 @@ private constructor(
             }
 
             /**
-             * Returns an immutable instance of [Item].
+             * Returns an immutable instance of [File].
              *
              * Further updates to this [Builder] will not mutate the returned instance.
              *
@@ -1015,8 +884,8 @@ private constructor(
              *
              * @throws IllegalStateException if any required field is unset.
              */
-            fun build(): Item =
-                Item(
+            fun build(): File =
+                File(
                     checkRequired("id", id),
                     checkRequired("createdAt", createdAt),
                     checkRequired("fileNo", fileNo),
@@ -1049,7 +918,7 @@ private constructor(
          * @throws AutorenderInvalidDataException if any value type in this object doesn't match its
          *   expected type.
          */
-        fun validate(): Item = apply {
+        fun validate(): File = apply {
             if (validated) {
                 return@apply
             }
@@ -1225,7 +1094,7 @@ private constructor(
                 return true
             }
 
-            return other is Item &&
+            return other is File &&
                 id == other.id &&
                 createdAt == other.createdAt &&
                 fileNo == other.fileNo &&
@@ -1272,7 +1141,312 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Item{id=$id, createdAt=$createdAt, fileNo=$fileNo, folderName=$folderName, folderNo=$folderNo, format=$format, height=$height, metadata=$metadata, mimeType=$mimeType, name=$name, path=$path, size=$size, source=$source, tags=$tags, updatedAt=$updatedAt, url=$url, width=$width, additionalProperties=$additionalProperties}"
+            "File{id=$id, createdAt=$createdAt, fileNo=$fileNo, folderName=$folderName, folderNo=$folderNo, format=$format, height=$height, metadata=$metadata, mimeType=$mimeType, name=$name, path=$path, size=$size, source=$source, tags=$tags, updatedAt=$updatedAt, url=$url, width=$width, additionalProperties=$additionalProperties}"
+    }
+
+    class Meta
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    private constructor(
+        private val hasNext: JsonField<Boolean>,
+        private val hasPrev: JsonField<Boolean>,
+        private val limit: JsonField<Long>,
+        private val page: JsonField<Long>,
+        private val total: JsonField<Long>,
+        private val additionalProperties: MutableMap<String, JsonValue>,
+    ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("hasNext") @ExcludeMissing hasNext: JsonField<Boolean> = JsonMissing.of(),
+            @JsonProperty("hasPrev") @ExcludeMissing hasPrev: JsonField<Boolean> = JsonMissing.of(),
+            @JsonProperty("limit") @ExcludeMissing limit: JsonField<Long> = JsonMissing.of(),
+            @JsonProperty("page") @ExcludeMissing page: JsonField<Long> = JsonMissing.of(),
+            @JsonProperty("total") @ExcludeMissing total: JsonField<Long> = JsonMissing.of(),
+        ) : this(hasNext, hasPrev, limit, page, total, mutableMapOf())
+
+        /**
+         * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun hasNext(): Boolean = hasNext.getRequired("hasNext")
+
+        /**
+         * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun hasPrev(): Boolean = hasPrev.getRequired("hasPrev")
+
+        /**
+         * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun limit(): Long = limit.getRequired("limit")
+
+        /**
+         * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun page(): Long = page.getRequired("page")
+
+        /**
+         * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun total(): Long = total.getRequired("total")
+
+        /**
+         * Returns the raw JSON value of [hasNext].
+         *
+         * Unlike [hasNext], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("hasNext") @ExcludeMissing fun _hasNext(): JsonField<Boolean> = hasNext
+
+        /**
+         * Returns the raw JSON value of [hasPrev].
+         *
+         * Unlike [hasPrev], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("hasPrev") @ExcludeMissing fun _hasPrev(): JsonField<Boolean> = hasPrev
+
+        /**
+         * Returns the raw JSON value of [limit].
+         *
+         * Unlike [limit], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("limit") @ExcludeMissing fun _limit(): JsonField<Long> = limit
+
+        /**
+         * Returns the raw JSON value of [page].
+         *
+         * Unlike [page], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("page") @ExcludeMissing fun _page(): JsonField<Long> = page
+
+        /**
+         * Returns the raw JSON value of [total].
+         *
+         * Unlike [total], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("total") @ExcludeMissing fun _total(): JsonField<Long> = total
+
+        @JsonAnySetter
+        private fun putAdditionalProperty(key: String, value: JsonValue) {
+            additionalProperties.put(key, value)
+        }
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> =
+            Collections.unmodifiableMap(additionalProperties)
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /**
+             * Returns a mutable builder for constructing an instance of [Meta].
+             *
+             * The following fields are required:
+             * ```java
+             * .hasNext()
+             * .hasPrev()
+             * .limit()
+             * .page()
+             * .total()
+             * ```
+             */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Meta]. */
+        class Builder internal constructor() {
+
+            private var hasNext: JsonField<Boolean>? = null
+            private var hasPrev: JsonField<Boolean>? = null
+            private var limit: JsonField<Long>? = null
+            private var page: JsonField<Long>? = null
+            private var total: JsonField<Long>? = null
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(meta: Meta) = apply {
+                hasNext = meta.hasNext
+                hasPrev = meta.hasPrev
+                limit = meta.limit
+                page = meta.page
+                total = meta.total
+                additionalProperties = meta.additionalProperties.toMutableMap()
+            }
+
+            fun hasNext(hasNext: Boolean) = hasNext(JsonField.of(hasNext))
+
+            /**
+             * Sets [Builder.hasNext] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.hasNext] with a well-typed [Boolean] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun hasNext(hasNext: JsonField<Boolean>) = apply { this.hasNext = hasNext }
+
+            fun hasPrev(hasPrev: Boolean) = hasPrev(JsonField.of(hasPrev))
+
+            /**
+             * Sets [Builder.hasPrev] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.hasPrev] with a well-typed [Boolean] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun hasPrev(hasPrev: JsonField<Boolean>) = apply { this.hasPrev = hasPrev }
+
+            fun limit(limit: Long) = limit(JsonField.of(limit))
+
+            /**
+             * Sets [Builder.limit] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.limit] with a well-typed [Long] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun limit(limit: JsonField<Long>) = apply { this.limit = limit }
+
+            fun page(page: Long) = page(JsonField.of(page))
+
+            /**
+             * Sets [Builder.page] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.page] with a well-typed [Long] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun page(page: JsonField<Long>) = apply { this.page = page }
+
+            fun total(total: Long) = total(JsonField.of(total))
+
+            /**
+             * Sets [Builder.total] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.total] with a well-typed [Long] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun total(total: JsonField<Long>) = apply { this.total = total }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Meta].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             *
+             * The following fields are required:
+             * ```java
+             * .hasNext()
+             * .hasPrev()
+             * .limit()
+             * .page()
+             * .total()
+             * ```
+             *
+             * @throws IllegalStateException if any required field is unset.
+             */
+            fun build(): Meta =
+                Meta(
+                    checkRequired("hasNext", hasNext),
+                    checkRequired("hasPrev", hasPrev),
+                    checkRequired("limit", limit),
+                    checkRequired("page", page),
+                    checkRequired("total", total),
+                    additionalProperties.toMutableMap(),
+                )
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws AutorenderInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Meta = apply {
+            if (validated) {
+                return@apply
+            }
+
+            hasNext()
+            hasPrev()
+            limit()
+            page()
+            total()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: AutorenderInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            (if (hasNext.asKnown().isPresent) 1 else 0) +
+                (if (hasPrev.asKnown().isPresent) 1 else 0) +
+                (if (limit.asKnown().isPresent) 1 else 0) +
+                (if (page.asKnown().isPresent) 1 else 0) +
+                (if (total.asKnown().isPresent) 1 else 0)
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Meta &&
+                hasNext == other.hasNext &&
+                hasPrev == other.hasPrev &&
+                limit == other.limit &&
+                page == other.page &&
+                total == other.total &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy {
+            Objects.hash(hasNext, hasPrev, limit, page, total, additionalProperties)
+        }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() =
+            "Meta{hasNext=$hasNext, hasPrev=$hasPrev, limit=$limit, page=$page, total=$total, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -1281,21 +1455,15 @@ private constructor(
         }
 
         return other is FileListResponse &&
-            isPageNext == other.isPageNext &&
-            items == other.items &&
-            limit == other.limit &&
-            page == other.page &&
-            totalCount == other.totalCount &&
-            totalPages == other.totalPages &&
+            files == other.files &&
+            meta == other.meta &&
             additionalProperties == other.additionalProperties
     }
 
-    private val hashCode: Int by lazy {
-        Objects.hash(isPageNext, items, limit, page, totalCount, totalPages, additionalProperties)
-    }
+    private val hashCode: Int by lazy { Objects.hash(files, meta, additionalProperties) }
 
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "FileListResponse{isPageNext=$isPageNext, items=$items, limit=$limit, page=$page, totalCount=$totalCount, totalPages=$totalPages, additionalProperties=$additionalProperties}"
+        "FileListResponse{files=$files, meta=$meta, additionalProperties=$additionalProperties}"
 }

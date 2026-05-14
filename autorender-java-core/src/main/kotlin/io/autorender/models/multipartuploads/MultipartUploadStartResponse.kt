@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package io.autorender.models.uploads
+package io.autorender.models.multipartuploads
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
@@ -16,45 +16,79 @@ import io.autorender.core.toImmutable
 import io.autorender.errors.AutorenderInvalidDataException
 import java.util.Collections
 import java.util.Objects
-import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Token generated */
-class UploadGenerateTokenResponse
+/** Session created */
+class MultipartUploadStartResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
-    private val token: JsonField<String>,
     private val expireAt: JsonField<Long>,
+    private val minPartSize: JsonField<Long>,
+    private val partSize: JsonField<Long>,
+    private val parts: JsonField<List<String>>,
     private val policy: JsonField<Policy>,
     private val publicKey: JsonField<String>,
-    private val signature: JsonField<String>,
+    private val sessionId: JsonField<String>,
+    private val uuid: JsonField<String>,
     private val workspaceId: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
     @JsonCreator
     private constructor(
-        @JsonProperty("token") @ExcludeMissing token: JsonField<String> = JsonMissing.of(),
         @JsonProperty("expire_at") @ExcludeMissing expireAt: JsonField<Long> = JsonMissing.of(),
+        @JsonProperty("min_part_size")
+        @ExcludeMissing
+        minPartSize: JsonField<Long> = JsonMissing.of(),
+        @JsonProperty("part_size") @ExcludeMissing partSize: JsonField<Long> = JsonMissing.of(),
+        @JsonProperty("parts") @ExcludeMissing parts: JsonField<List<String>> = JsonMissing.of(),
         @JsonProperty("policy") @ExcludeMissing policy: JsonField<Policy> = JsonMissing.of(),
         @JsonProperty("public_key") @ExcludeMissing publicKey: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("signature") @ExcludeMissing signature: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("session_id") @ExcludeMissing sessionId: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("uuid") @ExcludeMissing uuid: JsonField<String> = JsonMissing.of(),
         @JsonProperty("workspace_id")
         @ExcludeMissing
         workspaceId: JsonField<String> = JsonMissing.of(),
-    ) : this(token, expireAt, policy, publicKey, signature, workspaceId, mutableMapOf())
+    ) : this(
+        expireAt,
+        minPartSize,
+        partSize,
+        parts,
+        policy,
+        publicKey,
+        sessionId,
+        uuid,
+        workspaceId,
+        mutableMapOf(),
+    )
 
     /**
-     * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
-     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
-     */
-    fun token(): String = token.getRequired("token")
-
-    /**
+     * Unix timestamp when the session expires
+     *
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun expireAt(): Long = expireAt.getRequired("expire_at")
+
+    /**
+     * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
+     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     */
+    fun minPartSize(): Long = minPartSize.getRequired("min_part_size")
+
+    /**
+     * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
+     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     */
+    fun partSize(): Long = partSize.getRequired("part_size")
+
+    /**
+     * Pre-signed S3 upload URLs, one per part
+     *
+     * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
+     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     */
+    fun parts(): List<String> = parts.getRequired("parts")
 
     /**
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
@@ -72,7 +106,13 @@ private constructor(
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
-    fun signature(): String = signature.getRequired("signature")
+    fun sessionId(): String = sessionId.getRequired("session_id")
+
+    /**
+     * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
+     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     */
+    fun uuid(): String = uuid.getRequired("uuid")
 
     /**
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
@@ -81,18 +121,32 @@ private constructor(
     fun workspaceId(): String = workspaceId.getRequired("workspace_id")
 
     /**
-     * Returns the raw JSON value of [token].
-     *
-     * Unlike [token], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    @JsonProperty("token") @ExcludeMissing fun _token(): JsonField<String> = token
-
-    /**
      * Returns the raw JSON value of [expireAt].
      *
      * Unlike [expireAt], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("expire_at") @ExcludeMissing fun _expireAt(): JsonField<Long> = expireAt
+
+    /**
+     * Returns the raw JSON value of [minPartSize].
+     *
+     * Unlike [minPartSize], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("min_part_size") @ExcludeMissing fun _minPartSize(): JsonField<Long> = minPartSize
+
+    /**
+     * Returns the raw JSON value of [partSize].
+     *
+     * Unlike [partSize], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("part_size") @ExcludeMissing fun _partSize(): JsonField<Long> = partSize
+
+    /**
+     * Returns the raw JSON value of [parts].
+     *
+     * Unlike [parts], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("parts") @ExcludeMissing fun _parts(): JsonField<List<String>> = parts
 
     /**
      * Returns the raw JSON value of [policy].
@@ -109,11 +163,18 @@ private constructor(
     @JsonProperty("public_key") @ExcludeMissing fun _publicKey(): JsonField<String> = publicKey
 
     /**
-     * Returns the raw JSON value of [signature].
+     * Returns the raw JSON value of [sessionId].
      *
-     * Unlike [signature], this method doesn't throw if the JSON field has an unexpected type.
+     * Unlike [sessionId], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("signature") @ExcludeMissing fun _signature(): JsonField<String> = signature
+    @JsonProperty("session_id") @ExcludeMissing fun _sessionId(): JsonField<String> = sessionId
+
+    /**
+     * Returns the raw JSON value of [uuid].
+     *
+     * Unlike [uuid], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("uuid") @ExcludeMissing fun _uuid(): JsonField<String> = uuid
 
     /**
      * Returns the raw JSON value of [workspaceId].
@@ -139,53 +200,53 @@ private constructor(
     companion object {
 
         /**
-         * Returns a mutable builder for constructing an instance of [UploadGenerateTokenResponse].
+         * Returns a mutable builder for constructing an instance of [MultipartUploadStartResponse].
          *
          * The following fields are required:
          * ```java
-         * .token()
          * .expireAt()
+         * .minPartSize()
+         * .partSize()
+         * .parts()
          * .policy()
          * .publicKey()
-         * .signature()
+         * .sessionId()
+         * .uuid()
          * .workspaceId()
          * ```
          */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [UploadGenerateTokenResponse]. */
+    /** A builder for [MultipartUploadStartResponse]. */
     class Builder internal constructor() {
 
-        private var token: JsonField<String>? = null
         private var expireAt: JsonField<Long>? = null
+        private var minPartSize: JsonField<Long>? = null
+        private var partSize: JsonField<Long>? = null
+        private var parts: JsonField<MutableList<String>>? = null
         private var policy: JsonField<Policy>? = null
         private var publicKey: JsonField<String>? = null
-        private var signature: JsonField<String>? = null
+        private var sessionId: JsonField<String>? = null
+        private var uuid: JsonField<String>? = null
         private var workspaceId: JsonField<String>? = null
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(uploadGenerateTokenResponse: UploadGenerateTokenResponse) = apply {
-            token = uploadGenerateTokenResponse.token
-            expireAt = uploadGenerateTokenResponse.expireAt
-            policy = uploadGenerateTokenResponse.policy
-            publicKey = uploadGenerateTokenResponse.publicKey
-            signature = uploadGenerateTokenResponse.signature
-            workspaceId = uploadGenerateTokenResponse.workspaceId
-            additionalProperties = uploadGenerateTokenResponse.additionalProperties.toMutableMap()
+        internal fun from(multipartUploadStartResponse: MultipartUploadStartResponse) = apply {
+            expireAt = multipartUploadStartResponse.expireAt
+            minPartSize = multipartUploadStartResponse.minPartSize
+            partSize = multipartUploadStartResponse.partSize
+            parts = multipartUploadStartResponse.parts.map { it.toMutableList() }
+            policy = multipartUploadStartResponse.policy
+            publicKey = multipartUploadStartResponse.publicKey
+            sessionId = multipartUploadStartResponse.sessionId
+            uuid = multipartUploadStartResponse.uuid
+            workspaceId = multipartUploadStartResponse.workspaceId
+            additionalProperties = multipartUploadStartResponse.additionalProperties.toMutableMap()
         }
 
-        fun token(token: String) = token(JsonField.of(token))
-
-        /**
-         * Sets [Builder.token] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.token] with a well-typed [String] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
-         */
-        fun token(token: JsonField<String>) = apply { this.token = token }
-
+        /** Unix timestamp when the session expires */
         fun expireAt(expireAt: Long) = expireAt(JsonField.of(expireAt))
 
         /**
@@ -195,6 +256,51 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun expireAt(expireAt: JsonField<Long>) = apply { this.expireAt = expireAt }
+
+        fun minPartSize(minPartSize: Long) = minPartSize(JsonField.of(minPartSize))
+
+        /**
+         * Sets [Builder.minPartSize] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.minPartSize] with a well-typed [Long] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun minPartSize(minPartSize: JsonField<Long>) = apply { this.minPartSize = minPartSize }
+
+        fun partSize(partSize: Long) = partSize(JsonField.of(partSize))
+
+        /**
+         * Sets [Builder.partSize] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.partSize] with a well-typed [Long] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun partSize(partSize: JsonField<Long>) = apply { this.partSize = partSize }
+
+        /** Pre-signed S3 upload URLs, one per part */
+        fun parts(parts: List<String>) = parts(JsonField.of(parts))
+
+        /**
+         * Sets [Builder.parts] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.parts] with a well-typed `List<String>` value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun parts(parts: JsonField<List<String>>) = apply {
+            this.parts = parts.map { it.toMutableList() }
+        }
+
+        /**
+         * Adds a single [String] to [parts].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addPart(part: String) = apply {
+            parts =
+                (parts ?: JsonField.of(mutableListOf())).also { checkKnown("parts", it).add(part) }
+        }
 
         fun policy(policy: Policy) = policy(JsonField.of(policy))
 
@@ -217,16 +323,26 @@ private constructor(
          */
         fun publicKey(publicKey: JsonField<String>) = apply { this.publicKey = publicKey }
 
-        fun signature(signature: String) = signature(JsonField.of(signature))
+        fun sessionId(sessionId: String) = sessionId(JsonField.of(sessionId))
 
         /**
-         * Sets [Builder.signature] to an arbitrary JSON value.
+         * Sets [Builder.sessionId] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.signature] with a well-typed [String] value instead.
+         * You should usually call [Builder.sessionId] with a well-typed [String] value instead.
          * This method is primarily for setting the field to an undocumented or not yet supported
          * value.
          */
-        fun signature(signature: JsonField<String>) = apply { this.signature = signature }
+        fun sessionId(sessionId: JsonField<String>) = apply { this.sessionId = sessionId }
+
+        fun uuid(uuid: String) = uuid(JsonField.of(uuid))
+
+        /**
+         * Sets [Builder.uuid] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.uuid] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun uuid(uuid: JsonField<String>) = apply { this.uuid = uuid }
 
         fun workspaceId(workspaceId: String) = workspaceId(JsonField.of(workspaceId))
 
@@ -259,29 +375,35 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [UploadGenerateTokenResponse].
+         * Returns an immutable instance of [MultipartUploadStartResponse].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          *
          * The following fields are required:
          * ```java
-         * .token()
          * .expireAt()
+         * .minPartSize()
+         * .partSize()
+         * .parts()
          * .policy()
          * .publicKey()
-         * .signature()
+         * .sessionId()
+         * .uuid()
          * .workspaceId()
          * ```
          *
          * @throws IllegalStateException if any required field is unset.
          */
-        fun build(): UploadGenerateTokenResponse =
-            UploadGenerateTokenResponse(
-                checkRequired("token", token),
+        fun build(): MultipartUploadStartResponse =
+            MultipartUploadStartResponse(
                 checkRequired("expireAt", expireAt),
+                checkRequired("minPartSize", minPartSize),
+                checkRequired("partSize", partSize),
+                checkRequired("parts", parts).map { it.toImmutable() },
                 checkRequired("policy", policy),
                 checkRequired("publicKey", publicKey),
-                checkRequired("signature", signature),
+                checkRequired("sessionId", sessionId),
+                checkRequired("uuid", uuid),
                 checkRequired("workspaceId", workspaceId),
                 additionalProperties.toMutableMap(),
             )
@@ -297,16 +419,19 @@ private constructor(
      * @throws AutorenderInvalidDataException if any value type in this object doesn't match its
      *   expected type.
      */
-    fun validate(): UploadGenerateTokenResponse = apply {
+    fun validate(): MultipartUploadStartResponse = apply {
         if (validated) {
             return@apply
         }
 
-        token()
         expireAt()
+        minPartSize()
+        partSize()
+        parts()
         policy().validate()
         publicKey()
-        signature()
+        sessionId()
+        uuid()
         workspaceId()
         validated = true
     }
@@ -326,40 +451,33 @@ private constructor(
      */
     @JvmSynthetic
     internal fun validity(): Int =
-        (if (token.asKnown().isPresent) 1 else 0) +
-            (if (expireAt.asKnown().isPresent) 1 else 0) +
+        (if (expireAt.asKnown().isPresent) 1 else 0) +
+            (if (minPartSize.asKnown().isPresent) 1 else 0) +
+            (if (partSize.asKnown().isPresent) 1 else 0) +
+            (parts.asKnown().getOrNull()?.size ?: 0) +
             (policy.asKnown().getOrNull()?.validity() ?: 0) +
             (if (publicKey.asKnown().isPresent) 1 else 0) +
-            (if (signature.asKnown().isPresent) 1 else 0) +
+            (if (sessionId.asKnown().isPresent) 1 else 0) +
+            (if (uuid.asKnown().isPresent) 1 else 0) +
             (if (workspaceId.asKnown().isPresent) 1 else 0)
 
     class Policy
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
-        private val allowOverride: JsonField<AllowOverride>,
         private val folder: JsonField<String>,
-        private val maxFileSize: JsonField<Long>,
+        private val format: JsonField<String>,
+        private val size: JsonField<Long>,
         private val tags: JsonField<List<String>>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
         @JsonCreator
         private constructor(
-            @JsonProperty("allow_override")
-            @ExcludeMissing
-            allowOverride: JsonField<AllowOverride> = JsonMissing.of(),
             @JsonProperty("folder") @ExcludeMissing folder: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("max_file_size")
-            @ExcludeMissing
-            maxFileSize: JsonField<Long> = JsonMissing.of(),
+            @JsonProperty("format") @ExcludeMissing format: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("size") @ExcludeMissing size: JsonField<Long> = JsonMissing.of(),
             @JsonProperty("tags") @ExcludeMissing tags: JsonField<List<String>> = JsonMissing.of(),
-        ) : this(allowOverride, folder, maxFileSize, tags, mutableMapOf())
-
-        /**
-         * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
-         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
-         */
-        fun allowOverride(): AllowOverride = allowOverride.getRequired("allow_override")
+        ) : this(folder, format, size, tags, mutableMapOf())
 
         /**
          * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
@@ -371,23 +489,19 @@ private constructor(
          * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
-        fun maxFileSize(): Long = maxFileSize.getRequired("max_file_size")
+        fun format(): String = format.getRequired("format")
+
+        /**
+         * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun size(): Long = size.getRequired("size")
 
         /**
          * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
         fun tags(): List<String> = tags.getRequired("tags")
-
-        /**
-         * Returns the raw JSON value of [allowOverride].
-         *
-         * Unlike [allowOverride], this method doesn't throw if the JSON field has an unexpected
-         * type.
-         */
-        @JsonProperty("allow_override")
-        @ExcludeMissing
-        fun _allowOverride(): JsonField<AllowOverride> = allowOverride
 
         /**
          * Returns the raw JSON value of [folder].
@@ -397,13 +511,18 @@ private constructor(
         @JsonProperty("folder") @ExcludeMissing fun _folder(): JsonField<String> = folder
 
         /**
-         * Returns the raw JSON value of [maxFileSize].
+         * Returns the raw JSON value of [format].
          *
-         * Unlike [maxFileSize], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [format], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("max_file_size")
-        @ExcludeMissing
-        fun _maxFileSize(): JsonField<Long> = maxFileSize
+        @JsonProperty("format") @ExcludeMissing fun _format(): JsonField<String> = format
+
+        /**
+         * Returns the raw JSON value of [size].
+         *
+         * Unlike [size], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("size") @ExcludeMissing fun _size(): JsonField<Long> = size
 
         /**
          * Returns the raw JSON value of [tags].
@@ -431,9 +550,9 @@ private constructor(
              *
              * The following fields are required:
              * ```java
-             * .allowOverride()
              * .folder()
-             * .maxFileSize()
+             * .format()
+             * .size()
              * .tags()
              * ```
              */
@@ -443,33 +562,19 @@ private constructor(
         /** A builder for [Policy]. */
         class Builder internal constructor() {
 
-            private var allowOverride: JsonField<AllowOverride>? = null
             private var folder: JsonField<String>? = null
-            private var maxFileSize: JsonField<Long>? = null
+            private var format: JsonField<String>? = null
+            private var size: JsonField<Long>? = null
             private var tags: JsonField<MutableList<String>>? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(policy: Policy) = apply {
-                allowOverride = policy.allowOverride
                 folder = policy.folder
-                maxFileSize = policy.maxFileSize
+                format = policy.format
+                size = policy.size
                 tags = policy.tags.map { it.toMutableList() }
                 additionalProperties = policy.additionalProperties.toMutableMap()
-            }
-
-            fun allowOverride(allowOverride: AllowOverride) =
-                allowOverride(JsonField.of(allowOverride))
-
-            /**
-             * Sets [Builder.allowOverride] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.allowOverride] with a well-typed [AllowOverride]
-             * value instead. This method is primarily for setting the field to an undocumented or
-             * not yet supported value.
-             */
-            fun allowOverride(allowOverride: JsonField<AllowOverride>) = apply {
-                this.allowOverride = allowOverride
             }
 
             fun folder(folder: String) = folder(JsonField.of(folder))
@@ -483,16 +588,27 @@ private constructor(
              */
             fun folder(folder: JsonField<String>) = apply { this.folder = folder }
 
-            fun maxFileSize(maxFileSize: Long) = maxFileSize(JsonField.of(maxFileSize))
+            fun format(format: String) = format(JsonField.of(format))
 
             /**
-             * Sets [Builder.maxFileSize] to an arbitrary JSON value.
+             * Sets [Builder.format] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.maxFileSize] with a well-typed [Long] value instead.
+             * You should usually call [Builder.format] with a well-typed [String] value instead.
              * This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun maxFileSize(maxFileSize: JsonField<Long>) = apply { this.maxFileSize = maxFileSize }
+            fun format(format: JsonField<String>) = apply { this.format = format }
+
+            fun size(size: Long) = size(JsonField.of(size))
+
+            /**
+             * Sets [Builder.size] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.size] with a well-typed [Long] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun size(size: JsonField<Long>) = apply { this.size = size }
 
             fun tags(tags: List<String>) = tags(JsonField.of(tags))
 
@@ -543,9 +659,9 @@ private constructor(
              *
              * The following fields are required:
              * ```java
-             * .allowOverride()
              * .folder()
-             * .maxFileSize()
+             * .format()
+             * .size()
              * .tags()
              * ```
              *
@@ -553,9 +669,9 @@ private constructor(
              */
             fun build(): Policy =
                 Policy(
-                    checkRequired("allowOverride", allowOverride),
                     checkRequired("folder", folder),
-                    checkRequired("maxFileSize", maxFileSize),
+                    checkRequired("format", format),
+                    checkRequired("size", size),
                     checkRequired("tags", tags).map { it.toImmutable() },
                     additionalProperties.toMutableMap(),
                 )
@@ -577,9 +693,9 @@ private constructor(
                 return@apply
             }
 
-            allowOverride().validate()
             folder()
-            maxFileSize()
+            format()
+            size()
             tags()
             validated = true
         }
@@ -600,197 +716,10 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            (allowOverride.asKnown().getOrNull()?.validity() ?: 0) +
-                (if (folder.asKnown().isPresent) 1 else 0) +
-                (if (maxFileSize.asKnown().isPresent) 1 else 0) +
+            (if (folder.asKnown().isPresent) 1 else 0) +
+                (if (format.asKnown().isPresent) 1 else 0) +
+                (if (size.asKnown().isPresent) 1 else 0) +
                 (tags.asKnown().getOrNull()?.size ?: 0)
-
-        class AllowOverride
-        @JsonCreator(mode = JsonCreator.Mode.DISABLED)
-        private constructor(
-            private val folder: JsonField<Boolean>,
-            private val tags: JsonField<Boolean>,
-            private val additionalProperties: MutableMap<String, JsonValue>,
-        ) {
-
-            @JsonCreator
-            private constructor(
-                @JsonProperty("folder")
-                @ExcludeMissing
-                folder: JsonField<Boolean> = JsonMissing.of(),
-                @JsonProperty("tags") @ExcludeMissing tags: JsonField<Boolean> = JsonMissing.of(),
-            ) : this(folder, tags, mutableMapOf())
-
-            /**
-             * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g.
-             *   if the server responded with an unexpected value).
-             */
-            fun folder(): Optional<Boolean> = folder.getOptional("folder")
-
-            /**
-             * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g.
-             *   if the server responded with an unexpected value).
-             */
-            fun tags(): Optional<Boolean> = tags.getOptional("tags")
-
-            /**
-             * Returns the raw JSON value of [folder].
-             *
-             * Unlike [folder], this method doesn't throw if the JSON field has an unexpected type.
-             */
-            @JsonProperty("folder") @ExcludeMissing fun _folder(): JsonField<Boolean> = folder
-
-            /**
-             * Returns the raw JSON value of [tags].
-             *
-             * Unlike [tags], this method doesn't throw if the JSON field has an unexpected type.
-             */
-            @JsonProperty("tags") @ExcludeMissing fun _tags(): JsonField<Boolean> = tags
-
-            @JsonAnySetter
-            private fun putAdditionalProperty(key: String, value: JsonValue) {
-                additionalProperties.put(key, value)
-            }
-
-            @JsonAnyGetter
-            @ExcludeMissing
-            fun _additionalProperties(): Map<String, JsonValue> =
-                Collections.unmodifiableMap(additionalProperties)
-
-            fun toBuilder() = Builder().from(this)
-
-            companion object {
-
-                /** Returns a mutable builder for constructing an instance of [AllowOverride]. */
-                @JvmStatic fun builder() = Builder()
-            }
-
-            /** A builder for [AllowOverride]. */
-            class Builder internal constructor() {
-
-                private var folder: JsonField<Boolean> = JsonMissing.of()
-                private var tags: JsonField<Boolean> = JsonMissing.of()
-                private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
-
-                @JvmSynthetic
-                internal fun from(allowOverride: AllowOverride) = apply {
-                    folder = allowOverride.folder
-                    tags = allowOverride.tags
-                    additionalProperties = allowOverride.additionalProperties.toMutableMap()
-                }
-
-                fun folder(folder: Boolean) = folder(JsonField.of(folder))
-
-                /**
-                 * Sets [Builder.folder] to an arbitrary JSON value.
-                 *
-                 * You should usually call [Builder.folder] with a well-typed [Boolean] value
-                 * instead. This method is primarily for setting the field to an undocumented or not
-                 * yet supported value.
-                 */
-                fun folder(folder: JsonField<Boolean>) = apply { this.folder = folder }
-
-                fun tags(tags: Boolean) = tags(JsonField.of(tags))
-
-                /**
-                 * Sets [Builder.tags] to an arbitrary JSON value.
-                 *
-                 * You should usually call [Builder.tags] with a well-typed [Boolean] value instead.
-                 * This method is primarily for setting the field to an undocumented or not yet
-                 * supported value.
-                 */
-                fun tags(tags: JsonField<Boolean>) = apply { this.tags = tags }
-
-                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                    this.additionalProperties.clear()
-                    putAllAdditionalProperties(additionalProperties)
-                }
-
-                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                    additionalProperties.put(key, value)
-                }
-
-                fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
-                    apply {
-                        this.additionalProperties.putAll(additionalProperties)
-                    }
-
-                fun removeAdditionalProperty(key: String) = apply {
-                    additionalProperties.remove(key)
-                }
-
-                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
-                    keys.forEach(::removeAdditionalProperty)
-                }
-
-                /**
-                 * Returns an immutable instance of [AllowOverride].
-                 *
-                 * Further updates to this [Builder] will not mutate the returned instance.
-                 */
-                fun build(): AllowOverride =
-                    AllowOverride(folder, tags, additionalProperties.toMutableMap())
-            }
-
-            private var validated: Boolean = false
-
-            /**
-             * Validates that the types of all values in this object match their expected types
-             * recursively.
-             *
-             * This method is _not_ forwards compatible with new types from the API for existing
-             * fields.
-             *
-             * @throws AutorenderInvalidDataException if any value type in this object doesn't match
-             *   its expected type.
-             */
-            fun validate(): AllowOverride = apply {
-                if (validated) {
-                    return@apply
-                }
-
-                folder()
-                tags()
-                validated = true
-            }
-
-            fun isValid(): Boolean =
-                try {
-                    validate()
-                    true
-                } catch (e: AutorenderInvalidDataException) {
-                    false
-                }
-
-            /**
-             * Returns a score indicating how many valid values are contained in this object
-             * recursively.
-             *
-             * Used for best match union deserialization.
-             */
-            @JvmSynthetic
-            internal fun validity(): Int =
-                (if (folder.asKnown().isPresent) 1 else 0) +
-                    (if (tags.asKnown().isPresent) 1 else 0)
-
-            override fun equals(other: Any?): Boolean {
-                if (this === other) {
-                    return true
-                }
-
-                return other is AllowOverride &&
-                    folder == other.folder &&
-                    tags == other.tags &&
-                    additionalProperties == other.additionalProperties
-            }
-
-            private val hashCode: Int by lazy { Objects.hash(folder, tags, additionalProperties) }
-
-            override fun hashCode(): Int = hashCode
-
-            override fun toString() =
-                "AllowOverride{folder=$folder, tags=$tags, additionalProperties=$additionalProperties}"
-        }
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -798,21 +727,21 @@ private constructor(
             }
 
             return other is Policy &&
-                allowOverride == other.allowOverride &&
                 folder == other.folder &&
-                maxFileSize == other.maxFileSize &&
+                format == other.format &&
+                size == other.size &&
                 tags == other.tags &&
                 additionalProperties == other.additionalProperties
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(allowOverride, folder, maxFileSize, tags, additionalProperties)
+            Objects.hash(folder, format, size, tags, additionalProperties)
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Policy{allowOverride=$allowOverride, folder=$folder, maxFileSize=$maxFileSize, tags=$tags, additionalProperties=$additionalProperties}"
+            "Policy{folder=$folder, format=$format, size=$size, tags=$tags, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -820,23 +749,29 @@ private constructor(
             return true
         }
 
-        return other is UploadGenerateTokenResponse &&
-            token == other.token &&
+        return other is MultipartUploadStartResponse &&
             expireAt == other.expireAt &&
+            minPartSize == other.minPartSize &&
+            partSize == other.partSize &&
+            parts == other.parts &&
             policy == other.policy &&
             publicKey == other.publicKey &&
-            signature == other.signature &&
+            sessionId == other.sessionId &&
+            uuid == other.uuid &&
             workspaceId == other.workspaceId &&
             additionalProperties == other.additionalProperties
     }
 
     private val hashCode: Int by lazy {
         Objects.hash(
-            token,
             expireAt,
+            minPartSize,
+            partSize,
+            parts,
             policy,
             publicKey,
-            signature,
+            sessionId,
+            uuid,
             workspaceId,
             additionalProperties,
         )
@@ -845,5 +780,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "UploadGenerateTokenResponse{token=$token, expireAt=$expireAt, policy=$policy, publicKey=$publicKey, signature=$signature, workspaceId=$workspaceId, additionalProperties=$additionalProperties}"
+        "MultipartUploadStartResponse{expireAt=$expireAt, minPartSize=$minPartSize, partSize=$partSize, parts=$parts, policy=$policy, publicKey=$publicKey, sessionId=$sessionId, uuid=$uuid, workspaceId=$workspaceId, additionalProperties=$additionalProperties}"
 }

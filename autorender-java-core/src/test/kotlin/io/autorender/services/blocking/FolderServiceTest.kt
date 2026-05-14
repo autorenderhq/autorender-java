@@ -5,6 +5,7 @@ package io.autorender.services.blocking
 import io.autorender.TestServerExtension
 import io.autorender.client.okhttp.AutorenderOkHttpClient
 import io.autorender.models.folders.FolderCreateParams
+import io.autorender.models.folders.FolderListParams
 import io.autorender.models.folders.FolderRenameParams
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -23,10 +24,31 @@ internal class FolderServiceTest {
 
         val folder =
             folderService.create(
-                FolderCreateParams.builder().folderName("folder_name").path("path").build()
+                FolderCreateParams.builder().name("x").parentFolderNo("parent_folder_no").build()
             )
 
         folder.validate()
+    }
+
+    @Test
+    fun list() {
+        val client =
+            AutorenderOkHttpClient.builder()
+                .baseUrl(TestServerExtension.BASE_URL)
+                .apiKey("My API Key")
+                .build()
+        val folderService = client.folders()
+
+        val folders =
+            folderService.list(
+                FolderListParams.builder()
+                    .parentFolderNo("parent_folder_no")
+                    .search("search")
+                    .sort(FolderListParams.Sort.NAME_ASC)
+                    .build()
+            )
+
+        folders.validate()
     }
 
     @Test

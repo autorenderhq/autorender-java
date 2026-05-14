@@ -5,6 +5,7 @@ package io.autorender.services.async
 import io.autorender.TestServerExtension
 import io.autorender.client.okhttp.AutorenderOkHttpClientAsync
 import io.autorender.models.folders.FolderCreateParams
+import io.autorender.models.folders.FolderListParams
 import io.autorender.models.folders.FolderRenameParams
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -23,11 +24,33 @@ internal class FolderServiceAsyncTest {
 
         val folderFuture =
             folderServiceAsync.create(
-                FolderCreateParams.builder().folderName("folder_name").path("path").build()
+                FolderCreateParams.builder().name("x").parentFolderNo("parent_folder_no").build()
             )
 
         val folder = folderFuture.get()
         folder.validate()
+    }
+
+    @Test
+    fun list() {
+        val client =
+            AutorenderOkHttpClientAsync.builder()
+                .baseUrl(TestServerExtension.BASE_URL)
+                .apiKey("My API Key")
+                .build()
+        val folderServiceAsync = client.folders()
+
+        val foldersFuture =
+            folderServiceAsync.list(
+                FolderListParams.builder()
+                    .parentFolderNo("parent_folder_no")
+                    .search("search")
+                    .sort(FolderListParams.Sort.NAME_ASC)
+                    .build()
+            )
+
+        val folders = foldersFuture.get()
+        folders.validate()
     }
 
     @Test

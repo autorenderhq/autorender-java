@@ -4,10 +4,8 @@ package io.autorender.services.async
 
 import io.autorender.TestServerExtension
 import io.autorender.client.okhttp.AutorenderOkHttpClientAsync
-import io.autorender.core.JsonValue
 import io.autorender.models.uploads.UploadCreateFromUrlParams
 import io.autorender.models.uploads.UploadCreateParams
-import io.autorender.models.uploads.UploadGenerateTokenParams
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -64,58 +62,6 @@ internal class UploadServiceAsyncTest {
                     .webhookUrl("https://example.com")
                     .build()
             )
-
-        val response = responseFuture.get()
-        response.validate()
-    }
-
-    @Test
-    fun generateToken() {
-        val client =
-            AutorenderOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
-        val uploadServiceAsync = client.uploads()
-
-        val responseFuture =
-            uploadServiceAsync.generateToken(
-                UploadGenerateTokenParams.builder()
-                    .fileName("file_name")
-                    .allowOverride(
-                        UploadGenerateTokenParams.AllowOverride.builder()
-                            .folder(true)
-                            .tags(true)
-                            .build()
-                    )
-                    .customId("custom_id")
-                    .folder("folder")
-                    .maxFileSize(-9007199254740991L)
-                    .metadata(
-                        UploadGenerateTokenParams.Metadata.builder()
-                            .putAdditionalProperty("foo", JsonValue.from("bar"))
-                            .build()
-                    )
-                    .randomPrefix(true)
-                    .addTag("string")
-                    .ttlSeconds(-9007199254740991L)
-                    .build()
-            )
-
-        val response = responseFuture.get()
-        response.validate()
-    }
-
-    @Test
-    fun uploadWithToken() {
-        val client =
-            AutorenderOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
-        val uploadServiceAsync = client.uploads()
-
-        val responseFuture = uploadServiceAsync.uploadWithToken("token", "Example data")
 
         val response = responseFuture.get()
         response.validate()

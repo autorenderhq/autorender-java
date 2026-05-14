@@ -14,24 +14,24 @@ internal class FolderRenameResponseTest {
     fun create() {
         val folderRenameResponse =
             FolderRenameResponse.builder()
-                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                .folderNo("folder_no")
-                .name("name")
-                .parentFolderNo("parent_folder_no")
-                .path("path")
-                .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .id("3e4666bf-d5e5-4aa7-b8ce-cefe41c7568a")
+                .createdAt(OffsetDateTime.parse("2024-01-01T00:00:00Z"))
+                .folderNo("folder_abc123")
+                .name("example.jpg")
+                .parentFolderNo(null)
+                .path("/example.jpg")
+                .updatedAt(OffsetDateTime.parse("2024-01-01T00:00:00Z"))
                 .build()
 
-        assertThat(folderRenameResponse.id()).isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        assertThat(folderRenameResponse.id()).isEqualTo("3e4666bf-d5e5-4aa7-b8ce-cefe41c7568a")
         assertThat(folderRenameResponse.createdAt())
-            .isEqualTo(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-        assertThat(folderRenameResponse.folderNo()).isEqualTo("folder_no")
-        assertThat(folderRenameResponse.name()).isEqualTo("name")
-        assertThat(folderRenameResponse.parentFolderNo()).contains("parent_folder_no")
-        assertThat(folderRenameResponse.path()).isEqualTo("path")
+            .isEqualTo(OffsetDateTime.parse("2024-01-01T00:00:00Z"))
+        assertThat(folderRenameResponse.folderNo()).isEqualTo("folder_abc123")
+        assertThat(folderRenameResponse.name()).isEqualTo("example.jpg")
+        assertThat(folderRenameResponse.parentFolderNo()).isEmpty
+        assertThat(folderRenameResponse.path()).isEqualTo("/example.jpg")
         assertThat(folderRenameResponse.updatedAt())
-            .contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+            .contains(OffsetDateTime.parse("2024-01-01T00:00:00Z"))
     }
 
     @Test
@@ -39,13 +39,13 @@ internal class FolderRenameResponseTest {
         val jsonMapper = jsonMapper()
         val folderRenameResponse =
             FolderRenameResponse.builder()
-                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                .folderNo("folder_no")
-                .name("name")
-                .parentFolderNo("parent_folder_no")
-                .path("path")
-                .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .id("3e4666bf-d5e5-4aa7-b8ce-cefe41c7568a")
+                .createdAt(OffsetDateTime.parse("2024-01-01T00:00:00Z"))
+                .folderNo("folder_abc123")
+                .name("example.jpg")
+                .parentFolderNo(null)
+                .path("/example.jpg")
+                .updatedAt(OffsetDateTime.parse("2024-01-01T00:00:00Z"))
                 .build()
 
         val roundtrippedFolderRenameResponse =

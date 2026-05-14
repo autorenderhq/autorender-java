@@ -4,10 +4,8 @@ package io.autorender.services.blocking
 
 import io.autorender.TestServerExtension
 import io.autorender.client.okhttp.AutorenderOkHttpClient
-import io.autorender.core.JsonValue
 import io.autorender.models.files.FileListParams
 import io.autorender.models.files.FileRenameParams
-import io.autorender.models.files.FileUpdateParams
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -29,32 +27,6 @@ internal class FileServiceTest {
     }
 
     @Test
-    fun update() {
-        val client =
-            AutorenderOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
-        val fileService = client.files()
-
-        val file =
-            fileService.update(
-                FileUpdateParams.builder()
-                    .fileNo("fileNo")
-                    .addAddTag("string")
-                    .metadata(
-                        FileUpdateParams.Metadata.builder()
-                            .putAdditionalProperty("foo", JsonValue.from("bar"))
-                            .build()
-                    )
-                    .addRemoveTag("string")
-                    .build()
-            )
-
-        file.validate()
-    }
-
-    @Test
     fun list() {
         val client =
             AutorenderOkHttpClient.builder()
@@ -66,13 +38,11 @@ internal class FileServiceTest {
         val files =
             fileService.list(
                 FileListParams.builder()
-                    .folderNo("folderNo")
+                    .folderNo("folder_no")
                     .limit(1L)
-                    .name("name")
                     .page(1L)
-                    .path("path")
-                    .sort(FileListParams.Sort.CREATED_AT_ASC)
-                    .tags("tags")
+                    .search("search")
+                    .sort(FileListParams.Sort.NAME_ASC)
                     .build()
             )
 

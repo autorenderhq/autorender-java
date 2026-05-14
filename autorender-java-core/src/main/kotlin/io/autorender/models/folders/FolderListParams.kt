@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package io.autorender.models.files
+package io.autorender.models.folders
 
 import com.fasterxml.jackson.annotation.JsonCreator
 import io.autorender.core.Enum
@@ -13,24 +13,18 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** List/search files with pagination, filtering, and sorting. */
-class FileListParams
+/** List folders */
+class FolderListParams
 private constructor(
-    private val folderNo: String?,
-    private val limit: Long?,
-    private val page: Long?,
+    private val parentFolderNo: String?,
     private val search: String?,
     private val sort: Sort?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
 
-    /** Filter by folder number */
-    fun folderNo(): Optional<String> = Optional.ofNullable(folderNo)
-
-    fun limit(): Optional<Long> = Optional.ofNullable(limit)
-
-    fun page(): Optional<Long> = Optional.ofNullable(page)
+    /** Filter by parent folder number */
+    fun parentFolderNo(): Optional<String> = Optional.ofNullable(parentFolderNo)
 
     /** Partial name match (case-insensitive) */
     fun search(): Optional<String> = Optional.ofNullable(search)
@@ -47,63 +41,36 @@ private constructor(
 
     companion object {
 
-        @JvmStatic fun none(): FileListParams = builder().build()
+        @JvmStatic fun none(): FolderListParams = builder().build()
 
-        /** Returns a mutable builder for constructing an instance of [FileListParams]. */
+        /** Returns a mutable builder for constructing an instance of [FolderListParams]. */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [FileListParams]. */
+    /** A builder for [FolderListParams]. */
     class Builder internal constructor() {
 
-        private var folderNo: String? = null
-        private var limit: Long? = null
-        private var page: Long? = null
+        private var parentFolderNo: String? = null
         private var search: String? = null
         private var sort: Sort? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
         @JvmSynthetic
-        internal fun from(fileListParams: FileListParams) = apply {
-            folderNo = fileListParams.folderNo
-            limit = fileListParams.limit
-            page = fileListParams.page
-            search = fileListParams.search
-            sort = fileListParams.sort
-            additionalHeaders = fileListParams.additionalHeaders.toBuilder()
-            additionalQueryParams = fileListParams.additionalQueryParams.toBuilder()
+        internal fun from(folderListParams: FolderListParams) = apply {
+            parentFolderNo = folderListParams.parentFolderNo
+            search = folderListParams.search
+            sort = folderListParams.sort
+            additionalHeaders = folderListParams.additionalHeaders.toBuilder()
+            additionalQueryParams = folderListParams.additionalQueryParams.toBuilder()
         }
 
-        /** Filter by folder number */
-        fun folderNo(folderNo: String?) = apply { this.folderNo = folderNo }
+        /** Filter by parent folder number */
+        fun parentFolderNo(parentFolderNo: String?) = apply { this.parentFolderNo = parentFolderNo }
 
-        /** Alias for calling [Builder.folderNo] with `folderNo.orElse(null)`. */
-        fun folderNo(folderNo: Optional<String>) = folderNo(folderNo.getOrNull())
-
-        fun limit(limit: Long?) = apply { this.limit = limit }
-
-        /**
-         * Alias for [Builder.limit].
-         *
-         * This unboxed primitive overload exists for backwards compatibility.
-         */
-        fun limit(limit: Long) = limit(limit as Long?)
-
-        /** Alias for calling [Builder.limit] with `limit.orElse(null)`. */
-        fun limit(limit: Optional<Long>) = limit(limit.getOrNull())
-
-        fun page(page: Long?) = apply { this.page = page }
-
-        /**
-         * Alias for [Builder.page].
-         *
-         * This unboxed primitive overload exists for backwards compatibility.
-         */
-        fun page(page: Long) = page(page as Long?)
-
-        /** Alias for calling [Builder.page] with `page.orElse(null)`. */
-        fun page(page: Optional<Long>) = page(page.getOrNull())
+        /** Alias for calling [Builder.parentFolderNo] with `parentFolderNo.orElse(null)`. */
+        fun parentFolderNo(parentFolderNo: Optional<String>) =
+            parentFolderNo(parentFolderNo.getOrNull())
 
         /** Partial name match (case-insensitive) */
         fun search(search: String?) = apply { this.search = search }
@@ -215,15 +182,13 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [FileListParams].
+         * Returns an immutable instance of [FolderListParams].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): FileListParams =
-            FileListParams(
-                folderNo,
-                limit,
-                page,
+        fun build(): FolderListParams =
+            FolderListParams(
+                parentFolderNo,
                 search,
                 sort,
                 additionalHeaders.build(),
@@ -236,9 +201,7 @@ private constructor(
     override fun _queryParams(): QueryParams =
         QueryParams.builder()
             .apply {
-                folderNo?.let { put("folder_no", it) }
-                limit?.let { put("limit", it.toString()) }
-                page?.let { put("page", it.toString()) }
+                parentFolderNo?.let { put("parent_folder_no", it) }
                 search?.let { put("search", it) }
                 sort?.let { put("sort", it.toString()) }
                 putAll(additionalQueryParams)
@@ -263,10 +226,6 @@ private constructor(
 
             @JvmField val NAME_DESC = of("name_desc")
 
-            @JvmField val SIZE_ASC = of("size_asc")
-
-            @JvmField val SIZE_DESC = of("size_desc")
-
             @JvmField val CREATED_AT_ASC = of("created_at_asc")
 
             @JvmField val CREATED_AT_DESC = of("created_at_desc")
@@ -278,8 +237,6 @@ private constructor(
         enum class Known {
             NAME_ASC,
             NAME_DESC,
-            SIZE_ASC,
-            SIZE_DESC,
             CREATED_AT_ASC,
             CREATED_AT_DESC,
         }
@@ -296,8 +253,6 @@ private constructor(
         enum class Value {
             NAME_ASC,
             NAME_DESC,
-            SIZE_ASC,
-            SIZE_DESC,
             CREATED_AT_ASC,
             CREATED_AT_DESC,
             /** An enum member indicating that [Sort] was instantiated with an unknown value. */
@@ -315,8 +270,6 @@ private constructor(
             when (this) {
                 NAME_ASC -> Value.NAME_ASC
                 NAME_DESC -> Value.NAME_DESC
-                SIZE_ASC -> Value.SIZE_ASC
-                SIZE_DESC -> Value.SIZE_DESC
                 CREATED_AT_ASC -> Value.CREATED_AT_ASC
                 CREATED_AT_DESC -> Value.CREATED_AT_DESC
                 else -> Value._UNKNOWN
@@ -335,8 +288,6 @@ private constructor(
             when (this) {
                 NAME_ASC -> Known.NAME_ASC
                 NAME_DESC -> Known.NAME_DESC
-                SIZE_ASC -> Known.SIZE_ASC
-                SIZE_DESC -> Known.SIZE_DESC
                 CREATED_AT_ASC -> Known.CREATED_AT_ASC
                 CREATED_AT_DESC -> Known.CREATED_AT_DESC
                 else -> throw AutorenderInvalidDataException("Unknown Sort: $value")
@@ -410,10 +361,8 @@ private constructor(
             return true
         }
 
-        return other is FileListParams &&
-            folderNo == other.folderNo &&
-            limit == other.limit &&
-            page == other.page &&
+        return other is FolderListParams &&
+            parentFolderNo == other.parentFolderNo &&
             search == other.search &&
             sort == other.sort &&
             additionalHeaders == other.additionalHeaders &&
@@ -421,8 +370,8 @@ private constructor(
     }
 
     override fun hashCode(): Int =
-        Objects.hash(folderNo, limit, page, search, sort, additionalHeaders, additionalQueryParams)
+        Objects.hash(parentFolderNo, search, sort, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "FileListParams{folderNo=$folderNo, limit=$limit, page=$page, search=$search, sort=$sort, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "FolderListParams{parentFolderNo=$parentFolderNo, search=$search, sort=$sort, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

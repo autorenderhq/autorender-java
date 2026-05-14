@@ -8,6 +8,8 @@ import io.autorender.services.blocking.FileService
 import io.autorender.services.blocking.FileServiceImpl
 import io.autorender.services.blocking.FolderService
 import io.autorender.services.blocking.FolderServiceImpl
+import io.autorender.services.blocking.MultipartUploadService
+import io.autorender.services.blocking.MultipartUploadServiceImpl
 import io.autorender.services.blocking.UploadService
 import io.autorender.services.blocking.UploadServiceImpl
 import java.util.function.Consumer
@@ -35,6 +37,10 @@ class AutorenderClientImpl(private val clientOptions: ClientOptions) : Autorende
 
     private val folders: FolderService by lazy { FolderServiceImpl(clientOptionsWithUserAgent) }
 
+    private val multipartUploads: MultipartUploadService by lazy {
+        MultipartUploadServiceImpl(clientOptionsWithUserAgent)
+    }
+
     override fun async(): AutorenderClientAsync = async
 
     override fun withRawResponse(): AutorenderClient.WithRawResponse = withRawResponse
@@ -50,6 +56,9 @@ class AutorenderClientImpl(private val clientOptions: ClientOptions) : Autorende
 
     /** Folder management endpoints (API key required) */
     override fun folders(): FolderService = folders
+
+    /** Upload endpoints (API key required) */
+    override fun multipartUploads(): MultipartUploadService = multipartUploads
 
     override fun close() = clientOptions.close()
 
@@ -68,6 +77,10 @@ class AutorenderClientImpl(private val clientOptions: ClientOptions) : Autorende
             FolderServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val multipartUploads: MultipartUploadService.WithRawResponse by lazy {
+            MultipartUploadServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): AutorenderClient.WithRawResponse =
@@ -83,5 +96,8 @@ class AutorenderClientImpl(private val clientOptions: ClientOptions) : Autorende
 
         /** Folder management endpoints (API key required) */
         override fun folders(): FolderService.WithRawResponse = folders
+
+        /** Upload endpoints (API key required) */
+        override fun multipartUploads(): MultipartUploadService.WithRawResponse = multipartUploads
     }
 }

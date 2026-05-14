@@ -5,6 +5,7 @@ package io.autorender.client
 import io.autorender.core.ClientOptions
 import io.autorender.services.async.FileServiceAsync
 import io.autorender.services.async.FolderServiceAsync
+import io.autorender.services.async.MultipartUploadServiceAsync
 import io.autorender.services.async.UploadServiceAsync
 import java.util.function.Consumer
 
@@ -53,6 +54,9 @@ interface AutorenderClientAsync {
     /** Folder management endpoints (API key required) */
     fun folders(): FolderServiceAsync
 
+    /** Upload endpoints (API key required) */
+    fun multipartUploads(): MultipartUploadServiceAsync
+
     /**
      * Closes this client, relinquishing any underlying resources.
      *
@@ -88,5 +92,8 @@ interface AutorenderClientAsync {
 
         /** Folder management endpoints (API key required) */
         fun folders(): FolderServiceAsync.WithRawResponse
+
+        /** Upload endpoints (API key required) */
+        fun multipartUploads(): MultipartUploadServiceAsync.WithRawResponse
     }
 }
