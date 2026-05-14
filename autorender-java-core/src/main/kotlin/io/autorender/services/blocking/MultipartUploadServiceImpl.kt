@@ -13,75 +13,74 @@ import io.autorender.core.http.HttpResponse
 import io.autorender.core.http.HttpResponse.Handler
 import io.autorender.core.http.HttpResponseFor
 import io.autorender.core.http.json
-import io.autorender.core.http.multipartFormData
 import io.autorender.core.http.parseable
 import io.autorender.core.prepare
-import io.autorender.models.uploads.UploadCreateFromUrlParams
-import io.autorender.models.uploads.UploadCreateFromUrlResponse
-import io.autorender.models.uploads.UploadCreateParams
-import io.autorender.models.uploads.UploadCreateResponse
+import io.autorender.models.multipartuploads.MultipartUploadCompleteParams
+import io.autorender.models.multipartuploads.MultipartUploadCompleteResponse
+import io.autorender.models.multipartuploads.MultipartUploadStartParams
+import io.autorender.models.multipartuploads.MultipartUploadStartResponse
 import java.util.function.Consumer
 
 /** Upload endpoints (API key required) */
-class UploadServiceImpl internal constructor(private val clientOptions: ClientOptions) :
-    UploadService {
+class MultipartUploadServiceImpl internal constructor(private val clientOptions: ClientOptions) :
+    MultipartUploadService {
 
-    private val withRawResponse: UploadService.WithRawResponse by lazy {
+    private val withRawResponse: MultipartUploadService.WithRawResponse by lazy {
         WithRawResponseImpl(clientOptions)
     }
 
-    override fun withRawResponse(): UploadService.WithRawResponse = withRawResponse
+    override fun withRawResponse(): MultipartUploadService.WithRawResponse = withRawResponse
 
-    override fun withOptions(modifier: Consumer<ClientOptions.Builder>): UploadService =
-        UploadServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
+    override fun withOptions(modifier: Consumer<ClientOptions.Builder>): MultipartUploadService =
+        MultipartUploadServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
-    override fun create(
-        params: UploadCreateParams,
+    override fun complete(
+        params: MultipartUploadCompleteParams,
         requestOptions: RequestOptions,
-    ): UploadCreateResponse =
-        // post /api/v1/uploads
-        withRawResponse().create(params, requestOptions).parse()
+    ): MultipartUploadCompleteResponse =
+        // post /api/v1/multipart/complete
+        withRawResponse().complete(params, requestOptions).parse()
 
-    override fun createFromUrl(
-        params: UploadCreateFromUrlParams,
+    override fun start(
+        params: MultipartUploadStartParams,
         requestOptions: RequestOptions,
-    ): UploadCreateFromUrlResponse =
-        // post /api/v1/uploads/remote
-        withRawResponse().createFromUrl(params, requestOptions).parse()
+    ): MultipartUploadStartResponse =
+        // post /api/v1/multipart/start
+        withRawResponse().start(params, requestOptions).parse()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
-        UploadService.WithRawResponse {
+        MultipartUploadService.WithRawResponse {
 
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
 
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
-        ): UploadService.WithRawResponse =
-            UploadServiceImpl.WithRawResponseImpl(
+        ): MultipartUploadService.WithRawResponse =
+            MultipartUploadServiceImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val createHandler: Handler<UploadCreateResponse> =
-            jsonHandler<UploadCreateResponse>(clientOptions.jsonMapper)
+        private val completeHandler: Handler<MultipartUploadCompleteResponse> =
+            jsonHandler<MultipartUploadCompleteResponse>(clientOptions.jsonMapper)
 
-        override fun create(
-            params: UploadCreateParams,
+        override fun complete(
+            params: MultipartUploadCompleteParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<UploadCreateResponse> {
+        ): HttpResponseFor<MultipartUploadCompleteResponse> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "uploads")
-                    .body(multipartFormData(clientOptions.jsonMapper, params._body()))
+                    .addPathSegments("api", "v1", "multipart", "complete")
+                    .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepare(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
             val response = clientOptions.httpClient.execute(request, requestOptions)
             return errorHandler.handle(response).parseable {
                 response
-                    .use { createHandler.handle(it) }
+                    .use { completeHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()
@@ -90,18 +89,18 @@ class UploadServiceImpl internal constructor(private val clientOptions: ClientOp
             }
         }
 
-        private val createFromUrlHandler: Handler<UploadCreateFromUrlResponse> =
-            jsonHandler<UploadCreateFromUrlResponse>(clientOptions.jsonMapper)
+        private val startHandler: Handler<MultipartUploadStartResponse> =
+            jsonHandler<MultipartUploadStartResponse>(clientOptions.jsonMapper)
 
-        override fun createFromUrl(
-            params: UploadCreateFromUrlParams,
+        override fun start(
+            params: MultipartUploadStartParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<UploadCreateFromUrlResponse> {
+        ): HttpResponseFor<MultipartUploadStartResponse> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "uploads", "remote")
+                    .addPathSegments("api", "v1", "multipart", "start")
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepare(clientOptions, params)
@@ -109,7 +108,7 @@ class UploadServiceImpl internal constructor(private val clientOptions: ClientOp
             val response = clientOptions.httpClient.execute(request, requestOptions)
             return errorHandler.handle(response).parseable {
                 response
-                    .use { createFromUrlHandler.handle(it) }
+                    .use { startHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()

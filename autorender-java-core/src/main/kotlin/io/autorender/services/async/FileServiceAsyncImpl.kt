@@ -24,8 +24,6 @@ import io.autorender.models.files.FileRenameParams
 import io.autorender.models.files.FileRenameResponse
 import io.autorender.models.files.FileRetrieveParams
 import io.autorender.models.files.FileRetrieveResponse
-import io.autorender.models.files.FileUpdateParams
-import io.autorender.models.files.FileUpdateResponse
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
@@ -49,13 +47,6 @@ class FileServiceAsyncImpl internal constructor(private val clientOptions: Clien
     ): CompletableFuture<FileRetrieveResponse> =
         // get /api/v1/files/{fileNo}
         withRawResponse().retrieve(params, requestOptions).thenApply { it.parse() }
-
-    override fun update(
-        params: FileUpdateParams,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<FileUpdateResponse> =
-        // patch /api/v1/files/{fileNo}
-        withRawResponse().update(params, requestOptions).thenApply { it.parse() }
 
     override fun list(
         params: FileListParams,
@@ -115,40 +106,6 @@ class FileServiceAsyncImpl internal constructor(private val clientOptions: Clien
                     errorHandler.handle(response).parseable {
                         response
                             .use { retrieveHandler.handle(it) }
-                            .also {
-                                if (requestOptions.responseValidation!!) {
-                                    it.validate()
-                                }
-                            }
-                    }
-                }
-        }
-
-        private val updateHandler: Handler<FileUpdateResponse> =
-            jsonHandler<FileUpdateResponse>(clientOptions.jsonMapper)
-
-        override fun update(
-            params: FileUpdateParams,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<FileUpdateResponse>> {
-            // We check here instead of in the params builder because this can be specified
-            // positionally or in the params class.
-            checkRequired("fileNo", params.fileNo().getOrNull())
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.PATCH)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "files", params._pathParam(0))
-                    .body(json(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            return request
-                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
-                .thenApply { response ->
-                    errorHandler.handle(response).parseable {
-                        response
-                            .use { updateHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()

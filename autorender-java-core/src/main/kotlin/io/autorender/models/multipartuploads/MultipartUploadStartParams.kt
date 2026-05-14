@@ -1,18 +1,28 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package io.autorender.models.uploads
+package io.autorender.models.multipartuploads
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.core.JsonGenerator
+import com.fasterxml.jackson.core.ObjectCodec
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.SerializerProvider
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
+import io.autorender.core.BaseDeserializer
+import io.autorender.core.BaseSerializer
 import io.autorender.core.ExcludeMissing
 import io.autorender.core.JsonField
 import io.autorender.core.JsonMissing
 import io.autorender.core.JsonValue
 import io.autorender.core.Params
-import io.autorender.core.checkKnown
+import io.autorender.core.allMaxBy
 import io.autorender.core.checkRequired
+import io.autorender.core.getOrThrow
 import io.autorender.core.http.Headers
 import io.autorender.core.http.QueryParams
 import io.autorender.core.toImmutable
@@ -22,8 +32,8 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Generate a short-lived token for direct browser uploads. No file is created at this stage. */
-class UploadGenerateTokenParams
+/** Initialise a multipart upload session and receive pre-signed part URLs. */
+class MultipartUploadStartParams
 private constructor(
     private val body: Body,
     private val additionalHeaders: Headers,
@@ -31,18 +41,22 @@ private constructor(
 ) : Params {
 
     /**
-     * File name for the uploaded file (e.g., avatar.jpg)
-     *
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun fileName(): String = body.fileName()
 
     /**
-     * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
+     * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
+     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
-    fun allowOverride(): Optional<AllowOverride> = body.allowOverride()
+    fun format(): String = body.format()
+
+    /**
+     * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
+     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     */
+    fun size(): Long = body.size()
 
     /**
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -51,20 +65,10 @@ private constructor(
     fun customId(): Optional<String> = body.customId()
 
     /**
-     * Destination folder path
-     *
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun folder(): Optional<String> = body.folder()
-
-    /**
-     * Max file size in bytes
-     *
-     * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
-     */
-    fun maxFileSize(): Optional<Long> = body.maxFileSize()
 
     /**
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -82,11 +86,9 @@ private constructor(
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun tags(): Optional<List<String>> = body.tags()
+    fun tags(): Optional<Tags> = body.tags()
 
     /**
-     * Token lifetime in seconds. Defaults to 300.
-     *
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -100,11 +102,18 @@ private constructor(
     fun _fileName(): JsonField<String> = body._fileName()
 
     /**
-     * Returns the raw JSON value of [allowOverride].
+     * Returns the raw JSON value of [format].
      *
-     * Unlike [allowOverride], this method doesn't throw if the JSON field has an unexpected type.
+     * Unlike [format], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _allowOverride(): JsonField<AllowOverride> = body._allowOverride()
+    fun _format(): JsonField<String> = body._format()
+
+    /**
+     * Returns the raw JSON value of [size].
+     *
+     * Unlike [size], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _size(): JsonField<Long> = body._size()
 
     /**
      * Returns the raw JSON value of [customId].
@@ -119,13 +128,6 @@ private constructor(
      * Unlike [folder], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _folder(): JsonField<String> = body._folder()
-
-    /**
-     * Returns the raw JSON value of [maxFileSize].
-     *
-     * Unlike [maxFileSize], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    fun _maxFileSize(): JsonField<Long> = body._maxFileSize()
 
     /**
      * Returns the raw JSON value of [metadata].
@@ -146,7 +148,7 @@ private constructor(
      *
      * Unlike [tags], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _tags(): JsonField<List<String>> = body._tags()
+    fun _tags(): JsonField<Tags> = body._tags()
 
     /**
      * Returns the raw JSON value of [ttlSeconds].
@@ -168,17 +170,19 @@ private constructor(
     companion object {
 
         /**
-         * Returns a mutable builder for constructing an instance of [UploadGenerateTokenParams].
+         * Returns a mutable builder for constructing an instance of [MultipartUploadStartParams].
          *
          * The following fields are required:
          * ```java
          * .fileName()
+         * .format()
+         * .size()
          * ```
          */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [UploadGenerateTokenParams]. */
+    /** A builder for [MultipartUploadStartParams]. */
     class Builder internal constructor() {
 
         private var body: Body.Builder = Body.builder()
@@ -186,10 +190,10 @@ private constructor(
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
         @JvmSynthetic
-        internal fun from(uploadGenerateTokenParams: UploadGenerateTokenParams) = apply {
-            body = uploadGenerateTokenParams.body.toBuilder()
-            additionalHeaders = uploadGenerateTokenParams.additionalHeaders.toBuilder()
-            additionalQueryParams = uploadGenerateTokenParams.additionalQueryParams.toBuilder()
+        internal fun from(multipartUploadStartParams: MultipartUploadStartParams) = apply {
+            body = multipartUploadStartParams.body.toBuilder()
+            additionalHeaders = multipartUploadStartParams.additionalHeaders.toBuilder()
+            additionalQueryParams = multipartUploadStartParams.additionalQueryParams.toBuilder()
         }
 
         /**
@@ -198,15 +202,14 @@ private constructor(
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
          * - [fileName]
-         * - [allowOverride]
+         * - [format]
+         * - [size]
          * - [customId]
          * - [folder]
-         * - [maxFileSize]
          * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
-        /** File name for the uploaded file (e.g., avatar.jpg) */
         fun fileName(fileName: String) = apply { body.fileName(fileName) }
 
         /**
@@ -217,20 +220,25 @@ private constructor(
          */
         fun fileName(fileName: JsonField<String>) = apply { body.fileName(fileName) }
 
-        fun allowOverride(allowOverride: AllowOverride) = apply {
-            body.allowOverride(allowOverride)
-        }
+        fun format(format: String) = apply { body.format(format) }
 
         /**
-         * Sets [Builder.allowOverride] to an arbitrary JSON value.
+         * Sets [Builder.format] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.allowOverride] with a well-typed [AllowOverride] value
-         * instead. This method is primarily for setting the field to an undocumented or not yet
-         * supported value.
+         * You should usually call [Builder.format] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
          */
-        fun allowOverride(allowOverride: JsonField<AllowOverride>) = apply {
-            body.allowOverride(allowOverride)
-        }
+        fun format(format: JsonField<String>) = apply { body.format(format) }
+
+        fun size(size: Long) = apply { body.size(size) }
+
+        /**
+         * Sets [Builder.size] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.size] with a well-typed [Long] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun size(size: JsonField<Long>) = apply { body.size(size) }
 
         fun customId(customId: String) = apply { body.customId(customId) }
 
@@ -242,7 +250,6 @@ private constructor(
          */
         fun customId(customId: JsonField<String>) = apply { body.customId(customId) }
 
-        /** Destination folder path */
         fun folder(folder: String) = apply { body.folder(folder) }
 
         /**
@@ -252,18 +259,6 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun folder(folder: JsonField<String>) = apply { body.folder(folder) }
-
-        /** Max file size in bytes */
-        fun maxFileSize(maxFileSize: Long) = apply { body.maxFileSize(maxFileSize) }
-
-        /**
-         * Sets [Builder.maxFileSize] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.maxFileSize] with a well-typed [Long] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
-         */
-        fun maxFileSize(maxFileSize: JsonField<Long>) = apply { body.maxFileSize(maxFileSize) }
 
         fun metadata(metadata: Metadata) = apply { body.metadata(metadata) }
 
@@ -289,25 +284,22 @@ private constructor(
             body.randomPrefix(randomPrefix)
         }
 
-        fun tags(tags: List<String>) = apply { body.tags(tags) }
+        fun tags(tags: Tags) = apply { body.tags(tags) }
 
         /**
          * Sets [Builder.tags] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.tags] with a well-typed `List<String>` value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
+         * You should usually call [Builder.tags] with a well-typed [Tags] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
          */
-        fun tags(tags: JsonField<List<String>>) = apply { body.tags(tags) }
+        fun tags(tags: JsonField<Tags>) = apply { body.tags(tags) }
 
-        /**
-         * Adds a single [String] to [tags].
-         *
-         * @throws IllegalStateException if the field was previously set to a non-list.
-         */
-        fun addTag(tag: String) = apply { body.addTag(tag) }
+        /** Alias for calling [tags] with `Tags.ofStrings(strings)`. */
+        fun tagsOfStrings(strings: List<String>) = apply { body.tagsOfStrings(strings) }
 
-        /** Token lifetime in seconds. Defaults to 300. */
+        /** Alias for calling [tags] with `Tags.ofString(string)`. */
+        fun tags(string: String) = apply { body.tags(string) }
+
         fun ttlSeconds(ttlSeconds: Long) = apply { body.ttlSeconds(ttlSeconds) }
 
         /**
@@ -436,19 +428,21 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [UploadGenerateTokenParams].
+         * Returns an immutable instance of [MultipartUploadStartParams].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          *
          * The following fields are required:
          * ```java
          * .fileName()
+         * .format()
+         * .size()
          * ```
          *
          * @throws IllegalStateException if any required field is unset.
          */
-        fun build(): UploadGenerateTokenParams =
-            UploadGenerateTokenParams(
+        fun build(): MultipartUploadStartParams =
+            MultipartUploadStartParams(
                 body.build(),
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
@@ -465,13 +459,13 @@ private constructor(
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
         private val fileName: JsonField<String>,
-        private val allowOverride: JsonField<AllowOverride>,
+        private val format: JsonField<String>,
+        private val size: JsonField<Long>,
         private val customId: JsonField<String>,
         private val folder: JsonField<String>,
-        private val maxFileSize: JsonField<Long>,
         private val metadata: JsonField<Metadata>,
         private val randomPrefix: JsonField<Boolean>,
-        private val tags: JsonField<List<String>>,
+        private val tags: JsonField<Tags>,
         private val ttlSeconds: JsonField<Long>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
@@ -481,32 +475,28 @@ private constructor(
             @JsonProperty("file_name")
             @ExcludeMissing
             fileName: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("allow_override")
-            @ExcludeMissing
-            allowOverride: JsonField<AllowOverride> = JsonMissing.of(),
+            @JsonProperty("format") @ExcludeMissing format: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("size") @ExcludeMissing size: JsonField<Long> = JsonMissing.of(),
             @JsonProperty("custom_id")
             @ExcludeMissing
             customId: JsonField<String> = JsonMissing.of(),
             @JsonProperty("folder") @ExcludeMissing folder: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("max_file_size")
-            @ExcludeMissing
-            maxFileSize: JsonField<Long> = JsonMissing.of(),
             @JsonProperty("metadata")
             @ExcludeMissing
             metadata: JsonField<Metadata> = JsonMissing.of(),
             @JsonProperty("random_prefix")
             @ExcludeMissing
             randomPrefix: JsonField<Boolean> = JsonMissing.of(),
-            @JsonProperty("tags") @ExcludeMissing tags: JsonField<List<String>> = JsonMissing.of(),
+            @JsonProperty("tags") @ExcludeMissing tags: JsonField<Tags> = JsonMissing.of(),
             @JsonProperty("ttl_seconds")
             @ExcludeMissing
             ttlSeconds: JsonField<Long> = JsonMissing.of(),
         ) : this(
             fileName,
-            allowOverride,
+            format,
+            size,
             customId,
             folder,
-            maxFileSize,
             metadata,
             randomPrefix,
             tags,
@@ -515,18 +505,22 @@ private constructor(
         )
 
         /**
-         * File name for the uploaded file (e.g., avatar.jpg)
-         *
          * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
         fun fileName(): String = fileName.getRequired("file_name")
 
         /**
-         * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if
-         *   the server responded with an unexpected value).
+         * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
-        fun allowOverride(): Optional<AllowOverride> = allowOverride.getOptional("allow_override")
+        fun format(): String = format.getRequired("format")
+
+        /**
+         * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun size(): Long = size.getRequired("size")
 
         /**
          * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -535,20 +529,10 @@ private constructor(
         fun customId(): Optional<String> = customId.getOptional("custom_id")
 
         /**
-         * Destination folder path
-         *
          * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun folder(): Optional<String> = folder.getOptional("folder")
-
-        /**
-         * Max file size in bytes
-         *
-         * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if
-         *   the server responded with an unexpected value).
-         */
-        fun maxFileSize(): Optional<Long> = maxFileSize.getOptional("max_file_size")
 
         /**
          * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -566,11 +550,9 @@ private constructor(
          * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
-        fun tags(): Optional<List<String>> = tags.getOptional("tags")
+        fun tags(): Optional<Tags> = tags.getOptional("tags")
 
         /**
-         * Token lifetime in seconds. Defaults to 300.
-         *
          * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
@@ -584,14 +566,18 @@ private constructor(
         @JsonProperty("file_name") @ExcludeMissing fun _fileName(): JsonField<String> = fileName
 
         /**
-         * Returns the raw JSON value of [allowOverride].
+         * Returns the raw JSON value of [format].
          *
-         * Unlike [allowOverride], this method doesn't throw if the JSON field has an unexpected
-         * type.
+         * Unlike [format], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("allow_override")
-        @ExcludeMissing
-        fun _allowOverride(): JsonField<AllowOverride> = allowOverride
+        @JsonProperty("format") @ExcludeMissing fun _format(): JsonField<String> = format
+
+        /**
+         * Returns the raw JSON value of [size].
+         *
+         * Unlike [size], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("size") @ExcludeMissing fun _size(): JsonField<Long> = size
 
         /**
          * Returns the raw JSON value of [customId].
@@ -606,15 +592,6 @@ private constructor(
          * Unlike [folder], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("folder") @ExcludeMissing fun _folder(): JsonField<String> = folder
-
-        /**
-         * Returns the raw JSON value of [maxFileSize].
-         *
-         * Unlike [maxFileSize], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("max_file_size")
-        @ExcludeMissing
-        fun _maxFileSize(): JsonField<Long> = maxFileSize
 
         /**
          * Returns the raw JSON value of [metadata].
@@ -638,7 +615,7 @@ private constructor(
          *
          * Unlike [tags], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("tags") @ExcludeMissing fun _tags(): JsonField<List<String>> = tags
+        @JsonProperty("tags") @ExcludeMissing fun _tags(): JsonField<Tags> = tags
 
         /**
          * Returns the raw JSON value of [ttlSeconds].
@@ -667,6 +644,8 @@ private constructor(
              * The following fields are required:
              * ```java
              * .fileName()
+             * .format()
+             * .size()
              * ```
              */
             @JvmStatic fun builder() = Builder()
@@ -676,31 +655,30 @@ private constructor(
         class Builder internal constructor() {
 
             private var fileName: JsonField<String>? = null
-            private var allowOverride: JsonField<AllowOverride> = JsonMissing.of()
+            private var format: JsonField<String>? = null
+            private var size: JsonField<Long>? = null
             private var customId: JsonField<String> = JsonMissing.of()
             private var folder: JsonField<String> = JsonMissing.of()
-            private var maxFileSize: JsonField<Long> = JsonMissing.of()
             private var metadata: JsonField<Metadata> = JsonMissing.of()
             private var randomPrefix: JsonField<Boolean> = JsonMissing.of()
-            private var tags: JsonField<MutableList<String>>? = null
+            private var tags: JsonField<Tags> = JsonMissing.of()
             private var ttlSeconds: JsonField<Long> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
                 fileName = body.fileName
-                allowOverride = body.allowOverride
+                format = body.format
+                size = body.size
                 customId = body.customId
                 folder = body.folder
-                maxFileSize = body.maxFileSize
                 metadata = body.metadata
                 randomPrefix = body.randomPrefix
-                tags = body.tags.map { it.toMutableList() }
+                tags = body.tags
                 ttlSeconds = body.ttlSeconds
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
-            /** File name for the uploaded file (e.g., avatar.jpg) */
             fun fileName(fileName: String) = fileName(JsonField.of(fileName))
 
             /**
@@ -712,19 +690,27 @@ private constructor(
              */
             fun fileName(fileName: JsonField<String>) = apply { this.fileName = fileName }
 
-            fun allowOverride(allowOverride: AllowOverride) =
-                allowOverride(JsonField.of(allowOverride))
+            fun format(format: String) = format(JsonField.of(format))
 
             /**
-             * Sets [Builder.allowOverride] to an arbitrary JSON value.
+             * Sets [Builder.format] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.allowOverride] with a well-typed [AllowOverride]
-             * value instead. This method is primarily for setting the field to an undocumented or
-             * not yet supported value.
+             * You should usually call [Builder.format] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
-            fun allowOverride(allowOverride: JsonField<AllowOverride>) = apply {
-                this.allowOverride = allowOverride
-            }
+            fun format(format: JsonField<String>) = apply { this.format = format }
+
+            fun size(size: Long) = size(JsonField.of(size))
+
+            /**
+             * Sets [Builder.size] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.size] with a well-typed [Long] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun size(size: JsonField<Long>) = apply { this.size = size }
 
             fun customId(customId: String) = customId(JsonField.of(customId))
 
@@ -737,7 +723,6 @@ private constructor(
              */
             fun customId(customId: JsonField<String>) = apply { this.customId = customId }
 
-            /** Destination folder path */
             fun folder(folder: String) = folder(JsonField.of(folder))
 
             /**
@@ -748,18 +733,6 @@ private constructor(
              * supported value.
              */
             fun folder(folder: JsonField<String>) = apply { this.folder = folder }
-
-            /** Max file size in bytes */
-            fun maxFileSize(maxFileSize: Long) = maxFileSize(JsonField.of(maxFileSize))
-
-            /**
-             * Sets [Builder.maxFileSize] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.maxFileSize] with a well-typed [Long] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun maxFileSize(maxFileSize: JsonField<Long>) = apply { this.maxFileSize = maxFileSize }
 
             fun metadata(metadata: Metadata) = metadata(JsonField.of(metadata))
 
@@ -785,30 +758,23 @@ private constructor(
                 this.randomPrefix = randomPrefix
             }
 
-            fun tags(tags: List<String>) = tags(JsonField.of(tags))
+            fun tags(tags: Tags) = tags(JsonField.of(tags))
 
             /**
              * Sets [Builder.tags] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.tags] with a well-typed `List<String>` value
-             * instead. This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
+             * You should usually call [Builder.tags] with a well-typed [Tags] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
              */
-            fun tags(tags: JsonField<List<String>>) = apply {
-                this.tags = tags.map { it.toMutableList() }
-            }
+            fun tags(tags: JsonField<Tags>) = apply { this.tags = tags }
 
-            /**
-             * Adds a single [String] to [tags].
-             *
-             * @throws IllegalStateException if the field was previously set to a non-list.
-             */
-            fun addTag(tag: String) = apply {
-                tags =
-                    (tags ?: JsonField.of(mutableListOf())).also { checkKnown("tags", it).add(tag) }
-            }
+            /** Alias for calling [tags] with `Tags.ofStrings(strings)`. */
+            fun tagsOfStrings(strings: List<String>) = tags(Tags.ofStrings(strings))
 
-            /** Token lifetime in seconds. Defaults to 300. */
+            /** Alias for calling [tags] with `Tags.ofString(string)`. */
+            fun tags(string: String) = tags(Tags.ofString(string))
+
             fun ttlSeconds(ttlSeconds: Long) = ttlSeconds(JsonField.of(ttlSeconds))
 
             /**
@@ -847,6 +813,8 @@ private constructor(
              * The following fields are required:
              * ```java
              * .fileName()
+             * .format()
+             * .size()
              * ```
              *
              * @throws IllegalStateException if any required field is unset.
@@ -854,13 +822,13 @@ private constructor(
             fun build(): Body =
                 Body(
                     checkRequired("fileName", fileName),
-                    allowOverride,
+                    checkRequired("format", format),
+                    checkRequired("size", size),
                     customId,
                     folder,
-                    maxFileSize,
                     metadata,
                     randomPrefix,
-                    (tags ?: JsonMissing.of()).map { it.toImmutable() },
+                    tags,
                     ttlSeconds,
                     additionalProperties.toMutableMap(),
                 )
@@ -883,13 +851,13 @@ private constructor(
             }
 
             fileName()
-            allowOverride().ifPresent { it.validate() }
+            format()
+            size()
             customId()
             folder()
-            maxFileSize()
             metadata().ifPresent { it.validate() }
             randomPrefix()
-            tags()
+            tags().ifPresent { it.validate() }
             ttlSeconds()
             validated = true
         }
@@ -911,13 +879,13 @@ private constructor(
         @JvmSynthetic
         internal fun validity(): Int =
             (if (fileName.asKnown().isPresent) 1 else 0) +
-                (allowOverride.asKnown().getOrNull()?.validity() ?: 0) +
+                (if (format.asKnown().isPresent) 1 else 0) +
+                (if (size.asKnown().isPresent) 1 else 0) +
                 (if (customId.asKnown().isPresent) 1 else 0) +
                 (if (folder.asKnown().isPresent) 1 else 0) +
-                (if (maxFileSize.asKnown().isPresent) 1 else 0) +
                 (metadata.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (randomPrefix.asKnown().isPresent) 1 else 0) +
-                (tags.asKnown().getOrNull()?.size ?: 0) +
+                (tags.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (ttlSeconds.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
@@ -927,10 +895,10 @@ private constructor(
 
             return other is Body &&
                 fileName == other.fileName &&
-                allowOverride == other.allowOverride &&
+                format == other.format &&
+                size == other.size &&
                 customId == other.customId &&
                 folder == other.folder &&
-                maxFileSize == other.maxFileSize &&
                 metadata == other.metadata &&
                 randomPrefix == other.randomPrefix &&
                 tags == other.tags &&
@@ -941,10 +909,10 @@ private constructor(
         private val hashCode: Int by lazy {
             Objects.hash(
                 fileName,
-                allowOverride,
+                format,
+                size,
                 customId,
                 folder,
-                maxFileSize,
                 metadata,
                 randomPrefix,
                 tags,
@@ -956,187 +924,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{fileName=$fileName, allowOverride=$allowOverride, customId=$customId, folder=$folder, maxFileSize=$maxFileSize, metadata=$metadata, randomPrefix=$randomPrefix, tags=$tags, ttlSeconds=$ttlSeconds, additionalProperties=$additionalProperties}"
-    }
-
-    class AllowOverride
-    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
-    private constructor(
-        private val folder: JsonField<Boolean>,
-        private val tags: JsonField<Boolean>,
-        private val additionalProperties: MutableMap<String, JsonValue>,
-    ) {
-
-        @JsonCreator
-        private constructor(
-            @JsonProperty("folder") @ExcludeMissing folder: JsonField<Boolean> = JsonMissing.of(),
-            @JsonProperty("tags") @ExcludeMissing tags: JsonField<Boolean> = JsonMissing.of(),
-        ) : this(folder, tags, mutableMapOf())
-
-        /**
-         * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if
-         *   the server responded with an unexpected value).
-         */
-        fun folder(): Optional<Boolean> = folder.getOptional("folder")
-
-        /**
-         * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if
-         *   the server responded with an unexpected value).
-         */
-        fun tags(): Optional<Boolean> = tags.getOptional("tags")
-
-        /**
-         * Returns the raw JSON value of [folder].
-         *
-         * Unlike [folder], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("folder") @ExcludeMissing fun _folder(): JsonField<Boolean> = folder
-
-        /**
-         * Returns the raw JSON value of [tags].
-         *
-         * Unlike [tags], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("tags") @ExcludeMissing fun _tags(): JsonField<Boolean> = tags
-
-        @JsonAnySetter
-        private fun putAdditionalProperty(key: String, value: JsonValue) {
-            additionalProperties.put(key, value)
-        }
-
-        @JsonAnyGetter
-        @ExcludeMissing
-        fun _additionalProperties(): Map<String, JsonValue> =
-            Collections.unmodifiableMap(additionalProperties)
-
-        fun toBuilder() = Builder().from(this)
-
-        companion object {
-
-            /** Returns a mutable builder for constructing an instance of [AllowOverride]. */
-            @JvmStatic fun builder() = Builder()
-        }
-
-        /** A builder for [AllowOverride]. */
-        class Builder internal constructor() {
-
-            private var folder: JsonField<Boolean> = JsonMissing.of()
-            private var tags: JsonField<Boolean> = JsonMissing.of()
-            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
-
-            @JvmSynthetic
-            internal fun from(allowOverride: AllowOverride) = apply {
-                folder = allowOverride.folder
-                tags = allowOverride.tags
-                additionalProperties = allowOverride.additionalProperties.toMutableMap()
-            }
-
-            fun folder(folder: Boolean) = folder(JsonField.of(folder))
-
-            /**
-             * Sets [Builder.folder] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.folder] with a well-typed [Boolean] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun folder(folder: JsonField<Boolean>) = apply { this.folder = folder }
-
-            fun tags(tags: Boolean) = tags(JsonField.of(tags))
-
-            /**
-             * Sets [Builder.tags] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.tags] with a well-typed [Boolean] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun tags(tags: JsonField<Boolean>) = apply { this.tags = tags }
-
-            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.clear()
-                putAllAdditionalProperties(additionalProperties)
-            }
-
-            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                additionalProperties.put(key, value)
-            }
-
-            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.putAll(additionalProperties)
-            }
-
-            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
-
-            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
-                keys.forEach(::removeAdditionalProperty)
-            }
-
-            /**
-             * Returns an immutable instance of [AllowOverride].
-             *
-             * Further updates to this [Builder] will not mutate the returned instance.
-             */
-            fun build(): AllowOverride =
-                AllowOverride(folder, tags, additionalProperties.toMutableMap())
-        }
-
-        private var validated: Boolean = false
-
-        /**
-         * Validates that the types of all values in this object match their expected types
-         * recursively.
-         *
-         * This method is _not_ forwards compatible with new types from the API for existing fields.
-         *
-         * @throws AutorenderInvalidDataException if any value type in this object doesn't match its
-         *   expected type.
-         */
-        fun validate(): AllowOverride = apply {
-            if (validated) {
-                return@apply
-            }
-
-            folder()
-            tags()
-            validated = true
-        }
-
-        fun isValid(): Boolean =
-            try {
-                validate()
-                true
-            } catch (e: AutorenderInvalidDataException) {
-                false
-            }
-
-        /**
-         * Returns a score indicating how many valid values are contained in this object
-         * recursively.
-         *
-         * Used for best match union deserialization.
-         */
-        @JvmSynthetic
-        internal fun validity(): Int =
-            (if (folder.asKnown().isPresent) 1 else 0) + (if (tags.asKnown().isPresent) 1 else 0)
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) {
-                return true
-            }
-
-            return other is AllowOverride &&
-                folder == other.folder &&
-                tags == other.tags &&
-                additionalProperties == other.additionalProperties
-        }
-
-        private val hashCode: Int by lazy { Objects.hash(folder, tags, additionalProperties) }
-
-        override fun hashCode(): Int = hashCode
-
-        override fun toString() =
-            "AllowOverride{folder=$folder, tags=$tags, additionalProperties=$additionalProperties}"
+            "Body{fileName=$fileName, format=$format, size=$size, customId=$customId, folder=$folder, metadata=$metadata, randomPrefix=$randomPrefix, tags=$tags, ttlSeconds=$ttlSeconds, additionalProperties=$additionalProperties}"
     }
 
     class Metadata
@@ -1247,12 +1035,216 @@ private constructor(
         override fun toString() = "Metadata{additionalProperties=$additionalProperties}"
     }
 
+    @JsonDeserialize(using = Tags.Deserializer::class)
+    @JsonSerialize(using = Tags.Serializer::class)
+    class Tags
+    private constructor(
+        private val strings: List<String>? = null,
+        private val string: String? = null,
+        private val _json: JsonValue? = null,
+    ) {
+
+        fun strings(): Optional<List<String>> = Optional.ofNullable(strings)
+
+        fun string(): Optional<String> = Optional.ofNullable(string)
+
+        fun isStrings(): Boolean = strings != null
+
+        fun isString(): Boolean = string != null
+
+        fun asStrings(): List<String> = strings.getOrThrow("strings")
+
+        fun asString(): String = string.getOrThrow("string")
+
+        fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
+
+        /**
+         * Maps this instance's current variant to a value of type [T] using the given [visitor].
+         *
+         * Note that this method is _not_ forwards compatible with new variants from the API, unless
+         * [visitor] overrides [Visitor.unknown]. To handle variants not known to this version of
+         * the SDK gracefully, consider overriding [Visitor.unknown]:
+         * ```java
+         * import io.autorender.core.JsonValue;
+         * import java.util.Optional;
+         *
+         * Optional<String> result = tags.accept(new Tags.Visitor<Optional<String>>() {
+         *     @Override
+         *     public Optional<String> visitStrings(List<String> strings) {
+         *         return Optional.of(strings.toString());
+         *     }
+         *
+         *     // ...
+         *
+         *     @Override
+         *     public Optional<String> unknown(JsonValue json) {
+         *         // Or inspect the `json`.
+         *         return Optional.empty();
+         *     }
+         * });
+         * ```
+         *
+         * @throws AutorenderInvalidDataException if [Visitor.unknown] is not overridden in
+         *   [visitor] and the current variant is unknown.
+         */
+        fun <T> accept(visitor: Visitor<T>): T =
+            when {
+                strings != null -> visitor.visitStrings(strings)
+                string != null -> visitor.visitString(string)
+                else -> visitor.unknown(_json)
+            }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws AutorenderInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Tags = apply {
+            if (validated) {
+                return@apply
+            }
+
+            accept(
+                object : Visitor<Unit> {
+                    override fun visitStrings(strings: List<String>) {}
+
+                    override fun visitString(string: String) {}
+                }
+            )
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: AutorenderInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            accept(
+                object : Visitor<Int> {
+                    override fun visitStrings(strings: List<String>) = strings.size
+
+                    override fun visitString(string: String) = 1
+
+                    override fun unknown(json: JsonValue?) = 0
+                }
+            )
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Tags && strings == other.strings && string == other.string
+        }
+
+        override fun hashCode(): Int = Objects.hash(strings, string)
+
+        override fun toString(): String =
+            when {
+                strings != null -> "Tags{strings=$strings}"
+                string != null -> "Tags{string=$string}"
+                _json != null -> "Tags{_unknown=$_json}"
+                else -> throw IllegalStateException("Invalid Tags")
+            }
+
+        companion object {
+
+            @JvmStatic fun ofStrings(strings: List<String>) = Tags(strings = strings.toImmutable())
+
+            @JvmStatic fun ofString(string: String) = Tags(string = string)
+        }
+
+        /** An interface that defines how to map each variant of [Tags] to a value of type [T]. */
+        interface Visitor<out T> {
+
+            fun visitStrings(strings: List<String>): T
+
+            fun visitString(string: String): T
+
+            /**
+             * Maps an unknown variant of [Tags] to a value of type [T].
+             *
+             * An instance of [Tags] can contain an unknown variant if it was deserialized from data
+             * that doesn't match any known variant. For example, if the SDK is on an older version
+             * than the API, then the API may respond with new variants that the SDK is unaware of.
+             *
+             * @throws AutorenderInvalidDataException in the default implementation.
+             */
+            fun unknown(json: JsonValue?): T {
+                throw AutorenderInvalidDataException("Unknown Tags: $json")
+            }
+        }
+
+        internal class Deserializer : BaseDeserializer<Tags>(Tags::class) {
+
+            override fun ObjectCodec.deserialize(node: JsonNode): Tags {
+                val json = JsonValue.fromJsonNode(node)
+
+                val bestMatches =
+                    sequenceOf(
+                            tryDeserialize(node, jacksonTypeRef<String>())?.let {
+                                Tags(string = it, _json = json)
+                            },
+                            tryDeserialize(node, jacksonTypeRef<List<String>>())?.let {
+                                Tags(strings = it, _json = json)
+                            },
+                        )
+                        .filterNotNull()
+                        .allMaxBy { it.validity() }
+                        .toList()
+                return when (bestMatches.size) {
+                    // This can happen if what we're deserializing is completely incompatible with
+                    // all the possible variants (e.g. deserializing from boolean).
+                    0 -> Tags(_json = json)
+                    1 -> bestMatches.single()
+                    // If there's more than one match with the highest validity, then use the first
+                    // completely valid match, or simply the first match if none are completely
+                    // valid.
+                    else -> bestMatches.firstOrNull { it.isValid() } ?: bestMatches.first()
+                }
+            }
+        }
+
+        internal class Serializer : BaseSerializer<Tags>(Tags::class) {
+
+            override fun serialize(
+                value: Tags,
+                generator: JsonGenerator,
+                provider: SerializerProvider,
+            ) {
+                when {
+                    value.strings != null -> generator.writeObject(value.strings)
+                    value.string != null -> generator.writeObject(value.string)
+                    value._json != null -> generator.writeObject(value._json)
+                    else -> throw IllegalStateException("Invalid Tags")
+                }
+            }
+        }
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) {
             return true
         }
 
-        return other is UploadGenerateTokenParams &&
+        return other is MultipartUploadStartParams &&
             body == other.body &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
@@ -1261,5 +1253,5 @@ private constructor(
     override fun hashCode(): Int = Objects.hash(body, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "UploadGenerateTokenParams{body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "MultipartUploadStartParams{body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

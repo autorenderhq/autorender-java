@@ -7,13 +7,13 @@
 
 <!-- x-release-please-end -->
 
-The Autorender Java SDK provides convenient access to the [Autorender REST API](https://docs.autorender.io) from applications written in Java.
+The Autorender Java SDK provides convenient access to the [Autorender REST API](https://autorender.mintlify.app/) from applications written in Java.
 
 It is generated with [Stainless](https://www.stainless.com/).
 
 <!-- x-release-please-start-version -->
 
-The REST API documentation can be found on [docs.autorender.io](https://docs.autorender.io). Javadocs are available on [javadoc.io](https://javadoc.io/doc/io.autorender/autorender-java/0.0.1).
+The REST API documentation can be found on [autorender.mintlify.app](https://autorender.mintlify.app/). Javadocs are available on [javadoc.io](https://javadoc.io/doc/io.autorender/autorender-java/0.0.1).
 
 <!-- x-release-please-end -->
 
@@ -48,19 +48,17 @@ This library requires Java 8 or later.
 ```java
 import io.autorender.client.AutorenderClient;
 import io.autorender.client.okhttp.AutorenderOkHttpClient;
-import io.autorender.models.uploads.UploadCreateParams;
-import io.autorender.models.uploads.UploadCreateResponse;
-import java.io.ByteArrayInputStream;
+import io.autorender.models.files.FileListParams;
+import io.autorender.models.files.FileListResponse;
 
 // Configures using the `autorender.apiKey` and `autorender.baseUrl` system properties
 // Or configures using the `AUTORENDER_API_KEY` and `AUTORENDER_BASE_URL` environment variables
 AutorenderClient client = AutorenderOkHttpClient.fromEnv();
 
-UploadCreateParams params = UploadCreateParams.builder()
-    .file(new ByteArrayInputStream("<binary>".getBytes()))
-    .fileName("photo.jpg")
+FileListParams params = FileListParams.builder()
+    .limit(10L)
     .build();
-UploadCreateResponse upload = client.uploads().create(params);
+FileListResponse files = client.files().list(params);
 ```
 
 ## Client configuration
@@ -133,7 +131,7 @@ The `withOptions()` method does not affect the original client or service.
 
 To send a request to the Autorender API, build an instance of some `Params` class and pass it to the corresponding client method. When the response is received, it will be deserialized into an instance of a Java class.
 
-For example, `client.uploads().create(...)` should be called with an instance of `UploadCreateParams`, and it will return an instance of `UploadCreateResponse`.
+For example, `client.files().list(...)` should be called with an instance of `FileListParams`, and it will return an instance of `FileListResponse`.
 
 ## Immutability
 
@@ -150,20 +148,18 @@ The default client is synchronous. To switch to asynchronous execution, call the
 ```java
 import io.autorender.client.AutorenderClient;
 import io.autorender.client.okhttp.AutorenderOkHttpClient;
-import io.autorender.models.uploads.UploadCreateParams;
-import io.autorender.models.uploads.UploadCreateResponse;
-import java.io.ByteArrayInputStream;
+import io.autorender.models.files.FileListParams;
+import io.autorender.models.files.FileListResponse;
 import java.util.concurrent.CompletableFuture;
 
 // Configures using the `autorender.apiKey` and `autorender.baseUrl` system properties
 // Or configures using the `AUTORENDER_API_KEY` and `AUTORENDER_BASE_URL` environment variables
 AutorenderClient client = AutorenderOkHttpClient.fromEnv();
 
-UploadCreateParams params = UploadCreateParams.builder()
-    .file(new ByteArrayInputStream("<binary>".getBytes()))
-    .fileName("photo.jpg")
+FileListParams params = FileListParams.builder()
+    .limit(10L)
     .build();
-CompletableFuture<UploadCreateResponse> upload = client.async().uploads().create(params);
+CompletableFuture<FileListResponse> files = client.async().files().list(params);
 ```
 
 Or create an asynchronous client from the beginning:
@@ -171,20 +167,18 @@ Or create an asynchronous client from the beginning:
 ```java
 import io.autorender.client.AutorenderClientAsync;
 import io.autorender.client.okhttp.AutorenderOkHttpClientAsync;
-import io.autorender.models.uploads.UploadCreateParams;
-import io.autorender.models.uploads.UploadCreateResponse;
-import java.io.ByteArrayInputStream;
+import io.autorender.models.files.FileListParams;
+import io.autorender.models.files.FileListResponse;
 import java.util.concurrent.CompletableFuture;
 
 // Configures using the `autorender.apiKey` and `autorender.baseUrl` system properties
 // Or configures using the `AUTORENDER_API_KEY` and `AUTORENDER_BASE_URL` environment variables
 AutorenderClientAsync client = AutorenderOkHttpClientAsync.fromEnv();
 
-UploadCreateParams params = UploadCreateParams.builder()
-    .file(new ByteArrayInputStream("<binary>".getBytes()))
-    .fileName("photo.jpg")
+FileListParams params = FileListParams.builder()
+    .limit(10L)
     .build();
-CompletableFuture<UploadCreateResponse> upload = client.uploads().create(params);
+CompletableFuture<FileListResponse> files = client.files().list(params);
 ```
 
 The asynchronous client supports the same options as the synchronous one, except most methods return `CompletableFuture`s.
@@ -531,9 +525,9 @@ To set undocumented parameters, call the `putAdditionalHeader`, `putAdditionalQu
 
 ```java
 import io.autorender.core.JsonValue;
-import io.autorender.models.uploads.UploadCreateParams;
+import io.autorender.models.files.FileListParams;
 
-UploadCreateParams params = UploadCreateParams.builder()
+FileListParams params = FileListParams.builder()
     .putAdditionalHeader("Secret-Header", "42")
     .putAdditionalQueryParam("secret_query_param", "42")
     .putAdditionalBodyProperty("secretProperty", JsonValue.from("42"))
@@ -542,30 +536,13 @@ UploadCreateParams params = UploadCreateParams.builder()
 
 These can be accessed on the built object later using the `_additionalHeaders()`, `_additionalQueryParams()`, and `_additionalBodyProperties()` methods.
 
-To set undocumented parameters on _nested_ headers, query params, or body classes, call the `putAdditionalProperty` method on the nested class:
-
-```java
-import io.autorender.core.JsonValue;
-import io.autorender.models.uploads.UploadGenerateTokenParams;
-
-UploadGenerateTokenParams params = UploadGenerateTokenParams.builder()
-    .allowOverride(UploadGenerateTokenParams.AllowOverride.builder()
-        .putAdditionalProperty("secretProperty", JsonValue.from("42"))
-        .build())
-    .build();
-```
-
-These properties can be accessed on the nested built object later using the `_additionalProperties()` method.
-
 To set a documented parameter or property to an undocumented or not yet supported _value_, pass a [`JsonValue`](autorender-java-core/src/main/kotlin/io/autorender/core/Values.kt) object to its setter:
 
 ```java
-import io.autorender.core.JsonValue;
-import io.autorender.models.uploads.UploadCreateParams;
+import io.autorender.models.files.FileListParams;
 
-UploadCreateParams params = UploadCreateParams.builder()
-    .file(JsonValue.from(42))
-    .fileName("photo.jpg")
+FileListParams params = FileListParams.builder()
+    .limit(10L)
     .build();
 ```
 
@@ -614,9 +591,10 @@ To forcibly omit a required parameter or property, pass [`JsonMissing`](autorend
 
 ```java
 import io.autorender.core.JsonMissing;
+import io.autorender.models.files.FileListParams;
 import io.autorender.models.uploads.UploadCreateParams;
 
-UploadCreateParams params = UploadCreateParams.builder()
+FileListParams params = UploadCreateParams.builder()
     .fileName("product.jpg")
     .file(JsonMissing.of())
     .build();
@@ -630,7 +608,7 @@ To access undocumented response properties, call the `_additionalProperties()` m
 import io.autorender.core.JsonValue;
 import java.util.Map;
 
-Map<String, JsonValue> additionalProperties = client.uploads().create(params)._additionalProperties();
+Map<String, JsonValue> additionalProperties = client.files().list(params)._additionalProperties();
 JsonValue secretPropertyValue = additionalProperties.get("secretProperty");
 
 String result = secretPropertyValue.accept(new JsonValue.Visitor<>() {
@@ -658,22 +636,21 @@ To access a property's raw JSON value, which may be undocumented, call its `_` p
 
 ```java
 import io.autorender.core.JsonField;
-import java.io.InputStream;
 import java.util.Optional;
 
-JsonField<InputStream> file = client.uploads().create(params)._file();
+JsonField<Object> field = client.files().list(params)._field();
 
-if (file.isMissing()) {
+if (field.isMissing()) {
   // The property is absent from the JSON response
-} else if (file.isNull()) {
+} else if (field.isNull()) {
   // The property was set to literal null
 } else {
   // Check if value was provided as a string
   // Other methods include `asNumber()`, `asBoolean()`, etc.
-  Optional<String> jsonString = file.asString();
+  Optional<String> jsonString = field.asString();
 
   // Try to deserialize into a custom type
-  MyClass myObject = file.asUnknown().orElseThrow().convert(MyClass.class);
+  MyClass myObject = field.asUnknown().orElseThrow().convert(MyClass.class);
 }
 ```
 
@@ -688,19 +665,17 @@ Validating the response is _not_ forwards compatible with new types from the API
 If you would still prefer to check that the response is completely well-typed upfront, then either call `validate()`:
 
 ```java
-import io.autorender.models.uploads.UploadCreateResponse;
+import io.autorender.models.files.FileListResponse;
 
-UploadCreateResponse upload = client.uploads().create(params).validate();
+FileListResponse files = client.files().list(params).validate();
 ```
 
 Or configure the method call to validate the response using the `responseValidation` method:
 
 ```java
-import io.autorender.models.uploads.UploadCreateResponse;
+import io.autorender.models.files.FileListResponse;
 
-UploadCreateResponse upload = client.uploads().create(
-  params, RequestOptions.builder().responseValidation(true).build()
-);
+FileListResponse files = client.files().list(RequestOptions.builder().responseValidation(true).build());
 ```
 
 Or configure the default for all method calls at the client level:

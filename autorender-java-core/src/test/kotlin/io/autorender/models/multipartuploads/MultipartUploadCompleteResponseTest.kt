@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package io.autorender.models.uploads
+package io.autorender.models.multipartuploads
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import io.autorender.core.JsonValue
@@ -9,12 +9,12 @@ import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class UploadCreateFromUrlResponseTest {
+internal class MultipartUploadCompleteResponseTest {
 
     @Test
     fun create() {
-        val uploadCreateFromUrlResponse =
-            UploadCreateFromUrlResponse.builder()
+        val multipartUploadCompleteResponse =
+            MultipartUploadCompleteResponse.builder()
                 .id("id_abc123")
                 .createdAt(OffsetDateTime.parse("2024-01-01T00:00:00Z"))
                 .customId(null)
@@ -24,7 +24,7 @@ internal class UploadCreateFromUrlResponseTest {
                 .height(1080L)
                 .isDuplicate(false)
                 .metadata(
-                    UploadCreateFromUrlResponse.Metadata.builder()
+                    MultipartUploadCompleteResponse.Metadata.builder()
                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                         .build()
                 )
@@ -43,43 +43,43 @@ internal class UploadCreateFromUrlResponseTest {
                 .isPrivate(false)
                 .build()
 
-        assertThat(uploadCreateFromUrlResponse.id()).isEqualTo("id_abc123")
-        assertThat(uploadCreateFromUrlResponse.createdAt())
+        assertThat(multipartUploadCompleteResponse.id()).isEqualTo("id_abc123")
+        assertThat(multipartUploadCompleteResponse.createdAt())
             .isEqualTo(OffsetDateTime.parse("2024-01-01T00:00:00Z"))
-        assertThat(uploadCreateFromUrlResponse.customId()).isEmpty
-        assertThat(uploadCreateFromUrlResponse.extension()).isEqualTo("jpg")
-        assertThat(uploadCreateFromUrlResponse.fileNo()).isEqualTo("file_abc123")
-        assertThat(uploadCreateFromUrlResponse.folderNo()).contains("folder_abc123")
-        assertThat(uploadCreateFromUrlResponse.height()).contains(1080L)
-        assertThat(uploadCreateFromUrlResponse.isDuplicate()).isEqualTo(false)
-        assertThat(uploadCreateFromUrlResponse.metadata())
+        assertThat(multipartUploadCompleteResponse.customId()).isEmpty
+        assertThat(multipartUploadCompleteResponse.extension()).isEqualTo("jpg")
+        assertThat(multipartUploadCompleteResponse.fileNo()).isEqualTo("file_abc123")
+        assertThat(multipartUploadCompleteResponse.folderNo()).contains("folder_abc123")
+        assertThat(multipartUploadCompleteResponse.height()).contains(1080L)
+        assertThat(multipartUploadCompleteResponse.isDuplicate()).isEqualTo(false)
+        assertThat(multipartUploadCompleteResponse.metadata())
             .contains(
-                UploadCreateFromUrlResponse.Metadata.builder()
+                MultipartUploadCompleteResponse.Metadata.builder()
                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                     .build()
             )
-        assertThat(uploadCreateFromUrlResponse.mimeType()).isEqualTo("image/jpeg")
-        assertThat(uploadCreateFromUrlResponse.name()).isEqualTo("example.jpg")
-        assertThat(uploadCreateFromUrlResponse.path()).isEqualTo("/example.jpg")
-        assertThat(uploadCreateFromUrlResponse.size()).isEqualTo(12345L)
-        assertThat(uploadCreateFromUrlResponse.tags()).containsExactly("string")
-        assertThat(uploadCreateFromUrlResponse.thumbnail())
+        assertThat(multipartUploadCompleteResponse.mimeType()).isEqualTo("image/jpeg")
+        assertThat(multipartUploadCompleteResponse.name()).isEqualTo("example.jpg")
+        assertThat(multipartUploadCompleteResponse.path()).isEqualTo("/example.jpg")
+        assertThat(multipartUploadCompleteResponse.size()).isEqualTo(12345L)
+        assertThat(multipartUploadCompleteResponse.tags()).containsExactly("string")
+        assertThat(multipartUploadCompleteResponse.thumbnail())
             .isEqualTo("https://cdn.autorender.io/thumb.jpg")
-        assertThat(uploadCreateFromUrlResponse.uploadSource()).isEqualTo("direct")
-        assertThat(uploadCreateFromUrlResponse.url())
+        assertThat(multipartUploadCompleteResponse.uploadSource()).isEqualTo("direct")
+        assertThat(multipartUploadCompleteResponse.url())
             .isEqualTo("https://cdn.autorender.io/example.jpg")
-        assertThat(uploadCreateFromUrlResponse.width()).contains(1920L)
-        assertThat(uploadCreateFromUrlResponse.workspaceId()).isEqualTo("ws_abc123")
-        assertThat(uploadCreateFromUrlResponse.format()).contains("jpg")
-        assertThat(uploadCreateFromUrlResponse.hash()).contains("abc123def456")
-        assertThat(uploadCreateFromUrlResponse.isPrivate()).contains(false)
+        assertThat(multipartUploadCompleteResponse.width()).contains(1920L)
+        assertThat(multipartUploadCompleteResponse.workspaceId()).isEqualTo("ws_abc123")
+        assertThat(multipartUploadCompleteResponse.format()).contains("jpg")
+        assertThat(multipartUploadCompleteResponse.hash()).contains("abc123def456")
+        assertThat(multipartUploadCompleteResponse.isPrivate()).contains(false)
     }
 
     @Test
     fun roundtrip() {
         val jsonMapper = jsonMapper()
-        val uploadCreateFromUrlResponse =
-            UploadCreateFromUrlResponse.builder()
+        val multipartUploadCompleteResponse =
+            MultipartUploadCompleteResponse.builder()
                 .id("id_abc123")
                 .createdAt(OffsetDateTime.parse("2024-01-01T00:00:00Z"))
                 .customId(null)
@@ -89,7 +89,7 @@ internal class UploadCreateFromUrlResponseTest {
                 .height(1080L)
                 .isDuplicate(false)
                 .metadata(
-                    UploadCreateFromUrlResponse.Metadata.builder()
+                    MultipartUploadCompleteResponse.Metadata.builder()
                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                         .build()
                 )
@@ -108,12 +108,13 @@ internal class UploadCreateFromUrlResponseTest {
                 .isPrivate(false)
                 .build()
 
-        val roundtrippedUploadCreateFromUrlResponse =
+        val roundtrippedMultipartUploadCompleteResponse =
             jsonMapper.readValue(
-                jsonMapper.writeValueAsString(uploadCreateFromUrlResponse),
-                jacksonTypeRef<UploadCreateFromUrlResponse>(),
+                jsonMapper.writeValueAsString(multipartUploadCompleteResponse),
+                jacksonTypeRef<MultipartUploadCompleteResponse>(),
             )
 
-        assertThat(roundtrippedUploadCreateFromUrlResponse).isEqualTo(uploadCreateFromUrlResponse)
+        assertThat(roundtrippedMultipartUploadCompleteResponse)
+            .isEqualTo(multipartUploadCompleteResponse)
     }
 }

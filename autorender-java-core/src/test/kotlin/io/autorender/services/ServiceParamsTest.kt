@@ -4,6 +4,8 @@ package io.autorender.services
 
 import com.github.tomakehurst.wiremock.client.WireMock.anyUrl
 import com.github.tomakehurst.wiremock.client.WireMock.equalTo
+import com.github.tomakehurst.wiremock.client.WireMock.get
+import com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor
 import com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath
 import com.github.tomakehurst.wiremock.client.WireMock.ok
 import com.github.tomakehurst.wiremock.client.WireMock.post
@@ -15,6 +17,7 @@ import com.github.tomakehurst.wiremock.junit5.WireMockTest
 import io.autorender.client.AutorenderClient
 import io.autorender.client.okhttp.AutorenderOkHttpClient
 import io.autorender.core.JsonValue
+import io.autorender.models.files.FileListParams
 import io.autorender.models.uploads.UploadCreateParams
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -62,6 +65,30 @@ internal class ServiceParamsTest {
                 .withHeader("Secret-Header", equalTo("42"))
                 .withQueryParam("secret_query_param", equalTo("42"))
                 .withRequestBody(matchingJsonPath("$.secretProperty", equalTo("42")))
+        )
+    }
+
+    @Test
+    fun list() {
+        val fileService = client.files()
+        stubFor(get(anyUrl()).willReturn(ok("{}")))
+
+        fileService.list(
+            FileListParams.builder()
+                .folderNo("folder_no")
+                .limit(1L)
+                .page(1L)
+                .search("search")
+                .sort(FileListParams.Sort.NAME_ASC)
+                .putAdditionalHeader("Secret-Header", "42")
+                .putAdditionalQueryParam("secret_query_param", "42")
+                .build()
+        )
+
+        verify(
+            getRequestedFor(anyUrl())
+                .withHeader("Secret-Header", equalTo("42"))
+                .withQueryParam("secret_query_param", equalTo("42"))
         )
     }
 }

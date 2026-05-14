@@ -27,23 +27,25 @@ private constructor(
     private val id: JsonField<String>,
     private val createdAt: JsonField<OffsetDateTime>,
     private val customId: JsonField<String>,
+    private val extension: JsonField<String>,
     private val fileNo: JsonField<String>,
     private val folderNo: JsonField<String>,
     private val height: JsonField<Long>,
     private val isDuplicate: JsonField<Boolean>,
-    private val isPrivate: JsonField<Boolean>,
     private val metadata: JsonField<Metadata>,
     private val mimeType: JsonField<String>,
     private val name: JsonField<String>,
     private val path: JsonField<String>,
     private val size: JsonField<Long>,
     private val tags: JsonField<List<String>>,
+    private val thumbnail: JsonField<String>,
     private val uploadSource: JsonField<String>,
     private val url: JsonField<String>,
     private val width: JsonField<Long>,
     private val workspaceId: JsonField<String>,
     private val format: JsonField<String>,
     private val hash: JsonField<String>,
+    private val isPrivate: JsonField<Boolean>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
@@ -54,21 +56,20 @@ private constructor(
         @ExcludeMissing
         createdAt: JsonField<OffsetDateTime> = JsonMissing.of(),
         @JsonProperty("custom_id") @ExcludeMissing customId: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("extension") @ExcludeMissing extension: JsonField<String> = JsonMissing.of(),
         @JsonProperty("file_no") @ExcludeMissing fileNo: JsonField<String> = JsonMissing.of(),
         @JsonProperty("folder_no") @ExcludeMissing folderNo: JsonField<String> = JsonMissing.of(),
         @JsonProperty("height") @ExcludeMissing height: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("is_duplicate")
         @ExcludeMissing
         isDuplicate: JsonField<Boolean> = JsonMissing.of(),
-        @JsonProperty("is_private")
-        @ExcludeMissing
-        isPrivate: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("metadata") @ExcludeMissing metadata: JsonField<Metadata> = JsonMissing.of(),
         @JsonProperty("mime_type") @ExcludeMissing mimeType: JsonField<String> = JsonMissing.of(),
         @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
         @JsonProperty("path") @ExcludeMissing path: JsonField<String> = JsonMissing.of(),
         @JsonProperty("size") @ExcludeMissing size: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("tags") @ExcludeMissing tags: JsonField<List<String>> = JsonMissing.of(),
+        @JsonProperty("thumbnail") @ExcludeMissing thumbnail: JsonField<String> = JsonMissing.of(),
         @JsonProperty("upload_source")
         @ExcludeMissing
         uploadSource: JsonField<String> = JsonMissing.of(),
@@ -79,27 +80,30 @@ private constructor(
         workspaceId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("format") @ExcludeMissing format: JsonField<String> = JsonMissing.of(),
         @JsonProperty("hash") @ExcludeMissing hash: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("is_private") @ExcludeMissing isPrivate: JsonField<Boolean> = JsonMissing.of(),
     ) : this(
         id,
         createdAt,
         customId,
+        extension,
         fileNo,
         folderNo,
         height,
         isDuplicate,
-        isPrivate,
         metadata,
         mimeType,
         name,
         path,
         size,
         tags,
+        thumbnail,
         uploadSource,
         url,
         width,
         workspaceId,
         format,
         hash,
+        isPrivate,
         mutableMapOf(),
     )
 
@@ -125,6 +129,12 @@ private constructor(
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
+    fun extension(): String = extension.getRequired("extension")
+
+    /**
+     * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
+     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     */
     fun fileNo(): String = fileNo.getRequired("file_no")
 
     /**
@@ -144,12 +154,6 @@ private constructor(
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun isDuplicate(): Boolean = isDuplicate.getRequired("is_duplicate")
-
-    /**
-     * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
-     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
-     */
-    fun isPrivate(): Boolean = isPrivate.getRequired("is_private")
 
     /**
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -191,6 +195,12 @@ private constructor(
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
+    fun thumbnail(): String = thumbnail.getRequired("thumbnail")
+
+    /**
+     * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
+     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     */
     fun uploadSource(): String = uploadSource.getRequired("upload_source")
 
     /**
@@ -224,6 +234,12 @@ private constructor(
     fun hash(): Optional<String> = hash.getOptional("hash")
 
     /**
+     * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun isPrivate(): Optional<Boolean> = isPrivate.getOptional("is_private")
+
+    /**
      * Returns the raw JSON value of [id].
      *
      * Unlike [id], this method doesn't throw if the JSON field has an unexpected type.
@@ -245,6 +261,13 @@ private constructor(
      * Unlike [customId], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("custom_id") @ExcludeMissing fun _customId(): JsonField<String> = customId
+
+    /**
+     * Returns the raw JSON value of [extension].
+     *
+     * Unlike [extension], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("extension") @ExcludeMissing fun _extension(): JsonField<String> = extension
 
     /**
      * Returns the raw JSON value of [fileNo].
@@ -275,13 +298,6 @@ private constructor(
     @JsonProperty("is_duplicate")
     @ExcludeMissing
     fun _isDuplicate(): JsonField<Boolean> = isDuplicate
-
-    /**
-     * Returns the raw JSON value of [isPrivate].
-     *
-     * Unlike [isPrivate], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    @JsonProperty("is_private") @ExcludeMissing fun _isPrivate(): JsonField<Boolean> = isPrivate
 
     /**
      * Returns the raw JSON value of [metadata].
@@ -324,6 +340,13 @@ private constructor(
      * Unlike [tags], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("tags") @ExcludeMissing fun _tags(): JsonField<List<String>> = tags
+
+    /**
+     * Returns the raw JSON value of [thumbnail].
+     *
+     * Unlike [thumbnail], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("thumbnail") @ExcludeMissing fun _thumbnail(): JsonField<String> = thumbnail
 
     /**
      * Returns the raw JSON value of [uploadSource].
@@ -371,6 +394,13 @@ private constructor(
      */
     @JsonProperty("hash") @ExcludeMissing fun _hash(): JsonField<String> = hash
 
+    /**
+     * Returns the raw JSON value of [isPrivate].
+     *
+     * Unlike [isPrivate], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("is_private") @ExcludeMissing fun _isPrivate(): JsonField<Boolean> = isPrivate
+
     @JsonAnySetter
     private fun putAdditionalProperty(key: String, value: JsonValue) {
         additionalProperties.put(key, value)
@@ -393,17 +423,18 @@ private constructor(
          * .id()
          * .createdAt()
          * .customId()
+         * .extension()
          * .fileNo()
          * .folderNo()
          * .height()
          * .isDuplicate()
-         * .isPrivate()
          * .metadata()
          * .mimeType()
          * .name()
          * .path()
          * .size()
          * .tags()
+         * .thumbnail()
          * .uploadSource()
          * .url()
          * .width()
@@ -419,23 +450,25 @@ private constructor(
         private var id: JsonField<String>? = null
         private var createdAt: JsonField<OffsetDateTime>? = null
         private var customId: JsonField<String>? = null
+        private var extension: JsonField<String>? = null
         private var fileNo: JsonField<String>? = null
         private var folderNo: JsonField<String>? = null
         private var height: JsonField<Long>? = null
         private var isDuplicate: JsonField<Boolean>? = null
-        private var isPrivate: JsonField<Boolean>? = null
         private var metadata: JsonField<Metadata>? = null
         private var mimeType: JsonField<String>? = null
         private var name: JsonField<String>? = null
         private var path: JsonField<String>? = null
         private var size: JsonField<Long>? = null
         private var tags: JsonField<MutableList<String>>? = null
+        private var thumbnail: JsonField<String>? = null
         private var uploadSource: JsonField<String>? = null
         private var url: JsonField<String>? = null
         private var width: JsonField<Long>? = null
         private var workspaceId: JsonField<String>? = null
         private var format: JsonField<String> = JsonMissing.of()
         private var hash: JsonField<String> = JsonMissing.of()
+        private var isPrivate: JsonField<Boolean> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
@@ -443,23 +476,25 @@ private constructor(
             id = uploadCreateResponse.id
             createdAt = uploadCreateResponse.createdAt
             customId = uploadCreateResponse.customId
+            extension = uploadCreateResponse.extension
             fileNo = uploadCreateResponse.fileNo
             folderNo = uploadCreateResponse.folderNo
             height = uploadCreateResponse.height
             isDuplicate = uploadCreateResponse.isDuplicate
-            isPrivate = uploadCreateResponse.isPrivate
             metadata = uploadCreateResponse.metadata
             mimeType = uploadCreateResponse.mimeType
             name = uploadCreateResponse.name
             path = uploadCreateResponse.path
             size = uploadCreateResponse.size
             tags = uploadCreateResponse.tags.map { it.toMutableList() }
+            thumbnail = uploadCreateResponse.thumbnail
             uploadSource = uploadCreateResponse.uploadSource
             url = uploadCreateResponse.url
             width = uploadCreateResponse.width
             workspaceId = uploadCreateResponse.workspaceId
             format = uploadCreateResponse.format
             hash = uploadCreateResponse.hash
+            isPrivate = uploadCreateResponse.isPrivate
             additionalProperties = uploadCreateResponse.additionalProperties.toMutableMap()
         }
 
@@ -496,6 +531,17 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun customId(customId: JsonField<String>) = apply { this.customId = customId }
+
+        fun extension(extension: String) = extension(JsonField.of(extension))
+
+        /**
+         * Sets [Builder.extension] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.extension] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun extension(extension: JsonField<String>) = apply { this.extension = extension }
 
         fun fileNo(fileNo: String) = fileNo(JsonField.of(fileNo))
 
@@ -550,17 +596,6 @@ private constructor(
          * value.
          */
         fun isDuplicate(isDuplicate: JsonField<Boolean>) = apply { this.isDuplicate = isDuplicate }
-
-        fun isPrivate(isPrivate: Boolean) = isPrivate(JsonField.of(isPrivate))
-
-        /**
-         * Sets [Builder.isPrivate] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.isPrivate] with a well-typed [Boolean] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
-         */
-        fun isPrivate(isPrivate: JsonField<Boolean>) = apply { this.isPrivate = isPrivate }
 
         fun metadata(metadata: Metadata?) = metadata(JsonField.ofNullable(metadata))
 
@@ -638,6 +673,17 @@ private constructor(
             tags = (tags ?: JsonField.of(mutableListOf())).also { checkKnown("tags", it).add(tag) }
         }
 
+        fun thumbnail(thumbnail: String) = thumbnail(JsonField.of(thumbnail))
+
+        /**
+         * Sets [Builder.thumbnail] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.thumbnail] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun thumbnail(thumbnail: JsonField<String>) = apply { this.thumbnail = thumbnail }
+
         fun uploadSource(uploadSource: String) = uploadSource(JsonField.of(uploadSource))
 
         /**
@@ -712,6 +758,17 @@ private constructor(
          */
         fun hash(hash: JsonField<String>) = apply { this.hash = hash }
 
+        fun isPrivate(isPrivate: Boolean) = isPrivate(JsonField.of(isPrivate))
+
+        /**
+         * Sets [Builder.isPrivate] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.isPrivate] with a well-typed [Boolean] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun isPrivate(isPrivate: JsonField<Boolean>) = apply { this.isPrivate = isPrivate }
+
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
             this.additionalProperties.clear()
             putAllAdditionalProperties(additionalProperties)
@@ -741,17 +798,18 @@ private constructor(
          * .id()
          * .createdAt()
          * .customId()
+         * .extension()
          * .fileNo()
          * .folderNo()
          * .height()
          * .isDuplicate()
-         * .isPrivate()
          * .metadata()
          * .mimeType()
          * .name()
          * .path()
          * .size()
          * .tags()
+         * .thumbnail()
          * .uploadSource()
          * .url()
          * .width()
@@ -765,23 +823,25 @@ private constructor(
                 checkRequired("id", id),
                 checkRequired("createdAt", createdAt),
                 checkRequired("customId", customId),
+                checkRequired("extension", extension),
                 checkRequired("fileNo", fileNo),
                 checkRequired("folderNo", folderNo),
                 checkRequired("height", height),
                 checkRequired("isDuplicate", isDuplicate),
-                checkRequired("isPrivate", isPrivate),
                 checkRequired("metadata", metadata),
                 checkRequired("mimeType", mimeType),
                 checkRequired("name", name),
                 checkRequired("path", path),
                 checkRequired("size", size),
                 checkRequired("tags", tags).map { it.toImmutable() },
+                checkRequired("thumbnail", thumbnail),
                 checkRequired("uploadSource", uploadSource),
                 checkRequired("url", url),
                 checkRequired("width", width),
                 checkRequired("workspaceId", workspaceId),
                 format,
                 hash,
+                isPrivate,
                 additionalProperties.toMutableMap(),
             )
     }
@@ -804,23 +864,25 @@ private constructor(
         id()
         createdAt()
         customId()
+        extension()
         fileNo()
         folderNo()
         height()
         isDuplicate()
-        isPrivate()
         metadata().ifPresent { it.validate() }
         mimeType()
         name()
         path()
         size()
         tags()
+        thumbnail()
         uploadSource()
         url()
         width()
         workspaceId()
         format()
         hash()
+        isPrivate()
         validated = true
     }
 
@@ -842,23 +904,25 @@ private constructor(
         (if (id.asKnown().isPresent) 1 else 0) +
             (if (createdAt.asKnown().isPresent) 1 else 0) +
             (if (customId.asKnown().isPresent) 1 else 0) +
+            (if (extension.asKnown().isPresent) 1 else 0) +
             (if (fileNo.asKnown().isPresent) 1 else 0) +
             (if (folderNo.asKnown().isPresent) 1 else 0) +
             (if (height.asKnown().isPresent) 1 else 0) +
             (if (isDuplicate.asKnown().isPresent) 1 else 0) +
-            (if (isPrivate.asKnown().isPresent) 1 else 0) +
             (metadata.asKnown().getOrNull()?.validity() ?: 0) +
             (if (mimeType.asKnown().isPresent) 1 else 0) +
             (if (name.asKnown().isPresent) 1 else 0) +
             (if (path.asKnown().isPresent) 1 else 0) +
             (if (size.asKnown().isPresent) 1 else 0) +
             (tags.asKnown().getOrNull()?.size ?: 0) +
+            (if (thumbnail.asKnown().isPresent) 1 else 0) +
             (if (uploadSource.asKnown().isPresent) 1 else 0) +
             (if (url.asKnown().isPresent) 1 else 0) +
             (if (width.asKnown().isPresent) 1 else 0) +
             (if (workspaceId.asKnown().isPresent) 1 else 0) +
             (if (format.asKnown().isPresent) 1 else 0) +
-            (if (hash.asKnown().isPresent) 1 else 0)
+            (if (hash.asKnown().isPresent) 1 else 0) +
+            (if (isPrivate.asKnown().isPresent) 1 else 0)
 
     class Metadata
     @JsonCreator
@@ -977,23 +1041,25 @@ private constructor(
             id == other.id &&
             createdAt == other.createdAt &&
             customId == other.customId &&
+            extension == other.extension &&
             fileNo == other.fileNo &&
             folderNo == other.folderNo &&
             height == other.height &&
             isDuplicate == other.isDuplicate &&
-            isPrivate == other.isPrivate &&
             metadata == other.metadata &&
             mimeType == other.mimeType &&
             name == other.name &&
             path == other.path &&
             size == other.size &&
             tags == other.tags &&
+            thumbnail == other.thumbnail &&
             uploadSource == other.uploadSource &&
             url == other.url &&
             width == other.width &&
             workspaceId == other.workspaceId &&
             format == other.format &&
             hash == other.hash &&
+            isPrivate == other.isPrivate &&
             additionalProperties == other.additionalProperties
     }
 
@@ -1002,23 +1068,25 @@ private constructor(
             id,
             createdAt,
             customId,
+            extension,
             fileNo,
             folderNo,
             height,
             isDuplicate,
-            isPrivate,
             metadata,
             mimeType,
             name,
             path,
             size,
             tags,
+            thumbnail,
             uploadSource,
             url,
             width,
             workspaceId,
             format,
             hash,
+            isPrivate,
             additionalProperties,
         )
     }
@@ -1026,5 +1094,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "UploadCreateResponse{id=$id, createdAt=$createdAt, customId=$customId, fileNo=$fileNo, folderNo=$folderNo, height=$height, isDuplicate=$isDuplicate, isPrivate=$isPrivate, metadata=$metadata, mimeType=$mimeType, name=$name, path=$path, size=$size, tags=$tags, uploadSource=$uploadSource, url=$url, width=$width, workspaceId=$workspaceId, format=$format, hash=$hash, additionalProperties=$additionalProperties}"
+        "UploadCreateResponse{id=$id, createdAt=$createdAt, customId=$customId, extension=$extension, fileNo=$fileNo, folderNo=$folderNo, height=$height, isDuplicate=$isDuplicate, metadata=$metadata, mimeType=$mimeType, name=$name, path=$path, size=$size, tags=$tags, thumbnail=$thumbnail, uploadSource=$uploadSource, url=$url, width=$width, workspaceId=$workspaceId, format=$format, hash=$hash, isPrivate=$isPrivate, additionalProperties=$additionalProperties}"
 }

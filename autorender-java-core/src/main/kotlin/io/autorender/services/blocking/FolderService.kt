@@ -10,6 +10,8 @@ import io.autorender.core.http.HttpResponseFor
 import io.autorender.models.folders.FolderCreateParams
 import io.autorender.models.folders.FolderCreateResponse
 import io.autorender.models.folders.FolderDeleteParams
+import io.autorender.models.folders.FolderListParams
+import io.autorender.models.folders.FolderListResponse
 import io.autorender.models.folders.FolderRenameParams
 import io.autorender.models.folders.FolderRenameResponse
 import java.util.function.Consumer
@@ -38,6 +40,23 @@ interface FolderService {
         params: FolderCreateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): FolderCreateResponse
+
+    /** List folders */
+    fun list(): FolderListResponse = list(FolderListParams.none())
+
+    /** @see list */
+    fun list(
+        params: FolderListParams = FolderListParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): FolderListResponse
+
+    /** @see list */
+    fun list(params: FolderListParams = FolderListParams.none()): FolderListResponse =
+        list(params, RequestOptions.none())
+
+    /** @see list */
+    fun list(requestOptions: RequestOptions): FolderListResponse =
+        list(FolderListParams.none(), requestOptions)
 
     /** Delete folder */
     fun delete(folderNo: String) = delete(folderNo, FolderDeleteParams.none())
@@ -108,6 +127,31 @@ interface FolderService {
             params: FolderCreateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<FolderCreateResponse>
+
+        /**
+         * Returns a raw HTTP response for `get /api/v1/folders`, but is otherwise the same as
+         * [FolderService.list].
+         */
+        @MustBeClosed
+        fun list(): HttpResponseFor<FolderListResponse> = list(FolderListParams.none())
+
+        /** @see list */
+        @MustBeClosed
+        fun list(
+            params: FolderListParams = FolderListParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<FolderListResponse>
+
+        /** @see list */
+        @MustBeClosed
+        fun list(
+            params: FolderListParams = FolderListParams.none()
+        ): HttpResponseFor<FolderListResponse> = list(params, RequestOptions.none())
+
+        /** @see list */
+        @MustBeClosed
+        fun list(requestOptions: RequestOptions): HttpResponseFor<FolderListResponse> =
+            list(FolderListParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `delete /api/v1/folders/{folderNo}`, but is otherwise the

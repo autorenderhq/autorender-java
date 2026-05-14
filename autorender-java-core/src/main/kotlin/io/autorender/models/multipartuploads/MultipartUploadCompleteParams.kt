@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package io.autorender.models.folders
+package io.autorender.models.multipartuploads
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
@@ -19,8 +19,8 @@ import java.util.Collections
 import java.util.Objects
 import java.util.Optional
 
-/** Create folder */
-class FolderCreateParams
+/** Finalise a multipart upload session and return the stored file record. */
+class MultipartUploadCompleteParams
 private constructor(
     private val body: Body,
     private val additionalHeaders: Headers,
@@ -28,34 +28,30 @@ private constructor(
 ) : Params {
 
     /**
-     * Folder name without slashes
-     *
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
-    fun name(): String = body.name()
+    fun sessionId(): String = body.sessionId()
 
     /**
-     * Parent folder number
-     *
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun parentFolderNo(): Optional<String> = body.parentFolderNo()
+    fun uuid(): Optional<String> = body.uuid()
 
     /**
-     * Returns the raw JSON value of [name].
+     * Returns the raw JSON value of [sessionId].
      *
-     * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
+     * Unlike [sessionId], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _name(): JsonField<String> = body._name()
+    fun _sessionId(): JsonField<String> = body._sessionId()
 
     /**
-     * Returns the raw JSON value of [parentFolderNo].
+     * Returns the raw JSON value of [uuid].
      *
-     * Unlike [parentFolderNo], this method doesn't throw if the JSON field has an unexpected type.
+     * Unlike [uuid], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _parentFolderNo(): JsonField<String> = body._parentFolderNo()
+    fun _uuid(): JsonField<String> = body._uuid()
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
@@ -70,17 +66,18 @@ private constructor(
     companion object {
 
         /**
-         * Returns a mutable builder for constructing an instance of [FolderCreateParams].
+         * Returns a mutable builder for constructing an instance of
+         * [MultipartUploadCompleteParams].
          *
          * The following fields are required:
          * ```java
-         * .name()
+         * .sessionId()
          * ```
          */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [FolderCreateParams]. */
+    /** A builder for [MultipartUploadCompleteParams]. */
     class Builder internal constructor() {
 
         private var body: Body.Builder = Body.builder()
@@ -88,10 +85,10 @@ private constructor(
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
         @JvmSynthetic
-        internal fun from(folderCreateParams: FolderCreateParams) = apply {
-            body = folderCreateParams.body.toBuilder()
-            additionalHeaders = folderCreateParams.additionalHeaders.toBuilder()
-            additionalQueryParams = folderCreateParams.additionalQueryParams.toBuilder()
+        internal fun from(multipartUploadCompleteParams: MultipartUploadCompleteParams) = apply {
+            body = multipartUploadCompleteParams.body.toBuilder()
+            additionalHeaders = multipartUploadCompleteParams.additionalHeaders.toBuilder()
+            additionalQueryParams = multipartUploadCompleteParams.additionalQueryParams.toBuilder()
         }
 
         /**
@@ -99,35 +96,31 @@ private constructor(
          *
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
-         * - [name]
-         * - [parentFolderNo]
+         * - [sessionId]
+         * - [uuid]
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
-        /** Folder name without slashes */
-        fun name(name: String) = apply { body.name(name) }
+        fun sessionId(sessionId: String) = apply { body.sessionId(sessionId) }
 
         /**
-         * Sets [Builder.name] to an arbitrary JSON value.
+         * Sets [Builder.sessionId] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.name] with a well-typed [String] value instead. This
+         * You should usually call [Builder.sessionId] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun sessionId(sessionId: JsonField<String>) = apply { body.sessionId(sessionId) }
+
+        fun uuid(uuid: String) = apply { body.uuid(uuid) }
+
+        /**
+         * Sets [Builder.uuid] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.uuid] with a well-typed [String] value instead. This
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
-        fun name(name: JsonField<String>) = apply { body.name(name) }
-
-        /** Parent folder number */
-        fun parentFolderNo(parentFolderNo: String) = apply { body.parentFolderNo(parentFolderNo) }
-
-        /**
-         * Sets [Builder.parentFolderNo] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.parentFolderNo] with a well-typed [String] value
-         * instead. This method is primarily for setting the field to an undocumented or not yet
-         * supported value.
-         */
-        fun parentFolderNo(parentFolderNo: JsonField<String>) = apply {
-            body.parentFolderNo(parentFolderNo)
-        }
+        fun uuid(uuid: JsonField<String>) = apply { body.uuid(uuid) }
 
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
             body.additionalProperties(additionalBodyProperties)
@@ -247,19 +240,19 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [FolderCreateParams].
+         * Returns an immutable instance of [MultipartUploadCompleteParams].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          *
          * The following fields are required:
          * ```java
-         * .name()
+         * .sessionId()
          * ```
          *
          * @throws IllegalStateException if any required field is unset.
          */
-        fun build(): FolderCreateParams =
-            FolderCreateParams(
+        fun build(): MultipartUploadCompleteParams =
+            MultipartUploadCompleteParams(
                 body.build(),
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
@@ -275,51 +268,44 @@ private constructor(
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
-        private val name: JsonField<String>,
-        private val parentFolderNo: JsonField<String>,
+        private val sessionId: JsonField<String>,
+        private val uuid: JsonField<String>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
         @JsonCreator
         private constructor(
-            @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("parent_folder_no")
+            @JsonProperty("session_id")
             @ExcludeMissing
-            parentFolderNo: JsonField<String> = JsonMissing.of(),
-        ) : this(name, parentFolderNo, mutableMapOf())
+            sessionId: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("uuid") @ExcludeMissing uuid: JsonField<String> = JsonMissing.of(),
+        ) : this(sessionId, uuid, mutableMapOf())
 
         /**
-         * Folder name without slashes
-         *
          * @throws AutorenderInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
-        fun name(): String = name.getRequired("name")
+        fun sessionId(): String = sessionId.getRequired("session_id")
 
         /**
-         * Parent folder number
-         *
          * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
-        fun parentFolderNo(): Optional<String> = parentFolderNo.getOptional("parent_folder_no")
+        fun uuid(): Optional<String> = uuid.getOptional("uuid")
 
         /**
-         * Returns the raw JSON value of [name].
+         * Returns the raw JSON value of [sessionId].
          *
-         * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [sessionId], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("name") @ExcludeMissing fun _name(): JsonField<String> = name
+        @JsonProperty("session_id") @ExcludeMissing fun _sessionId(): JsonField<String> = sessionId
 
         /**
-         * Returns the raw JSON value of [parentFolderNo].
+         * Returns the raw JSON value of [uuid].
          *
-         * Unlike [parentFolderNo], this method doesn't throw if the JSON field has an unexpected
-         * type.
+         * Unlike [uuid], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("parent_folder_no")
-        @ExcludeMissing
-        fun _parentFolderNo(): JsonField<String> = parentFolderNo
+        @JsonProperty("uuid") @ExcludeMissing fun _uuid(): JsonField<String> = uuid
 
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -340,7 +326,7 @@ private constructor(
              *
              * The following fields are required:
              * ```java
-             * .name()
+             * .sessionId()
              * ```
              */
             @JvmStatic fun builder() = Builder()
@@ -349,43 +335,38 @@ private constructor(
         /** A builder for [Body]. */
         class Builder internal constructor() {
 
-            private var name: JsonField<String>? = null
-            private var parentFolderNo: JsonField<String> = JsonMissing.of()
+            private var sessionId: JsonField<String>? = null
+            private var uuid: JsonField<String> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
-                name = body.name
-                parentFolderNo = body.parentFolderNo
+                sessionId = body.sessionId
+                uuid = body.uuid
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
-            /** Folder name without slashes */
-            fun name(name: String) = name(JsonField.of(name))
+            fun sessionId(sessionId: String) = sessionId(JsonField.of(sessionId))
 
             /**
-             * Sets [Builder.name] to an arbitrary JSON value.
+             * Sets [Builder.sessionId] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.name] with a well-typed [String] value instead. This
+             * You should usually call [Builder.sessionId] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun sessionId(sessionId: JsonField<String>) = apply { this.sessionId = sessionId }
+
+            fun uuid(uuid: String) = uuid(JsonField.of(uuid))
+
+            /**
+             * Sets [Builder.uuid] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.uuid] with a well-typed [String] value instead. This
              * method is primarily for setting the field to an undocumented or not yet supported
              * value.
              */
-            fun name(name: JsonField<String>) = apply { this.name = name }
-
-            /** Parent folder number */
-            fun parentFolderNo(parentFolderNo: String) =
-                parentFolderNo(JsonField.of(parentFolderNo))
-
-            /**
-             * Sets [Builder.parentFolderNo] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.parentFolderNo] with a well-typed [String] value
-             * instead. This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun parentFolderNo(parentFolderNo: JsonField<String>) = apply {
-                this.parentFolderNo = parentFolderNo
-            }
+            fun uuid(uuid: JsonField<String>) = apply { this.uuid = uuid }
 
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
@@ -413,15 +394,15 @@ private constructor(
              *
              * The following fields are required:
              * ```java
-             * .name()
+             * .sessionId()
              * ```
              *
              * @throws IllegalStateException if any required field is unset.
              */
             fun build(): Body =
                 Body(
-                    checkRequired("name", name),
-                    parentFolderNo,
+                    checkRequired("sessionId", sessionId),
+                    uuid,
                     additionalProperties.toMutableMap(),
                 )
         }
@@ -442,8 +423,8 @@ private constructor(
                 return@apply
             }
 
-            name()
-            parentFolderNo()
+            sessionId()
+            uuid()
             validated = true
         }
 
@@ -463,8 +444,7 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            (if (name.asKnown().isPresent) 1 else 0) +
-                (if (parentFolderNo.asKnown().isPresent) 1 else 0)
+            (if (sessionId.asKnown().isPresent) 1 else 0) + (if (uuid.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -472,19 +452,17 @@ private constructor(
             }
 
             return other is Body &&
-                name == other.name &&
-                parentFolderNo == other.parentFolderNo &&
+                sessionId == other.sessionId &&
+                uuid == other.uuid &&
                 additionalProperties == other.additionalProperties
         }
 
-        private val hashCode: Int by lazy {
-            Objects.hash(name, parentFolderNo, additionalProperties)
-        }
+        private val hashCode: Int by lazy { Objects.hash(sessionId, uuid, additionalProperties) }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{name=$name, parentFolderNo=$parentFolderNo, additionalProperties=$additionalProperties}"
+            "Body{sessionId=$sessionId, uuid=$uuid, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -492,7 +470,7 @@ private constructor(
             return true
         }
 
-        return other is FolderCreateParams &&
+        return other is MultipartUploadCompleteParams &&
             body == other.body &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
@@ -501,5 +479,5 @@ private constructor(
     override fun hashCode(): Int = Objects.hash(body, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "FolderCreateParams{body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "MultipartUploadCompleteParams{body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

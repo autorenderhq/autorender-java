@@ -20,6 +20,8 @@ import io.autorender.core.prepareAsync
 import io.autorender.models.folders.FolderCreateParams
 import io.autorender.models.folders.FolderCreateResponse
 import io.autorender.models.folders.FolderDeleteParams
+import io.autorender.models.folders.FolderListParams
+import io.autorender.models.folders.FolderListResponse
 import io.autorender.models.folders.FolderRenameParams
 import io.autorender.models.folders.FolderRenameResponse
 import java.util.concurrent.CompletableFuture
@@ -45,6 +47,13 @@ class FolderServiceAsyncImpl internal constructor(private val clientOptions: Cli
     ): CompletableFuture<FolderCreateResponse> =
         // post /api/v1/folders
         withRawResponse().create(params, requestOptions).thenApply { it.parse() }
+
+    override fun list(
+        params: FolderListParams,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<FolderListResponse> =
+        // get /api/v1/folders
+        withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
     override fun delete(
         params: FolderDeleteParams,
@@ -95,6 +104,36 @@ class FolderServiceAsyncImpl internal constructor(private val clientOptions: Cli
                     errorHandler.handle(response).parseable {
                         response
                             .use { createHandler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.validate()
+                                }
+                            }
+                    }
+                }
+        }
+
+        private val listHandler: Handler<FolderListResponse> =
+            jsonHandler<FolderListResponse>(clientOptions.jsonMapper)
+
+        override fun list(
+            params: FolderListParams,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<FolderListResponse>> {
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v1", "folders")
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response
+                            .use { listHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()

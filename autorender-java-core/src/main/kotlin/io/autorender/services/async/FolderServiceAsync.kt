@@ -9,6 +9,8 @@ import io.autorender.core.http.HttpResponseFor
 import io.autorender.models.folders.FolderCreateParams
 import io.autorender.models.folders.FolderCreateResponse
 import io.autorender.models.folders.FolderDeleteParams
+import io.autorender.models.folders.FolderListParams
+import io.autorender.models.folders.FolderListResponse
 import io.autorender.models.folders.FolderRenameParams
 import io.autorender.models.folders.FolderRenameResponse
 import java.util.concurrent.CompletableFuture
@@ -38,6 +40,24 @@ interface FolderServiceAsync {
         params: FolderCreateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<FolderCreateResponse>
+
+    /** List folders */
+    fun list(): CompletableFuture<FolderListResponse> = list(FolderListParams.none())
+
+    /** @see list */
+    fun list(
+        params: FolderListParams = FolderListParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<FolderListResponse>
+
+    /** @see list */
+    fun list(
+        params: FolderListParams = FolderListParams.none()
+    ): CompletableFuture<FolderListResponse> = list(params, RequestOptions.none())
+
+    /** @see list */
+    fun list(requestOptions: RequestOptions): CompletableFuture<FolderListResponse> =
+        list(FolderListParams.none(), requestOptions)
 
     /** Delete folder */
     fun delete(folderNo: String): CompletableFuture<Void?> =
@@ -123,6 +143,31 @@ interface FolderServiceAsync {
             params: FolderCreateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<FolderCreateResponse>>
+
+        /**
+         * Returns a raw HTTP response for `get /api/v1/folders`, but is otherwise the same as
+         * [FolderServiceAsync.list].
+         */
+        fun list(): CompletableFuture<HttpResponseFor<FolderListResponse>> =
+            list(FolderListParams.none())
+
+        /** @see list */
+        fun list(
+            params: FolderListParams = FolderListParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<FolderListResponse>>
+
+        /** @see list */
+        fun list(
+            params: FolderListParams = FolderListParams.none()
+        ): CompletableFuture<HttpResponseFor<FolderListResponse>> =
+            list(params, RequestOptions.none())
+
+        /** @see list */
+        fun list(
+            requestOptions: RequestOptions
+        ): CompletableFuture<HttpResponseFor<FolderListResponse>> =
+            list(FolderListParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `delete /api/v1/folders/{folderNo}`, but is otherwise the

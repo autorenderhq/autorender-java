@@ -4,10 +4,8 @@ package io.autorender.services.async
 
 import io.autorender.TestServerExtension
 import io.autorender.client.okhttp.AutorenderOkHttpClientAsync
-import io.autorender.core.JsonValue
 import io.autorender.models.files.FileListParams
 import io.autorender.models.files.FileRenameParams
-import io.autorender.models.files.FileUpdateParams
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -30,33 +28,6 @@ internal class FileServiceAsyncTest {
     }
 
     @Test
-    fun update() {
-        val client =
-            AutorenderOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
-        val fileServiceAsync = client.files()
-
-        val fileFuture =
-            fileServiceAsync.update(
-                FileUpdateParams.builder()
-                    .fileNo("fileNo")
-                    .addAddTag("string")
-                    .metadata(
-                        FileUpdateParams.Metadata.builder()
-                            .putAdditionalProperty("foo", JsonValue.from("bar"))
-                            .build()
-                    )
-                    .addRemoveTag("string")
-                    .build()
-            )
-
-        val file = fileFuture.get()
-        file.validate()
-    }
-
-    @Test
     fun list() {
         val client =
             AutorenderOkHttpClientAsync.builder()
@@ -68,13 +39,11 @@ internal class FileServiceAsyncTest {
         val filesFuture =
             fileServiceAsync.list(
                 FileListParams.builder()
-                    .folderNo("folderNo")
+                    .folderNo("folder_no")
                     .limit(1L)
-                    .name("name")
                     .page(1L)
-                    .path("path")
-                    .sort(FileListParams.Sort.CREATED_AT_ASC)
-                    .tags("tags")
+                    .search("search")
+                    .sort(FileListParams.Sort.NAME_ASC)
                     .build()
             )
 

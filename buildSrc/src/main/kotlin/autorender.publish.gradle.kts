@@ -10,8 +10,8 @@ configure<PublishingExtension> {
 
             pom {
                 name.set("AutoRender Public API")
-                description.set("AutoRender Public API Documentation - File upload, management, and optimization\nendpoints (API key authentication required)")
-                url.set("https://docs.autorender.io")
+                description.set("REST API for uploading, managing, and serving media assets. All endpoints\nrequire an API key via the x-api-key header or Authorization: Bearer <key>.")
+                url.set("https://autorender.mintlify.app/")
 
                 licenses {
                     license {
@@ -22,7 +22,7 @@ configure<PublishingExtension> {
                 developers {
                     developer {
                         name.set("Autorender")
-                        email.set("support@autorender.io")
+                        email.set("engineering@autorender.io")
                     }
                 }
 
