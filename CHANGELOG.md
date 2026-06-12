@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.1.1](https://github.com/autorenderhq/autorender-java/compare/v0.1.0...v0.1.1) (2026-06-12)
+
+
+### Bug Fixes
+
+* preserve production-managed files in release branch ([5f201f6](https://github.com/autorenderhq/autorender-java/commit/5f201f628121874fcba612e72bdbad4e281312ee))
+* strip internal workflows from production release branch ([e22f717](https://github.com/autorenderhq/autorender-java/commit/e22f71702056aebae1014511c6577f22aec98ccb))
+* update promote workflow and add back-sync from production ([ea351cb](https://github.com/autorenderhq/autorender-java/commit/ea351cbb61e6d03c9cb5c981d310e9ab4036e4b2))
+* use blob comparison in overlay; add language-specific version files ([43eb184](https://github.com/autorenderhq/autorender-java/commit/43eb18450e1120c831eeb531d2e8c57d2a2a47c5))
+* use persist-credentials: false in sync workflow ([bc21325](https://github.com/autorenderhq/autorender-java/commit/bc21325184ef3a9b9888892bc561982fd538282b))
+
+
+### Chores
+
+* preserve production-managed files ([1a161c0](https://github.com/autorenderhq/autorender-java/commit/1a161c02ba29c3896a148263c1aa244e5296266e))
+* remove staging-only workflows from production ([274d4bf](https://github.com/autorenderhq/autorender-java/commit/274d4bf7f0d5e87a015b39fe1ba0fdce940a1bf4))
+* remove staging-only workflows from production ([e0aa612](https://github.com/autorenderhq/autorender-java/commit/e0aa612fa59d094fc1a220c748fa6f54f211c17e))
+* strip internal workflows; preserve production-managed files ([8c90eef](https://github.com/autorenderhq/autorender-java/commit/8c90eefa171972573cb2411be6a8f9c2526903ff))
+
+
+### Documentation
+
+* add auto-generated notice to CONTRIBUTING.md ([f05fd86](https://github.com/autorenderhq/autorender-java/commit/f05fd86ee647fab2541d9d9cf53fb0a4be739232))
+
 ## [0.1.0](https://github.com/autorenderhq/autorender-java/compare/v0.0.1...v0.1.0) (2026-06-05)
 
 
