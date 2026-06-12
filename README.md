@@ -9,8 +9,6 @@
 
 The Autorender Java SDK provides convenient access to the [Autorender REST API](https://autorender.mintlify.app/) from applications written in Java.
 
-It is generated with [Stainless](https://www.stainless.com/).
-
 <!-- x-release-please-start-version -->
 
 The REST API documentation can be found on [autorender.mintlify.app](https://autorender.mintlify.app/). Javadocs are available on [javadoc.io](https://javadoc.io/doc/io.autorender/autorender-java/0.0.1).
