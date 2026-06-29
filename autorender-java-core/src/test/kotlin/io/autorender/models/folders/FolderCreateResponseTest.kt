@@ -14,24 +14,24 @@ internal class FolderCreateResponseTest {
     fun create() {
         val folderCreateResponse =
             FolderCreateResponse.builder()
-                .id("3e4666bf-d5e5-4aa7-b8ce-cefe41c7568a")
-                .createdAt(OffsetDateTime.parse("2024-01-01T00:00:00Z"))
-                .folderNo("folder_abc123")
-                .name("example.jpg")
-                .parentFolderNo(null)
-                .path("/example.jpg")
-                .updatedAt(OffsetDateTime.parse("2024-01-01T00:00:00Z"))
+                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .folderNo("folder_no")
+                .name("name")
+                .parentFolderNo("parent_folder_no")
+                .path("path")
+                .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .build()
 
-        assertThat(folderCreateResponse.id()).isEqualTo("3e4666bf-d5e5-4aa7-b8ce-cefe41c7568a")
+        assertThat(folderCreateResponse.id()).isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(folderCreateResponse.createdAt())
-            .isEqualTo(OffsetDateTime.parse("2024-01-01T00:00:00Z"))
-        assertThat(folderCreateResponse.folderNo()).isEqualTo("folder_abc123")
-        assertThat(folderCreateResponse.name()).isEqualTo("example.jpg")
-        assertThat(folderCreateResponse.parentFolderNo()).isEmpty
-        assertThat(folderCreateResponse.path()).isEqualTo("/example.jpg")
+            .isEqualTo(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+        assertThat(folderCreateResponse.folderNo()).isEqualTo("folder_no")
+        assertThat(folderCreateResponse.name()).isEqualTo("name")
+        assertThat(folderCreateResponse.parentFolderNo()).contains("parent_folder_no")
+        assertThat(folderCreateResponse.path()).isEqualTo("path")
         assertThat(folderCreateResponse.updatedAt())
-            .contains(OffsetDateTime.parse("2024-01-01T00:00:00Z"))
+            .contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
     }
 
     @Test
@@ -39,13 +39,13 @@ internal class FolderCreateResponseTest {
         val jsonMapper = jsonMapper()
         val folderCreateResponse =
             FolderCreateResponse.builder()
-                .id("3e4666bf-d5e5-4aa7-b8ce-cefe41c7568a")
-                .createdAt(OffsetDateTime.parse("2024-01-01T00:00:00Z"))
-                .folderNo("folder_abc123")
-                .name("example.jpg")
-                .parentFolderNo(null)
-                .path("/example.jpg")
-                .updatedAt(OffsetDateTime.parse("2024-01-01T00:00:00Z"))
+                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .folderNo("folder_no")
+                .name("name")
+                .parentFolderNo("parent_folder_no")
+                .path("path")
+                .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .build()
 
         val roundtrippedFolderCreateResponse =

@@ -58,7 +58,7 @@ internal class UploadServiceAsyncTest {
                     .folder("folder")
                     .metadata("metadata")
                     .randomPrefix("random_prefix")
-                    .tags("tags")
+                    .tagsOfStrings(listOf("string"))
                     .webhookUrl("https://example.com")
                     .build()
             )
