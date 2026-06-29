@@ -6,18 +6,31 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.core.JsonGenerator
+import com.fasterxml.jackson.core.ObjectCodec
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.SerializerProvider
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
+import io.autorender.core.BaseDeserializer
+import io.autorender.core.BaseSerializer
 import io.autorender.core.ExcludeMissing
 import io.autorender.core.JsonField
 import io.autorender.core.JsonMissing
 import io.autorender.core.JsonValue
 import io.autorender.core.Params
+import io.autorender.core.allMaxBy
 import io.autorender.core.checkRequired
+import io.autorender.core.getOrThrow
 import io.autorender.core.http.Headers
 import io.autorender.core.http.QueryParams
+import io.autorender.core.toImmutable
 import io.autorender.errors.AutorenderInvalidDataException
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
+import kotlin.jvm.optionals.getOrNull
 
 /** Download a file from a remote URL and store it in AutoRender. */
 class UploadCreateFromUrlParams
@@ -74,12 +87,12 @@ private constructor(
     fun randomPrefix(): Optional<String> = body.randomPrefix()
 
     /**
-     * Comma-separated tags
+     * Tags array or comma-separated string
      *
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun tags(): Optional<String> = body.tags()
+    fun tags(): Optional<Tags> = body.tags()
 
     /**
      * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -134,7 +147,7 @@ private constructor(
      *
      * Unlike [tags], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _tags(): JsonField<String> = body._tags()
+    fun _tags(): JsonField<Tags> = body._tags()
 
     /**
      * Returns the raw JSON value of [webhookUrl].
@@ -263,16 +276,22 @@ private constructor(
             body.randomPrefix(randomPrefix)
         }
 
-        /** Comma-separated tags */
-        fun tags(tags: String) = apply { body.tags(tags) }
+        /** Tags array or comma-separated string */
+        fun tags(tags: Tags) = apply { body.tags(tags) }
 
         /**
          * Sets [Builder.tags] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.tags] with a well-typed [String] value instead. This
+         * You should usually call [Builder.tags] with a well-typed [Tags] value instead. This
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
-        fun tags(tags: JsonField<String>) = apply { body.tags(tags) }
+        fun tags(tags: JsonField<Tags>) = apply { body.tags(tags) }
+
+        /** Alias for calling [tags] with `Tags.ofStrings(strings)`. */
+        fun tagsOfStrings(strings: List<String>) = apply { body.tagsOfStrings(strings) }
+
+        /** Alias for calling [tags] with `Tags.ofString(string)`. */
+        fun tags(string: String) = apply { body.tags(string) }
 
         fun webhookUrl(webhookUrl: String) = apply { body.webhookUrl(webhookUrl) }
 
@@ -437,7 +456,7 @@ private constructor(
         private val folder: JsonField<String>,
         private val metadata: JsonField<String>,
         private val randomPrefix: JsonField<String>,
-        private val tags: JsonField<String>,
+        private val tags: JsonField<Tags>,
         private val webhookUrl: JsonField<String>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
@@ -460,7 +479,7 @@ private constructor(
             @JsonProperty("random_prefix")
             @ExcludeMissing
             randomPrefix: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("tags") @ExcludeMissing tags: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("tags") @ExcludeMissing tags: JsonField<Tags> = JsonMissing.of(),
             @JsonProperty("webhook_url")
             @ExcludeMissing
             webhookUrl: JsonField<String> = JsonMissing.of(),
@@ -523,12 +542,12 @@ private constructor(
         fun randomPrefix(): Optional<String> = randomPrefix.getOptional("random_prefix")
 
         /**
-         * Comma-separated tags
+         * Tags array or comma-separated string
          *
          * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
-        fun tags(): Optional<String> = tags.getOptional("tags")
+        fun tags(): Optional<Tags> = tags.getOptional("tags")
 
         /**
          * @throws AutorenderInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -586,7 +605,7 @@ private constructor(
          *
          * Unlike [tags], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("tags") @ExcludeMissing fun _tags(): JsonField<String> = tags
+        @JsonProperty("tags") @ExcludeMissing fun _tags(): JsonField<Tags> = tags
 
         /**
          * Returns the raw JSON value of [webhookUrl].
@@ -631,7 +650,7 @@ private constructor(
             private var folder: JsonField<String> = JsonMissing.of()
             private var metadata: JsonField<String> = JsonMissing.of()
             private var randomPrefix: JsonField<String> = JsonMissing.of()
-            private var tags: JsonField<String> = JsonMissing.of()
+            private var tags: JsonField<Tags> = JsonMissing.of()
             private var webhookUrl: JsonField<String> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -721,17 +740,23 @@ private constructor(
                 this.randomPrefix = randomPrefix
             }
 
-            /** Comma-separated tags */
-            fun tags(tags: String) = tags(JsonField.of(tags))
+            /** Tags array or comma-separated string */
+            fun tags(tags: Tags) = tags(JsonField.of(tags))
 
             /**
              * Sets [Builder.tags] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.tags] with a well-typed [String] value instead. This
+             * You should usually call [Builder.tags] with a well-typed [Tags] value instead. This
              * method is primarily for setting the field to an undocumented or not yet supported
              * value.
              */
-            fun tags(tags: JsonField<String>) = apply { this.tags = tags }
+            fun tags(tags: JsonField<Tags>) = apply { this.tags = tags }
+
+            /** Alias for calling [tags] with `Tags.ofStrings(strings)`. */
+            fun tagsOfStrings(strings: List<String>) = tags(Tags.ofStrings(strings))
+
+            /** Alias for calling [tags] with `Tags.ofString(string)`. */
+            fun tags(string: String) = tags(Tags.ofString(string))
 
             fun webhookUrl(webhookUrl: String) = webhookUrl(JsonField.of(webhookUrl))
 
@@ -811,7 +836,7 @@ private constructor(
             folder()
             metadata()
             randomPrefix()
-            tags()
+            tags().ifPresent { it.validate() }
             webhookUrl()
             validated = true
         }
@@ -838,7 +863,7 @@ private constructor(
                 (if (folder.asKnown().isPresent) 1 else 0) +
                 (if (metadata.asKnown().isPresent) 1 else 0) +
                 (if (randomPrefix.asKnown().isPresent) 1 else 0) +
-                (if (tags.asKnown().isPresent) 1 else 0) +
+                (tags.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (webhookUrl.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
@@ -876,6 +901,211 @@ private constructor(
 
         override fun toString() =
             "Body{remoteUrl=$remoteUrl, customId=$customId, fileName=$fileName, folder=$folder, metadata=$metadata, randomPrefix=$randomPrefix, tags=$tags, webhookUrl=$webhookUrl, additionalProperties=$additionalProperties}"
+    }
+
+    /** Tags array or comma-separated string */
+    @JsonDeserialize(using = Tags.Deserializer::class)
+    @JsonSerialize(using = Tags.Serializer::class)
+    class Tags
+    private constructor(
+        private val strings: List<String>? = null,
+        private val string: String? = null,
+        private val _json: JsonValue? = null,
+    ) {
+
+        fun strings(): Optional<List<String>> = Optional.ofNullable(strings)
+
+        fun string(): Optional<String> = Optional.ofNullable(string)
+
+        fun isStrings(): Boolean = strings != null
+
+        fun isString(): Boolean = string != null
+
+        fun asStrings(): List<String> = strings.getOrThrow("strings")
+
+        fun asString(): String = string.getOrThrow("string")
+
+        fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
+
+        /**
+         * Maps this instance's current variant to a value of type [T] using the given [visitor].
+         *
+         * Note that this method is _not_ forwards compatible with new variants from the API, unless
+         * [visitor] overrides [Visitor.unknown]. To handle variants not known to this version of
+         * the SDK gracefully, consider overriding [Visitor.unknown]:
+         * ```java
+         * import io.autorender.core.JsonValue;
+         * import java.util.Optional;
+         *
+         * Optional<String> result = tags.accept(new Tags.Visitor<Optional<String>>() {
+         *     @Override
+         *     public Optional<String> visitStrings(List<String> strings) {
+         *         return Optional.of(strings.toString());
+         *     }
+         *
+         *     // ...
+         *
+         *     @Override
+         *     public Optional<String> unknown(JsonValue json) {
+         *         // Or inspect the `json`.
+         *         return Optional.empty();
+         *     }
+         * });
+         * ```
+         *
+         * @throws AutorenderInvalidDataException if [Visitor.unknown] is not overridden in
+         *   [visitor] and the current variant is unknown.
+         */
+        fun <T> accept(visitor: Visitor<T>): T =
+            when {
+                strings != null -> visitor.visitStrings(strings)
+                string != null -> visitor.visitString(string)
+                else -> visitor.unknown(_json)
+            }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws AutorenderInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Tags = apply {
+            if (validated) {
+                return@apply
+            }
+
+            accept(
+                object : Visitor<Unit> {
+                    override fun visitStrings(strings: List<String>) {}
+
+                    override fun visitString(string: String) {}
+                }
+            )
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: AutorenderInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            accept(
+                object : Visitor<Int> {
+                    override fun visitStrings(strings: List<String>) = strings.size
+
+                    override fun visitString(string: String) = 1
+
+                    override fun unknown(json: JsonValue?) = 0
+                }
+            )
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Tags && strings == other.strings && string == other.string
+        }
+
+        override fun hashCode(): Int = Objects.hash(strings, string)
+
+        override fun toString(): String =
+            when {
+                strings != null -> "Tags{strings=$strings}"
+                string != null -> "Tags{string=$string}"
+                _json != null -> "Tags{_unknown=$_json}"
+                else -> throw IllegalStateException("Invalid Tags")
+            }
+
+        companion object {
+
+            @JvmStatic fun ofStrings(strings: List<String>) = Tags(strings = strings.toImmutable())
+
+            @JvmStatic fun ofString(string: String) = Tags(string = string)
+        }
+
+        /** An interface that defines how to map each variant of [Tags] to a value of type [T]. */
+        interface Visitor<out T> {
+
+            fun visitStrings(strings: List<String>): T
+
+            fun visitString(string: String): T
+
+            /**
+             * Maps an unknown variant of [Tags] to a value of type [T].
+             *
+             * An instance of [Tags] can contain an unknown variant if it was deserialized from data
+             * that doesn't match any known variant. For example, if the SDK is on an older version
+             * than the API, then the API may respond with new variants that the SDK is unaware of.
+             *
+             * @throws AutorenderInvalidDataException in the default implementation.
+             */
+            fun unknown(json: JsonValue?): T {
+                throw AutorenderInvalidDataException("Unknown Tags: $json")
+            }
+        }
+
+        internal class Deserializer : BaseDeserializer<Tags>(Tags::class) {
+
+            override fun ObjectCodec.deserialize(node: JsonNode): Tags {
+                val json = JsonValue.fromJsonNode(node)
+
+                val bestMatches =
+                    sequenceOf(
+                            tryDeserialize(node, jacksonTypeRef<String>())?.let {
+                                Tags(string = it, _json = json)
+                            },
+                            tryDeserialize(node, jacksonTypeRef<List<String>>())?.let {
+                                Tags(strings = it, _json = json)
+                            },
+                        )
+                        .filterNotNull()
+                        .allMaxBy { it.validity() }
+                        .toList()
+                return when (bestMatches.size) {
+                    // This can happen if what we're deserializing is completely incompatible with
+                    // all the possible variants (e.g. deserializing from boolean).
+                    0 -> Tags(_json = json)
+                    1 -> bestMatches.single()
+                    // If there's more than one match with the highest validity, then use the first
+                    // completely valid match, or simply the first match if none are completely
+                    // valid.
+                    else -> bestMatches.firstOrNull { it.isValid() } ?: bestMatches.first()
+                }
+            }
+        }
+
+        internal class Serializer : BaseSerializer<Tags>(Tags::class) {
+
+            override fun serialize(
+                value: Tags,
+                generator: JsonGenerator,
+                provider: SerializerProvider,
+            ) {
+                when {
+                    value.strings != null -> generator.writeObject(value.strings)
+                    value.string != null -> generator.writeObject(value.string)
+                    value._json != null -> generator.writeObject(value._json)
+                    else -> throw IllegalStateException("Invalid Tags")
+                }
+            }
+        }
     }
 
     override fun equals(other: Any?): Boolean {

@@ -16,7 +16,7 @@ internal class UploadCreateFromUrlParamsTest {
             .folder("folder")
             .metadata("metadata")
             .randomPrefix("random_prefix")
-            .tags("tags")
+            .tagsOfStrings(listOf("string"))
             .webhookUrl("https://example.com")
             .build()
     }
@@ -31,7 +31,7 @@ internal class UploadCreateFromUrlParamsTest {
                 .folder("folder")
                 .metadata("metadata")
                 .randomPrefix("random_prefix")
-                .tags("tags")
+                .tagsOfStrings(listOf("string"))
                 .webhookUrl("https://example.com")
                 .build()
 
@@ -43,7 +43,7 @@ internal class UploadCreateFromUrlParamsTest {
         assertThat(body.folder()).contains("folder")
         assertThat(body.metadata()).contains("metadata")
         assertThat(body.randomPrefix()).contains("random_prefix")
-        assertThat(body.tags()).contains("tags")
+        assertThat(body.tags()).contains(UploadCreateFromUrlParams.Tags.ofStrings(listOf("string")))
         assertThat(body.webhookUrl()).contains("https://example.com")
     }
 
