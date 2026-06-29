@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.2](https://github.com/autorenderhq/autorender-java/compare/v0.1.1...v0.1.2) (2026-06-29)
+
+
+### Chores
+
+* remove Stainless attribution from README and SECURITY ([4c839ff](https://github.com/autorenderhq/autorender-java/commit/4c839ffd8ac8f49d033fcccd7b45cb355682edeb))
+* strip internal workflows; preserve production-managed files ([d7db835](https://github.com/autorenderhq/autorender-java/commit/d7db835edad9054485f1681e0c8f50e1fc608f31))
+
 ## [0.1.1](https://github.com/autorenderhq/autorender-java/compare/v0.1.0...v0.1.1) (2026-06-12)
 
 
